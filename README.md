@@ -1,11 +1,12 @@
 # Mouse_Segmentation
 Segmentation of Mouse data
-* InputPath.txt @“ü—ÍƒpƒX  
-* CasePath.txt @Ç—á–¼  
-* load_case_data.m @ƒf[ƒ^ƒ[ƒh  
-* Parameter_config.m @ƒpƒ‰ƒ[ƒ^  
-* proposed_bilateral.m @’ñˆÄƒoƒCƒ‰ƒeƒ‰ƒ‹ƒtƒBƒ‹ƒ^  
-* Output.m @‰æ‘œ•\¦E•Û‘¶  
+* InputPath.txt ã€€å…¥åŠ›ãƒ‘ã‚¹  
+* CasePath.txt ã€€ç—‡ä¾‹å  
+* load_case_data.m ã€€ãƒ‡ãƒ¼ã‚¿ãƒ­ãƒ¼ãƒ‰  
+* M1_segmentation.m ã€€Segmentation of Mouse1  
+* M2_segmentation.m   Segmentation of Mouse2    
+* M3_segmentation.m   Segmentation of Mouse3  
+* Output.m ã€€ç”»åƒè¡¨ç¤ºãƒ»ä¿å­˜  
 
 
 # License
