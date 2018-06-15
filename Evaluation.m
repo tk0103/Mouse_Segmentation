@@ -1,7 +1,8 @@
 %%
+%GraphCut Enrgy of each term
 seikai = pM1GT(pmask1);
 seikai = double(seikai);
-%%
+
 Label = CurLabel;
 term1 = RP((1:N)'+(Label(:)-1)*N);
 
@@ -16,7 +17,7 @@ shapeval = shape(Sig);
 shapeval(shapeval == 2) = E1(shapeval == 2);
 shapeval(shapeval == 3) = E2(shapeval == 3);
 term3 = shapeval;
-%%
+
 term1da = term1(Label == 3);
 term2da = term2(Label == 3);
 term3da = term3(Label == 3);
@@ -32,7 +33,7 @@ Label = CurLabel;
 E1test = pM1E1(pmask1);
 P = GraphModel.Hi(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
 Q = GraphModel.Hj(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
-%%
+
 sig = 0.0174;
 dif = (E1test(P) - E1test(Q))/( sig);
 edges = [-2 -2:0.05:3 3];
@@ -48,3 +49,4 @@ z(x < 0) = 1;
 yyaxis right
 xlabel('I_p - I_q / \sigma')
 plot(x,z,'LineWidth',3);
+

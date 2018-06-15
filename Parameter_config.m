@@ -8,6 +8,7 @@ K=4;
 sig1 = 5; %bladder
 sig2 = 3; %kidneys
 
+%%
 %GraphCut
 lambda = 0.05;
 h = 0.5;
