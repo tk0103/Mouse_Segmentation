@@ -10,9 +10,9 @@ pIwM3E1
 pIwM3E2
 pIwM3E3
 pIwM3E4
-pIwM1GT
-pIwM2GT
-pIwM3GT
+M1GT
+M2GT
+M3GT
 pmaskM1
 pmaskM2
 pmaskM3
