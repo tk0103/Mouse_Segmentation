@@ -89,7 +89,6 @@ while(flag ~=1)
     PreE = E;
 end
 
-%Output(pmask1) = CurLabel;
 JI= CalcuJI(Output,pM1GT,K-1);
 disp("GraphCut_JI")
 disp(JI);
