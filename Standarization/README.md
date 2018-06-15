@@ -1,5 +1,9 @@
 # Mouse_Standarization
-空間的標準化
+Mouseデータ標準化作業
+
+1. 入力  
+1. 入力  
+1. 入力  
 
 # License
 MIT
