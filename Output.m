@@ -34,6 +34,10 @@ imagesc(voronoiOut(:,:,slice));
 caxis([0 4])
 axis tight equal
 %%
+map = [0, 0, 0
+    parula(4)];
+
+%%
 %Save
 temp1 = pM1GT;
 temp1(temp1 == 4) = 0;

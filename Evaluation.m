@@ -50,3 +50,74 @@ yyaxis right
 xlabel('I_p - I_q / \sigma')
 plot(x,z,'LineWidth',3);
 
+%%
+edge = [0 0:0.01:1.4 1.4];
+hold on
+histogram(pM1E1(pM1GT ==2),edge,'Normalization','probability','EdgeAlpha',0.4);
+histogram(pM1E1(pM1GT ==4),edge,'Normalization','probability','EdgeAlpha',0.4);
+xlabel('K’²’l')
+ylabel('‘‘Ξ•p“x')
+mutest =0.273128082034521;
+sigtest = sqrt(0.0014);
+y = pdf('Normal',edge,mutest,sigtest)*0.07;
+y = y./sum(y(:));
+plot(edge,y,'Color',[0.2 0.6 0.2],'LineWidth',2)
+
+%%
+mutest =0.273128082034521;
+sigtest = sqrt(0.0014);
+y = pdf('Normal',edge,mutest,sigtest)*0.07;
+y = y./sum(y(:));
+plot(edge,y);
+
+%%
+%Distance feature
+xim = zeros(siz2); yim = zeros(siz2);  zim = zeros(siz2); 
+for i = 1:siz2(1)
+    xim(i,:,:) = i;
+end
+for i = 1:siz2(2)
+    yim(:,i,:) = i;
+end
+for i = 1:siz2(3)
+    zim(:,:,i) = i;
+end
+
+%%
+%Calculate kurtosis and skewness
+class = 2;
+kM1 = [kurtosis(pM1E1(pM1GT == class)); kurtosis(pM1E2(pM1GT == class)); kurtosis(pM1E3(pM1GT == class)); kurtosis(pM1E4(pM1GT == class));];
+kM2 = [kurtosis(pM2E1(pM2GT == class)); kurtosis(pM2E2(pM2GT == class)); kurtosis(pM2E3(pM2GT == class)); kurtosis(pM2E4(pM2GT == class));];
+kM3 = [kurtosis(pM3E1(pM3GT == class)); kurtosis(pM3E2(pM3GT == class)); kurtosis(pM3E3(pM3GT == class)); kurtosis(pM3E4(pM3GT == class));];
+
+yM1 = [skewness(pM1E1(pM1GT == class)); skewness(pM1E2(pM1GT == class)); skewness(pM1E3(pM1GT == class)); skewness(pM1E4(pM1GT == class));];
+yM2 = [skewness(pM2E1(pM2GT == class)); skewness(pM2E2(pM2GT == class)); skewness(pM2E3(pM2GT == class)); skewness(pM2E4(pM2GT == class));];
+yM3 = [skewness(pM3E1(pM3GT == class)); skewness(pM3E2(pM3GT == class)); skewness(pM3E3(pM3GT == class)); skewness(pM3E4(pM3GT == class));];
+
+
+%%
+hold on
+histogram(pM3E4(pM3GT==1),edge,'Facecolor','y','Normalization','probability','FaceAlpha',0.3);
+%histogram(pM3E4(pM3GT==2),edge,'Facecolor','red','Normalization','probability','FaceAlpha',0.3);
+%histogram(pM3E4(pM3GT==3),edge,'Facecolor','blue','Normalization','probability','FaceAlpha',0.3);
+
+%%
+hold on
+scatter(pM3E1(pM3GT==3),pM3E4(pM3GT==3),'.');
+scatter(pM3E1(pM3GT==3),pM3E3(pM3GT==3),'.');
+scatter(pM3E1(pM3GT==3),pM3E2(pM3GT==3),'.');
+
+scatter(pM3E1(pM3GT==1),pM3E4(pM3GT==1),'.');
+scatter(pM3E1(pM3GT==1),pM3E3(pM3GT==1),'.');
+scatter(pM3E1(pM3GT==1),pM3E2(pM3GT==1),'.');
+axis tight equal
+xlim([0.1 2.5]);
+ylim([0.1 2.5]);
+xlabel('Energy1')
+ylabel('Energy2,Energy3,Energy4')
+legend('E1&E4(¶t‘)','E1&E3(¶t‘)','E1&E2(¶t‘)','E1&E4(δNγχ)','E1&E3(δNγχ)','E1&E2(δNγχ)','Location','northwest')
+%%
+class  = 1;
+[h1,p1] = lillietest(pM1E3(pM1GT == class));
+[h2,p2] = lillietest(pM2E3(pM2GT == class));
+[h3,p3] = lillietest(pM3E3(pM3GT == class));
