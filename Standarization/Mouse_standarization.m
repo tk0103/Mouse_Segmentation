@@ -277,6 +277,7 @@ imagesc(boneM1(:,:,325)');
 axis tight equal
 colormap gray
 %%
+%Save
 save_raw(pIwM1E1,'C:\Users\yourb\Desktop\new2\pIwM1E1.raw','*double');
 save_raw(pIwM2E1,'C:\Users\yourb\Desktop\new2\pIwM2E1.raw','*double');
 save_raw(pIwM3E1,'C:\Users\yourb\Desktop\new2\pIwM3E1.raw','*double');

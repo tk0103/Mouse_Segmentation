@@ -1,0 +1,12 @@
+Mouse1\E1-118
+Mouse1\E2-118
+Mouse1\E3-118
+Mouse1\E4-118
+Mouse2\E1-118
+Mouse2\E2-118
+Mouse2\E3-118
+Mouse2\E4-118
+Mouse3\E1-118
+Mouse3\E2-118
+Mouse3\E3-118
+Mouse3\E4-118
