@@ -316,3 +316,140 @@ M3bgE3(pIwM3E3 < graythresh(pIwM3E3(mask3))) = 0;
 
 M3bgE4 = true(siz);
 M3bgE4(pIwM3E4 < graythresh(pIwM3E4(mask3))) = 0;
+
+%%
+%Segmentation
+M1E1 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM1E1.raw','*double');
+M1E2 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM1E2.raw','*double');
+M1E3 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM1E3.raw','*double');
+M1E4 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM1E4.raw','*double');
+M1GT = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM1GT.raw','*uint8');
+mask1 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pmaskM1.raw','*uint8');
+siz = [544,544,860];
+M1E1 = reshape(M1E1,siz); M1E2 = reshape(M1E2,siz); M1E3 = reshape(M1E3,siz); 
+M1E4 = reshape(M1E4,siz); M1GT = reshape(M1GT,siz); mask1 = reshape(mask1,siz);
+mask1 = logical(mask1);
+
+%Input Mouse2
+M2E1 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM2E1.raw','*double');
+M2E2 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM2E2.raw','*double');
+M2E3 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM2E3.raw','*double');
+M2E4 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM2E4.raw','*double');
+M2GT = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM2GT.raw','*uint8');
+mask2 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pmaskM2.raw','*uint8');
+M2E1 = reshape(M2E1,siz); M2E2 = reshape(M2E2,siz); M2E3 = reshape(M2E3,siz); 
+M2E4 = reshape(M2E4,siz); M2GT = reshape(M2GT,siz); mask2 = reshape(mask2,siz);
+mask2 = logical(mask2);
+
+%Input Mouse3
+M3E1 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM3E1.raw','*double');
+M3E2 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM3E2.raw','*double');
+M3E3 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM3E3.raw','*double');
+M3E4 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM3E4.raw','*double');
+M3GT = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pIwM3GT.raw','*uint8');
+mask3 = load_raw('\\tera\user\boku\NZ_data\Mouse\Standarized_mouse\with_bone\pmaskM3.raw','*uint8');
+M3E1 = reshape(M3E1,siz); M3E2 = reshape(M3E2,siz); M3E3 = reshape(M3E3,siz); 
+M3E4 = reshape(M3E4,siz); M3GT = reshape(M3GT,siz); mask3 = reshape(mask3,siz);
+mask3 = logical(mask3);
+%%
+imagesc(M2E1(:,:,210));
+axis tight equal
+%%
+diff21M1 = M1E2 - M1E1;
+diff21M2 = M2E2 - M2E1;
+diff21M3 = M3E2 - M3E1;
+
+SE = strel('sphere',3);
+boneM1 = true(siz); tmp = true(siz); BWM1 = zeros(siz);
+boneM1(M1E1 < 0.32) = 0; boneM1ori = boneM1;
+tmp(diff21M1 < 0.015) = 0; boneM1(tmp) = 0;
+boneM1 = imclose(boneM1,SE);
+L1 = bwconncomp(boneM1);
+numPixels = cellfun(@numel,L1.PixelIdxList);
+[~,idx] = max(numPixels);
+BWM1(L1.PixelIdxList{idx}) = 1;
+boneM1 = and(boneM1ori,BWM1);
+boneM1 = logical(boneM1);
+
+%boneM2
+SE = strel('sphere',3);
+boneM2 = true(siz); tmp = true(siz); BWM2 = zeros(siz);
+boneM2(M2E1 < 0.32) = 0; boneM2ori = boneM2;
+tmp(diff21M2 < 0.015) = 0; boneM2(tmp) = 0;
+boneM2 = imclose(boneM2,SE);
+L2 = bwconncomp(boneM2);
+numPixels = cellfun(@numel,L2.PixelIdxList);
+[~,idx] = max(numPixels);
+BWM2(L2.PixelIdxList{idx}) = 1;
+boneM2 = and(boneM2ori,BWM2);
+boneM2 = logical(boneM2);
+
+%boneM3
+SE = strel('sphere',5);
+boneM3 = true(siz); tmp = true(siz); BWM3 = zeros(siz);
+boneM3(M3E1 < 0.3) = 0; boneM3ori = boneM3;
+tmp(diff21M3 < 0.015) = 0; boneM3(tmp) = 0;
+boneM3 = imclose(boneM3,SE);
+L3 = bwconncomp(boneM3);
+numPixels = cellfun(@numel,L3.PixelIdxList);
+[~,idx] = max(numPixels);
+BWM3(L3.PixelIdxList{idx}) = 1;
+boneM3 = and(boneM3ori,BWM3);
+boneM3 = logical(boneM3);
+
+boneM1 = not(boneM1);
+boneM2 = not(boneM2);
+boneM3 = not(boneM3);
+%%
+pM1E1 = zeros(siz); pM1E1(boneM1) = M1E1(boneM1); 
+pM1E2 = zeros(siz); pM1E2(boneM1) = M1E2(boneM1); 
+pM1E3 = zeros(siz); pM1E3(boneM1) = M1E3(boneM1); 
+pM1E4 = zeros(siz); pM1E4(boneM1) = M1E4(boneM1); 
+pM1GT = zeros(siz); pM1GT(boneM1) = M1GT(boneM1); 
+
+pM2E1 = zeros(siz); pM2E1(boneM2) = M2E1(boneM2); 
+pM2E2 = zeros(siz); pM2E2(boneM2) = M2E2(boneM2); 
+pM2E3 = zeros(siz); pM2E3(boneM2) = M2E3(boneM2); 
+pM2E4 = zeros(siz); pM2E4(boneM2) = M2E4(boneM2); 
+pM2GT = zeros(siz); pM2GT(boneM2) = M2GT(boneM2); 
+
+pM3E1 = zeros(siz); pM3E1(boneM3) = M3E1(boneM3); 
+pM3E2 = zeros(siz); pM3E2(boneM3) = M3E2(boneM3); 
+pM3E3 = zeros(siz); pM3E3(boneM3) = M3E3(boneM3); 
+pM3E4 = zeros(siz); pM3E4(boneM3) = M3E4(boneM3); 
+pM3GT = zeros(siz); pM3GT(boneM3) = M3GT(boneM3); 
+%%
+save_raw(pM1E1,'C:\Users\yourb\Desktop\new2\pIwM1E1.raw','*double');
+save_raw(pM2E1,'C:\Users\yourb\Desktop\new2\pIwM2E1.raw','*double');
+save_raw(pM3E1,'C:\Users\yourb\Desktop\new2\pIwM3E1.raw','*double');
+
+save_raw(pM1E2,'C:\Users\yourb\Desktop\new2\pIwM1E2.raw','*double');
+save_raw(pM2E2,'C:\Users\yourb\Desktop\new2\pIwM2E2.raw','*double');
+save_raw(pM3E2,'C:\Users\yourb\Desktop\new2\pIwM3E2.raw','*double');
+
+save_raw(pM1E3,'C:\Users\yourb\Desktop\new2\pIwM1E3.raw','*double');
+save_raw(pM2E3,'C:\Users\yourb\Desktop\new2\pIwM2E3.raw','*double');
+save_raw(pM3E3,'C:\Users\yourb\Desktop\new2\pIwM3E3.raw','*double');
+
+save_raw(pM1E4,'C:\Users\yourb\Desktop\new2\pIwM1E4.raw','*double');
+save_raw(pM2E4,'C:\Users\yourb\Desktop\new2\pIwM2E4.raw','*double');
+save_raw(pM3E4,'C:\Users\yourb\Desktop\new2\pIwM3E4.raw','*double');
+
+save_raw(pM1GT,'C:\Users\yourb\Desktop\new2\pIwM1GT.raw','*uint8');
+save_raw(pM2GT,'C:\Users\yourb\Desktop\new2\pIwM2GT.raw','*uint8');
+save_raw(pM3GT,'C:\Users\yourb\Desktop\new2\pIwM3GT.raw','*uint8');
+
+save_raw(test1,'C:\Users\yourb\Desktop\new2\pmaskM1.raw','*uint8');
+save_raw(test2,'C:\Users\yourb\Desktop\new2\pmaskM2.raw','*uint8');
+save_raw(test3,'C:\Users\yourb\Desktop\new2\pmaskM3.raw','*uint8');
+
+%%
+boneM1 = not(boneM1);
+boneM2 = not(boneM2);
+boneM3 = not(boneM3);
+%%
+SE = strel('sphere',3);
+testbone = imerode(boneM3,SE);
+%%
+imagesc(boneM3(:,:,295));
+axis tight equal
