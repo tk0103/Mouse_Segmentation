@@ -121,3 +121,20 @@ class  = 1;
 [h1,p1] = lillietest(pM1E3(pM1GT == class));
 [h2,p2] = lillietest(pM2E3(pM2GT == class));
 [h3,p3] = lillietest(pM3E3(pM3GT == class));
+
+%%
+%histogram
+class = 3;
+
+temp1 = M1E1(M1GT == class);
+temp2 = M2E1(M2GT == class);
+temp3 = M3E1(M3GT == class);
+
+edges = [0 0:0.01:1.5 1.5];
+hold on
+histogram(temp1,edges);
+histogram(temp2,edges);
+histogram(temp3,edges);
+%%
+meanval = [mean(temp1); mean(temp2); mean(temp3);];
+covval = [var(temp1); var(temp2); var(temp3);];

@@ -1,9 +1,11 @@
+st = 164; en = 439;
 pM1E1 = M1E1(:,:,st:en); pM1E2 = M1E2(:,:,st:en); pM1E3 = M1E3(:,:,st:en); pM1E4 = M1E4(:,:,st:en); pM1GT = M1GT(:,:,st:en); pmask1 = mask1(:,:,st:en);
 pM2E1 = M2E1(:,:,st:en); pM2E2 = M2E2(:,:,st:en); pM2E3 = M2E3(:,:,st:en); pM2E4 = M2E4(:,:,st:en); pM2GT = M2GT(:,:,st:en); pmask2 = mask2(:,:,st:en);
 pM3E1 = M3E1(:,:,st:en); pM3E2 = M3E2(:,:,st:en); pM3E3 = M3E3(:,:,st:en); pM3E4 = M3E4(:,:,st:en); pM3GT = M3GT(:,:,st:en); pmask3 = mask3(:,:,st:en);
 siz2 = size(pM1E1);
 clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask2 mask3 M1GT M2GT M3GT
 
+%%
 %train_mouse1 mouse2 test_mouse3
 Xtr = [[pM1E2(pmask1); pM2E2(pmask2)] [pM1E3(pmask1); pM2E3(pmask2)] [pM1E4(pmask1); pM2E4(pmask2)] ];
 Xte = [pM3E2(pmask3) pM3E3(pmask3) pM3E4(pmask3)];
@@ -25,6 +27,7 @@ sig1 = 5; sig2 = 3; K = 4;
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask3,pM1GT,pM2GT);
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask3,siz2);
 JI= CalcuJI(Imap,pM3GT,K-1);
+disp("EM_MAP result")
 disp(JI);
 %%
 %GraphCut
@@ -93,4 +96,30 @@ disp(JI);
 %sumJI(n) = sum(JI(:));
 %disp(n);
 %end
+%%
+% 0.1 0.04
+temp = pM3E2-pM3E1;
+temp = temp(pmask3);
+temp = temp>0.03;
 
+test = zeros(siz2);
+test(pmask3) = temp;
+%%
+imagesc(temtem(:,:,215));
+caxis([0 2])
+%%
+imagesc(GT1(:,:,215));
+%%
+GT1 = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M3GTnew.raw','*uint8');
+GT1 = reshape(GT1,siz);
+GT1 = GT1(:,:,st:en);
+GT1 = double(GT1);
+%%
+temtem = test+GT1;
+%%
+save_raw(out,'C:\\Users\\yourb\\Desktop\\NZ_unet\\M3GTnewnew.raw')
+
+
+%%
+out = zeros(siz);
+out(:,:,st:en) = temtem;

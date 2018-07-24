@@ -25,6 +25,9 @@ M3E2 = load_raw([InputPath CasePath{10,:} '.raw'],'*double');
 M3E3 = load_raw([InputPath CasePath{11,:} '.raw'],'*double');
 M3E4 = load_raw([InputPath CasePath{12,:} '.raw'],'*double');
 
+M1GT = load_raw([InputPath CasePath{13,:} '.raw'],'*uint8');
+M2GT = load_raw([InputPath CasePath{14,:} '.raw'],'*uint8');
+M3GT = load_raw([InputPath CasePath{15,:} '.raw'],'*uint8');
 mask1 = load_raw([InputPath CasePath{16,:} '.raw'],'*uint8');
 mask2 = load_raw([InputPath CasePath{17,:} '.raw'],'*uint8');
 mask3 = load_raw([InputPath CasePath{18,:} '.raw'],'*uint8');
@@ -75,9 +78,9 @@ wM3E1 = reshape(wM3E1,siz2); wM3GT = reshape(wM3GT,siz); wmask3 = reshape(wmask3
 
 %%
 temp = zeros([4 544 544 860]);
-temp(1,:,:,:) = M3GT;
-temp(2,:,:,:) = M3GT;
-temp(3,:,:,:) = M3GT;
-temp(4,:,:,:) = M3GT;
+temp(1,:,:,:) = M1E1;
+temp(2,:,:,:) = M1E2;
+temp(3,:,:,:) = M1E3;
+temp(4,:,:,:) = M1E4;
 %%
-save_raw(temp,'C:\\Users\\yourb\\Desktop\\4chLabel_M31.raw','*uint8');
+save_raw(temp,'C:\\Users\\yourb\\Desktop\\4chInput.raw','*double');

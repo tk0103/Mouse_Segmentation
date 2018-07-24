@@ -1,30 +1,37 @@
 %figure
-slice = 191;
+slice = 200;
 subplot(1,4,1);
-imagesc(pM1E1(:,:,slice)'); 
+imagesc(pM3E1(:,:,slice)'); 
 axis equal tight off
 colormap(gca,'gray');
 caxis([0 0.7])
 
+%Colormap
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+
 subplot(1,4,2);
-imagesc(pM1GT(:,:,slice)'); 
+imagesc(pM3GT(:,:,slice)'); 
 axis equal tight off
-colormap(gca,'default')
+colormap(map)
 caxis([0 4]);
 %caxis([0 0.05])
 
 subplot(1,4,3);
 
-imagesc(pM2GT(:,:,slice)'); 
+imagesc(Imap(:,:,slice)'); 
 axis equal tight off
-colormap(gca,'default')
+colormap(map)
 caxis([0 4]);
 %caxis([0 0.05])
 
 subplot(1,4,4);
-imagesc(pM3GT(:,:,slice)'); 
+imagesc(Output(:,:,slice)'); 
 axis equal tight off
-colormap(gca,'default');
+colormap(map)
 caxis([0 4])
 
 %%

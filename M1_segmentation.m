@@ -4,6 +4,10 @@ pM3E1 = M3E1(:,:,st:en); pM3E2 = M3E2(:,:,st:en); pM3E3 = M3E3(:,:,st:en); pM3E4
 siz2 = size(pM1E1);
 clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask2 mask3 M1GT M2GT M3GT
 
+
+
+%%
+
 %train_mouse2_mouse3 test_mouse1
 Xtr = [[pM2E2(pmask2); pM3E2(pmask3)] [pM2E3(pmask2); pM3E3(pmask3)] [pM2E4(pmask2); pM3E4(pmask3)] ];
 Xte = [pM1E2(pmask1) pM1E3(pmask1) pM1E4(pmask1)];
@@ -27,7 +31,12 @@ atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask1,pM2GT,pM3GT);
 JI= CalcuJI(Imap,pM1GT,K-1);
 disp("EM_MAP result")
 disp(JI);
-
+%%
+temp = zeros(siz2);
+temp(pmask2) = PP(:,2);
+%%
+imagesc(temp(:,:,245)');
+caxis([ 0 1])
 %%
 %GraphCut
 GraphModel = CreateFullyConnectedGraphWithMask(pmask1);
