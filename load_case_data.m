@@ -25,6 +25,10 @@ M3E2 = load_raw([InputPath CasePath{10,:} '.raw'],'*double');
 M3E3 = load_raw([InputPath CasePath{11,:} '.raw'],'*double');
 M3E4 = load_raw([InputPath CasePath{12,:} '.raw'],'*double');
 
+M1GT = load_raw([InputPath CasePath{13,:} '.raw'],'*uint8');
+M2GT = load_raw([InputPath CasePath{14,:} '.raw'],'*uint8');
+M3GT = load_raw([InputPath CasePath{15,:} '.raw'],'*uint8');
+
 mask1 = load_raw([InputPath CasePath{16,:} '.raw'],'*uint8');
 mask2 = load_raw([InputPath CasePath{17,:} '.raw'],'*uint8');
 mask3 = load_raw([InputPath CasePath{18,:} '.raw'],'*uint8');
@@ -81,3 +85,66 @@ temp(3,:,:,:) = M3GT;
 temp(4,:,:,:) = M3GT;
 %%
 save_raw(temp,'C:\\Users\\yourb\\Desktop\\4chLabel_M31.raw','*uint8');
+
+
+
+
+%%
+%normilizatoon & atlas data
+PP1 = zeros(siz2); PP2 = zeros(siz2); PP3 = zeros(siz2); PP4 = zeros(siz2);
+
+PP1(pmask3) = PP(:,1);
+PP2(pmask3) = PP(:,2);
+PP3(pmask3) = PP(:,3);
+PP4(pmask3) = PP(:,4);
+
+PP1 = imgaussfilt3(PP1,5);
+PP2 = imgaussfilt3(PP2,5);
+PP3 = imgaussfilt3(PP3,5);
+
+newPP1 = zeros(siz); newPP2 = zeros(siz); newPP3 = zeros(siz);
+newPP1(:,:,st:en) = PP1;
+newPP2(:,:,st:en) = PP2;
+newPP3(:,:,st:en) = PP3;
+
+%%
+maxval = max(pM1E1(:)); minval = min(pM1E1(:));
+normM1E1 = (M1E1 - minval)/(maxval - minval);
+maxval = max(pM1E2(:)); minval = min(pM1E2(:));
+normM1E2 = (M1E2 - minval)/(maxval - minval);
+maxval = max(pM1E3(:)); minval = min(pM1E3(:));
+normM1E3 = (M1E3 - minval)/(maxval - minval);
+maxval = max(pM1E4(:)); minval = min(pM1E4(:));
+normM1E4 = (M1E4 - minval)/(maxval - minval);
+
+maxval = max(pM2E1(:)); minval = min(pM2E1(:));
+normM2E1 = (M2E1 - minval)/(maxval - minval);
+maxval = max(pM2E2(:)); minval = min(pM2E2(:));
+normM2E2 = (M2E2 - minval)/(maxval - minval);
+maxval = max(pM2E3(:)); minval = min(pM2E3(:));
+normM2E3 = (M2E3 - minval)/(maxval - minval);
+maxval = max(pM2E4(:)); minval = min(pM2E4(:));
+normM2E4 = (M2E4 - minval)/(maxval - minval);
+
+maxval = max(pM3E1(:)); minval = min(pM3E1(:));
+normM3E1 = (M3E1 - minval)/(maxval - minval);
+maxval = max(pM3E2(:)); minval = min(pM3E2(:));
+normM3E2 = (M3E2 - minval)/(maxval - minval);
+maxval = max(pM3E3(:)); minval = min(pM3E3(:));
+normM3E3 = (M3E3 - minval)/(maxval - minval);
+maxval = max(pM3E4(:)); minval = min(pM3E4(:));
+normM3E4 = (M3E4 - minval)/(maxval - minval);
+
+%%
+output = zeros([7 544 544 860]);
+output(1,:,:,:) = normM3E1;
+output(2,:,:,:) = normM3E2;
+output(3,:,:,:) = normM3E3;
+output(4,:,:,:) = normM3E4;
+output(5,:,:,:) = newPP1;
+output(6,:,:,:) = newPP2;
+output(7,:,:,:) = newPP3;
+
+%%
+save_raw(output,'C:\\Users\\yourb\\Desktop\\7chM3.raw')
+

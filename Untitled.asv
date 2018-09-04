@@ -1,11 +1,11 @@
 %mask
 st = 164; en = 439;
-num_of_patch_bla = 1000;
-num_of_patch_Lkid = 1000;
-num_of_patch_Rkid = 1000;
-num_of_patch_bg = 2000;
+num_of_patch_bla = 100;
+num_of_patch_Lkid = 100;
+num_of_patch_Rkid = 100;
+num_of_patch_bg = 200;
 
-Label = M3GT;
+Label = M2GT;
 Input_Label = zeros(siz);
 Input_Label(:,:,st:en) = Label(:,:,st:en);
 
@@ -24,40 +24,38 @@ idx = randperm(size(Lkid,1),num_of_patch_Lkid); Lkid = Lkid(idx,:);
 idx = randperm(size(Rkid,1),num_of_patch_Rkid); Rkid = Rkid(idx,:);
 idx = randperm(size(bg,1),num_of_patch_bg); bg = bg(idx,:);
 coordi = [bla; Lkid; Rkid; bg;];
-
-%dave
-csvwrite("C:\Users\yourb\Desktop\tr_M3.csv",coordi)
 %%
-imagesc(M3GT(:,:,360)')
+%dave
+csvwrite("C:\Users\yourb\Desktop\M2.csv",coordi)
+%%
+imagesc(Input_Label(:,:,360)')
 axis tight equal
 caxis([0 4])
 %%
-%Test
+%JI
 st = 164; en = 439;
-temp = load_raw('C:\\Users\\yourb\\Desktop\\U_net_result\\4ch\\Results_trM2_ValiM3\\TestResultM1.raw','*uint8');
+temp = load_raw('C:\\Users\\yourb\\Documents\\GitHub\\3D-Unet\\Results_trM1_ValiM2\\TestResultM3.raw','*uint8');
 temp = reshape(temp,siz);
-Testresult = zeros(siz); pmask3 = zeros(siz);
-pmask3(:,:,st:en) = mask1(:,:,st:en); pmask3 = logical(pmask3);
-Testresult(pmask3) = temp(pmask3);
 
-%GT
-M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M1GTnew.raw','*uint8');
-M3GT = reshape(M3GT,siz);
+testresult = zeros(siz); pmask3 = zeros(siz);
+pmask3(:,:,st:en) = mask3(:,:,st:en);
+pmask3 = logical(pmask3);
+testresult(pmask3) = temp2(pmask3);
 
 %%
-JI = CalcuJI(Testresult,M3GT,4);
+newM3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M3GTnew.raw','*uint8');
+newM3GT = reshape(newM3GT,siz);
+
+%%
+JI = CalcuJI(testresult,newM3GT,4);
 disp(JI);
 
-Dice = CalcuDice(Testresult,M3GT,4);
+Dice = CalcuDice(testresult,newM3GT,4);
 disp(Dice);
+
 %%
-slice = 345;
-imagesc(M3E1(:,:,slice)');
-axis tight equal off
-colormap gray
-caxis([0 0.7])
-%%
-slice = 220;
+slice1 = 345;
+slice2 = 250;
 
 %Colormap
 map = [0, 0, 0
@@ -67,21 +65,49 @@ map = [0, 0, 0
     0.9, 0.9, 0];
 
 subplot(1,2,1)
-imagesc(Testresult(:,:,slice)');
+imagesc(testresult(:,:,slice1)');
 axis tight equal off
 caxis([0 4])
 colormap(map)
 
 subplot(1,2,2)
-imagesc(M3GT(:,:,slice)');
+imagesc(newM3GT(:,:,slice1)');
 axis tight equal off
 caxis([0 4])
+%%
+temp = M2E2 - M2E1;
+%%
+normM2 = M2E1 + 3*temp;
+%%
+imagesc(normM2(:,:,235)')
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
+%%
+slice1 = 260;
+slice2 = 230;
+
+subplot(1,3,1)
+imagesc(M1E1(:,:,slice1)');
+axis tight equal off
+caxis([0 0.7])
+colormap(gray)
+
+subplot(1,3,2)
+imagesc(M2E1(:,:,slice1)');
+axis tight equal off
+caxis([0 0.7])
+
+subplot(1,3,3)
+imagesc(M3E1(:,:,slice1)');
+axis tight equal off
+caxis([0 0.6])
 
 %%
 %histogram
-temp1 = ppM1E1(:,:,slice);
-temp2 = ppM2E1(:,:,slice);
-temp3 = ppM3E1(:,:,slice);
+temp1 = ppM1E1(:,:,slice1);
+temp2 = ppM2E1(:,:,slice1);
+temp3 = ppM3E1(:,:,slice1);
 %%
 edges = [-2 -2:0.05:1 1];
 hold on
@@ -91,7 +117,23 @@ histogram(temp3(:),edges);
 
 
 %%
-%Test_patch creat
+%setting
+
+st = 164; en = 439;
+
+stax = 100;
+endx = 450;
+stay = 100;
+endy = 450;
+staz = 164;
+endz = 439;
+
+out_patch_sizex = 4;
+out_patch_sizey = 4;
+out_patch_sizez = 4;
+
+%%
+%test
 stax = 50;
 endx = 500;
 stay = 50;
@@ -101,7 +143,7 @@ endz = 439;
 out_patch_sizex = 52;
 out_patch_sizey = 52;
 out_patch_sizez = 52;
-
+%%
 num_of_patch = numel(stax:out_patch_sizex:endx) * numel(stay:out_patch_sizey:endy)...
     * numel(staz:out_patch_sizez:endz);
 coordi = zeros(num_of_patch,3);
@@ -115,14 +157,9 @@ for z = staz:out_patch_sizez:endz
         end
     end
 end
-
+%%
+%dave
 csvwrite("C:\Users\yourb\Desktop\test_coordinate_nopad52.csv",coordi)
-
-
-
-
-
-
 
 
 
@@ -172,7 +209,7 @@ for index = 1:size(coordinate,1)
     x = coordinate(index,1);
     y = coordinate(index,2);
     z = coordinate(index,3);
-    temp = Testresult(x-pa_siz:x+pa_siz-1,y-pa_siz:y+pa_siz-1,z-pa_siz:z+pa_siz-1);
+    temp = testresult(x-pa_siz:x+pa_siz-1,y-pa_siz:y+pa_siz-1,z-pa_siz:z+pa_siz-1);
     temp2 = temp(20:24-1,20:24-1,20:24-1);
     Result(index,:) = temp2(:);
 end
@@ -181,7 +218,7 @@ Result(Result == 0) = 4;
 %%
 testvaliimage = zeros(siz);
 
-temp = Testresult;
+temp = testresult;
 temp(temp==0) = 4;
 for index = 1:size(coordinate,1)
     x = coordinate(index,1);
@@ -191,3 +228,44 @@ for index = 1:size(coordinate,1)
     temp2 = temp2(20:24-1,20:24-1,20:24-1);  
     testvaliimage(x-2:x+2-1,y-2:y+2-1,z-2:z+2-1) = temp2;
 end
+%%
+Dice=  CalcuDice(GT,Result,4);
+disp(Dice);
+%%
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+
+slice = 358;
+subplot(1,2,1)
+imagesc(testvaliimage(:,:,slice)');
+colormap(map)
+axis tight equal off
+
+subplot(1,2,2)
+imagesc(M2GT(:,:,slice)');
+colormap(map)
+axis tight equal off
+%%
+ppM1E1 = (M1E1 - 0.3474) / sqrt(0.0268);
+ppM2E1 = (M2E1 - 0.3253) / sqrt(0.0024);
+ppM3E1 = (M3E1 - 0.3180) / sqrt(0.0239);
+%%
+%histogram
+class = 1;
+
+temp1 = normM1(M1GT == class);
+temp2 = normM2(M2GT == class);
+temp3 = normM3(M3GT == class);
+%%
+edges = [0 0:0.01:1.5 1.5];
+hold on
+histogram(temp1,edges);
+histogram(temp2,edges);
+histogram(temp3,edges);
+%%
+save_raw(ppM1E1,'C:\\Users\\yourb\\Desktop\\normalize_M1.raw','*double');
+save_raw(ppM2E1,'C:\\Users\\yourb\\Desktop\\normalize_M2.raw','*double');
+save_raw(ppM3E1,'C:\\Users\\yourb\\Desktop\\normalize_M3.raw','*double');
