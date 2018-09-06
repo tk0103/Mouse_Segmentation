@@ -91,22 +91,22 @@ save_raw(temp,'C:\\Users\\yourb\\Desktop\\4chLabel_M31.raw','*uint8');
 
 %%
 %normilizatoon & atlas data
-PP1 = zeros(siz2); PP2 = zeros(siz2); PP3 = zeros(siz2); PP4 = zeros(siz2);
+PP1 = zeros(siz2); PP2 = zeros(siz2); PP3 = zeros(siz2); PPtem = zeros(siz2)+1; 
 
 PP1(pmask3) = PP(:,1);
 PP2(pmask3) = PP(:,2);
 PP3(pmask3) = PP(:,3);
-PP4(pmask3) = PP(:,4);
 
 PP1 = imgaussfilt3(PP1,5);
 PP2 = imgaussfilt3(PP2,5);
 PP3 = imgaussfilt3(PP3,5);
-
-newPP1 = zeros(siz); newPP2 = zeros(siz); newPP3 = zeros(siz);
+PP4 = PPtem - PP1 - PP2 - PP3;
+%%
+newPP1 = zeros(siz); newPP2 = zeros(siz); newPP3 = zeros(siz); newPP4 = zeros(siz);
 newPP1(:,:,st:en) = PP1;
 newPP2(:,:,st:en) = PP2;
 newPP3(:,:,st:en) = PP3;
-
+newPP4(:,:,st:en) = PP4;
 %%
 maxval = max(pM1E1(:)); minval = min(pM1E1(:));
 normM1E1 = (M1E1 - minval)/(maxval - minval);
@@ -136,7 +136,7 @@ maxval = max(pM3E4(:)); minval = min(pM3E4(:));
 normM3E4 = (M3E4 - minval)/(maxval - minval);
 
 %%
-output = zeros([7 544 544 860]);
+output = zeros([8 544 544 860]);
 output(1,:,:,:) = normM3E1;
 output(2,:,:,:) = normM3E2;
 output(3,:,:,:) = normM3E3;
@@ -144,7 +144,58 @@ output(4,:,:,:) = normM3E4;
 output(5,:,:,:) = newPP1;
 output(6,:,:,:) = newPP2;
 output(7,:,:,:) = newPP3;
+output(8,:,:,:) = newPP4;
+
+save_raw(output,'C:\\Users\\yourb\\Desktop\\8chM3.raw','*double')
 
 %%
-save_raw(output,'C:\\Users\\yourb\\Desktop\\7chM3.raw')
+M18ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\6chInput_M1.raw','*double');
+M28ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\6chInput_M2.raw','*double');
+M38ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\6chInput_M3.raw','*double');
+%%
+siz = [8 544 544 860];
+M18ch = reshape(M18ch,siz); M28ch = reshape(M28ch,siz); M38ch = reshape(M38ch,siz);
 
+%%
+tempM1 = zeros([6 544  544 860]);
+tempM2 = zeros([6 544  544 860]);
+tempM3 = zeros([6 544  544 860]);
+%%
+tempM1(1:4,:,:,:) = M18ch(1:4,:,:,:);
+tempM2(1:4,:,:,:) = M28ch(1:4,:,:,:);
+tempM3(1:4,:,:,:) = M38ch(1:4,:,:,:);
+%%
+tempM1(5:6,:,:,:) = M18ch(6:7,:,:,:);
+tempM2(5:6,:,:,:) = M28ch(6:7,:,:,:);
+tempM3(5:6,:,:,:) = M38ch(6:7,:,:,:);
+%%
+save_raw(tempM1,'C:\\Users\\yourb\\Desktop\\6chInput_M1.raw','*double')
+save_raw(tempM2,'C:\\Users\\yourb\\Desktop\\6chInput_M2.raw','*double')
+save_raw(tempM3,'C:\\Users\\yourb\\Desktop\\6chInput_M3.raw','*double')
+
+%%
+M28ch = load_raw('C:\\Users\\yourb\\Desktop\\6chInput_M2.raw','*double');
+M28ch = reshape(M28ch,[6 544 544 860]);
+%%
+temp1 = M28ch(1,:,:,:);
+temp2 = M28ch(5,:,:,:);
+temp3 = M28ch(6,:,:,:);
+%%
+temp1 = squeeze(temp1);
+temp2 = squeeze(temp2);
+temp3 = squeeze(temp3);
+%%
+slice = 370;
+subplot(2,2,1)
+imagesc(temp1(:,:,slice)');
+axis tight equal
+
+subplot(2,2,2)
+imagesc(temp2(:,:,slice)');
+axis tight equal
+caxis([0 1])
+
+subplot(2,2,3)
+imagesc(temp3(:,:,slice)');
+axis tight equal
+caxis([0 1])
