@@ -33,7 +33,7 @@ mask1 = load_raw([InputPath CasePath{16,:} '.raw'],'*uint8');
 mask2 = load_raw([InputPath CasePath{17,:} '.raw'],'*uint8');
 mask3 = load_raw([InputPath CasePath{18,:} '.raw'],'*uint8');
 
-siz = [544,544,860];
+siz = [544 544  860];
 M1E1 = reshape(M1E1,siz); M1E2 = reshape(M1E2,siz); M1E3 = reshape(M1E3,siz);  M1E4 = reshape(M1E4,siz);
 M1GT = reshape(M1GT,siz); mask1 = reshape(mask1,siz); mask1 = logical(mask1);
 M2E1 = reshape(M2E1,siz); M2E2 = reshape(M2E2,siz); M2E3 = reshape(M2E3,siz); M2E4 = reshape(M2E4,siz);
@@ -91,16 +91,15 @@ save_raw(temp,'C:\\Users\\yourb\\Desktop\\4chLabel_M31.raw','*uint8');
 
 %%
 %normilizatoon & atlas data
-PP1 = zeros(siz2); PP2 = zeros(siz2); PP3 = zeros(siz2); PPtem = zeros(siz2)+1; 
+PP1 = zeros(siz2); PP2 = zeros(siz2); PP3 = zeros(siz2);  
 
-PP1(pmask3) = PP(:,1);
-PP2(pmask3) = PP(:,2);
-PP3(pmask3) = PP(:,3);
+PP1(pmask2) = PP(:,1);
+PP2(pmask2) = PP(:,2);
+PP3(pmask2) = PP(:,3);
 
 PP1 = imgaussfilt3(PP1,5);
 PP2 = imgaussfilt3(PP2,5);
 PP3 = imgaussfilt3(PP3,5);
-PP4 = PPtem - PP1 - PP2 - PP3;
 %%
 newPP1 = zeros(siz); newPP2 = zeros(siz); newPP3 = zeros(siz); newPP4 = zeros(siz);
 newPP1(:,:,st:en) = PP1;
@@ -136,25 +135,24 @@ maxval = max(pM3E4(:)); minval = min(pM3E4(:));
 normM3E4 = (M3E4 - minval)/(maxval - minval);
 
 %%
-output = zeros([8 544 544 860]);
-output(1,:,:,:) = normM3E1;
-output(2,:,:,:) = normM3E2;
-output(3,:,:,:) = normM3E3;
-output(4,:,:,:) = normM3E4;
-output(5,:,:,:) = newPP1;
-output(6,:,:,:) = newPP2;
-output(7,:,:,:) = newPP3;
-output(8,:,:,:) = newPP4;
+output = zeros([6 544 544 860]);
+output(1,:,:,:) = M2E1;
+output(2,:,:,:) = M2E2;
+output(3,:,:,:) = M2E3;
+output(4,:,:,:) = M2E4;
+output(5,:,:,:) = newPP2;
+output(6,:,:,:) = newPP3;
 
-save_raw(output,'C:\\Users\\yourb\\Desktop\\8chM3.raw','*double')
+save_raw(output,'C:\\Users\\yourb\\Desktop\\6chInput_M2_notnorm.raw','*double')
 
 %%
-M18ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\6chInput_M1.raw','*double');
-M28ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\6chInput_M2.raw','*double');
-M38ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\6chInput_M3.raw','*double');
+M18ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M1_notnorm.raw','*double');
+M28ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M2_notnorm.raw','*double');
+M38ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M3_notnorm.raw','*double');
 %%
-siz = [8 544 544 860];
+siz = [7 544 544 860];
 M18ch = reshape(M18ch,siz); M28ch = reshape(M28ch,siz); M38ch = reshape(M38ch,siz);
+
 
 %%
 tempM1 = zeros([6 544  544 860]);
@@ -169,9 +167,9 @@ tempM1(5:6,:,:,:) = M18ch(6:7,:,:,:);
 tempM2(5:6,:,:,:) = M28ch(6:7,:,:,:);
 tempM3(5:6,:,:,:) = M38ch(6:7,:,:,:);
 %%
-save_raw(tempM1,'C:\\Users\\yourb\\Desktop\\6chInput_M1.raw','*double')
-save_raw(tempM2,'C:\\Users\\yourb\\Desktop\\6chInput_M2.raw','*double')
-save_raw(tempM3,'C:\\Users\\yourb\\Desktop\\6chInput_M3.raw','*double')
+save_raw(tempM1,'C:\\Users\\yourb\\Desktop\\6chInput_M1_notnorm.raw','*double')
+save_raw(tempM2,'C:\\Users\\yourb\\Desktop\\6chInput_M2_notnorm.raw','*double')
+save_raw(tempM3,'C:\\Users\\yourb\\Desktop\\6chInput_M3_notnorm.raw','*double')
 
 %%
 M28ch = load_raw('C:\\Users\\yourb\\Desktop\\6chInput_M2.raw','*double');
@@ -180,6 +178,9 @@ M28ch = reshape(M28ch,[6 544 544 860]);
 temp1 = M28ch(1,:,:,:);
 temp2 = M28ch(5,:,:,:);
 temp3 = M28ch(6,:,:,:);
+
+
+
 %%
 temp1 = squeeze(temp1);
 temp2 = squeeze(temp2);
@@ -199,3 +200,53 @@ subplot(2,2,3)
 imagesc(temp3(:,:,slice)');
 axis tight equal
 caxis([0 1])
+
+%%
+softout1 = load_raw('C:\\Users\\yourb\\Desktop\\softou1.raw','*double');
+softout2 = load_raw('C:\\Users\\yourb\\Desktop\\softou2.raw','*double');
+softout3 = load_raw('C:\\Users\\yourb\\Desktop\\softou3.raw','*double');
+softout4 = load_raw('C:\\Users\\yourb\\Desktop\\softou4.raw','*double');
+
+%%
+siz = [544 544 860];
+softout1 = reshape(softout1,siz);
+softout2 = reshape(softout2,siz);
+softout3 = reshape(softout3,siz);
+softout4 = reshape(softout4,siz);
+%%
+temp1 = softout(1,:,:,:); temp1 = squeeze(temp1);
+temp2 = softout(2,:,:,:); temp2 = squeeze(temp2);
+temp3 = softout(3,:,:,:); temp3 = squeeze(temp3);
+temp4 = softout(4,:,:,:); temp4 = squeeze(temp4);
+%%
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+
+slice=  220;
+subplot(2,2,1)
+imagesc(softout1(:,:,slice)');
+axis tight equal off
+%caxis([0.4 0.6])
+caxis([0.46 0.47])
+colormap(gray)
+
+subplot(2,2,2)
+imagesc(softout2(:,:,slice)');
+axis tight equal off
+caxis([0.17 0.18])
+%caxis([0 0.5])
+colormap(map)
+
+subplot(2,2,3)
+imagesc(softout3(:,:,slice)');
+axis tight equal off
+caxis([0 0.5])
+
+subplot(2,2,4)
+imagesc(softout4(:,:,slice)');
+axis tight equal off
+caxis([0 0.5])
+%%

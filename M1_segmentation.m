@@ -7,7 +7,6 @@ siz2 = size(pM1E1);
 
 
 %%
-
 %train_mouse2_mouse3 test_mouse1
 Xtr = [[pM2E2(pmask2); pM3E2(pmask3)] [pM2E3(pmask2); pM3E3(pmask3)] [pM2E4(pmask2); pM3E4(pmask3)] ];
 Xte = [pM1E2(pmask1) pM1E3(pmask1) pM1E4(pmask1)];

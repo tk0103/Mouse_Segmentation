@@ -34,14 +34,16 @@ caxis([0 4])
 %%
 %Test
 st = 164; en = 439;
-temp = load_raw('C:\\Users\\yourb\\Desktop\\U_net_result\\8ch\\Results_trM1_ValiM2_0906\\TestResultM3.raw','*uint8');
+%temp = load_raw('C:\\Users\\yourb\\Desktop\\U_net_result\\7ch\\Results_trM1_ValiM2\\TestResultM3.raw','*uint8');
+temp = load_raw('C:\\Users\\yourb\\Desktop\\ResultOut_M3.raw','*uint8');
+
 temp = reshape(temp,siz);
 Testresult = zeros(siz); pmask3 = zeros(siz);
-pmask3(:,:,st:en) = mask1(:,:,st:en); pmask3 = logical(pmask3);
+pmask3(:,:,st:en) = mask3(:,:,st:en); pmask3 = logical(pmask3);
 Testresult(pmask3) = temp(pmask3);
 
 %GT
-M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M2GT.raw','*uint8');
+M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M3GT.raw','*uint8');
 M3GT = reshape(M3GT,siz);
 
 %%
@@ -81,31 +83,24 @@ disp(JI);
 Dice = CalcuDice(Testresult,M3GT,4);
 disp(Dice);
 %%
-slice = 407;
+slice = 192;
 imagesc(Testresult(:,:,slice)');
 axis tight equal off
 %colormap gray
 caxis([0 4])
 %%
-slice = 240;
-
-%Colormap
-map = [0, 0, 0
-    0.1, 0.5, 0.8
-    0.2, 0.7, 0.6
-    0.8, 0.7, 0.3
-    0.9, 0.9, 0];
+slice = 230;
 
 subplot(1,2,1)
-imagesc(Testresult(:,:,slice)');
+imagesc(M3E1(:,:,slice)');
 axis tight equal off
-caxis([0 4])
-colormap(map)
+caxis([0 0.7])
+colormap(gray)
 
 subplot(1,2,2)
-imagesc(M3GT(:,:,slice)');
+imagesc(M2E1(:,:,slice)');
 axis tight equal off
-caxis([0 4])
+caxis([0 0.7])
 
 %%
 M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M1GT.raw','*uint8');
