@@ -213,11 +213,7 @@ softout1 = reshape(softout1,siz);
 softout2 = reshape(softout2,siz);
 softout3 = reshape(softout3,siz);
 softout4 = reshape(softout4,siz);
-%%
-temp1 = softout(1,:,:,:); temp1 = squeeze(temp1);
-temp2 = softout(2,:,:,:); temp2 = squeeze(temp2);
-temp3 = softout(3,:,:,:); temp3 = squeeze(temp3);
-temp4 = softout(4,:,:,:); temp4 = squeeze(temp4);
+
 %%
 map = [0, 0, 0
     0.1, 0.5, 0.8

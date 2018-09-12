@@ -124,7 +124,11 @@ class  = 1;
 
 %%
 %histogram
-class = 3;
+class = 1
+
+
+
+;
 
 temp1 = M1E1(M1GT == class);
 temp2 = M2E1(M2GT == class);
@@ -133,7 +137,7 @@ temp3 = M3E1(M3GT == class);
 edges = [0 0:0.01:1.5 1.5];
 hold on
 histogram(temp1,edges);
-histogram(temp2,edges);
+%histogram(temp2,edges);
 histogram(temp3,edges);
 %%
 meanval = [mean(temp1); mean(temp2); mean(temp3);];
