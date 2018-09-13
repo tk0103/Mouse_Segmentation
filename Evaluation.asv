@@ -185,6 +185,6 @@ histogram(temp1,edges,'Normalization','probability');
 histogram(temp2,edges,'Normalization','probability');
 histogram(temp3,edges,'Normalization','probability');
 %%
-save_raw(gammaoutM1,'C:\\Users\\yourb\\Desktop\\Gammacorr_M1E4.raw','*double')
-save_raw(gammaoutM2,'C:\\Users\\yourb\\Desktop\\Gammacorr_M2E4.raw','*double')
-save_raw(gammaoutM3,'C:\\Users\\yourb\\Desktop\\Gammacorr_M3E4.raw','*double')
+save_raw(tempM1,'C:\\Users\\yourb\\Desktop\\GammaCo.raw','*double')
+save_raw(tempM2,'C:\\Users\\yourb\\Desktop\\6chInput_M2_notnorm.raw','*double')
+save_raw(tempM3,'C:\\Users\\yourb\\Desktop\\6chInput_M3_notnorm.raw','*double')
