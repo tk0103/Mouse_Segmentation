@@ -137,36 +137,47 @@ normM3E4 = (M3E4 - minval)/(maxval - minval);
 
 %%
 output = zeros([7 544 544 860]);
-output(1,:,:,:) = IoutM1E1;
-output(2,:,:,:) = IoutM1E2;
-output(3,:,:,:) = IoutM1E3;
-output(4,:,:,:) = IoutM1E4;
+output(1,:,:,:) = IoutM3E1;
+output(2,:,:,:) = IoutM3E2;
+output(3,:,:,:) = IoutM3E3;
+output(4,:,:,:) = IoutM3E4;
 output(5,:,:,:) = PP1;
 output(6,:,:,:) = PP2;
 output(7,:,:,:) = PP3;
 %%
-save_raw(output,'C:\\Users\\yourb\\Desktop\\7chInput_M1_prc99.93.raw','*double')
+save_raw(output,'C:\\Users\\yourb\\Desktop\\7chInput_M3_prc99.93.raw','*double')
 
 %%
-M18ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M1_notnorm.raw','*double');
-M28ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M2_notnorm.raw','*double');
-M38ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M3_notnorm.raw','*double');
+M17ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M1_prc99.93.raw','*double');
+M27ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M2_prc99.93.raw','*double');
+M37ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M3_prc99.93.raw','*double');
 siz = [7 544 544 860];
-M18ch = reshape(M18ch,siz); M28ch = reshape(M28ch,siz); M38ch = reshape(M38ch,siz);
+M17ch = reshape(M17ch,siz); M27ch = reshape(M27ch,siz); M37ch = reshape(M37ch,siz);
 
 %%
-PP1 = M18ch(1,:,:,:);
-PP2 = M18ch(2,:,:,:);
-PP3 = M18ch(3,:,:,:);
+PP1 = M17ch(5,:,:,:);
+PP2 = M17ch(6,:,:,:);
+PP3 = M17ch(7,:,:,:);
 PP1 = squeeze(PP1);
 PP2 = squeeze(PP2);
 PP3 = squeeze(PP3);
+
 %%
-slice = 325;
+E1 = M17ch(1,:,:,:);
+E2 = M17ch(2,:,:,:);
+E3 = M17ch(3,:,:,:);
+E4 = M17ch(4,:,:,:);
+E1 = squeeze(E1);
+E2 = squeeze(E2);
+E3 = squeeze(E3);
+E4 = squeeze(E4);
+%%
+slice = 340;
 subplot(2,2,1)
 imagesc(PP1(:,:,slice)');
 axis tight equal
 colormap(gray)
+caxis([0 1])
 
 subplot(2,2,2)
 imagesc(PP2(:,:,slice)');
@@ -177,20 +188,6 @@ subplot(2,2,3)
 imagesc(PP3(:,:,slice)');
 axis tight equal
 %caxis([0 1])
-
-%%
-softout1 = load_raw('C:\\Users\\yourb\\Desktop\\softou1.raw','*double');
-softout2 = load_raw('C:\\Users\\yourb\\Desktop\\softou2.raw','*double');
-softout3 = load_raw('C:\\Users\\yourb\\Desktop\\softou3.raw','*double');
-softout4 = load_raw('C:\\Users\\yourb\\Desktop\\softou4.raw','*double');
-
-%%
-siz = [544 544 860];
-softout1 = reshape(softout1,siz);
-softout2 = reshape(softout2,siz);
-softout3 = reshape(softout3,siz);
-softout4 = reshape(softout4,siz);
-
 %%
 map = [0, 0, 0
     0.1, 0.5, 0.8
@@ -198,76 +195,26 @@ map = [0, 0, 0
     0.8, 0.7, 0.3
     0.9, 0.9, 0];
 
+
+%%
 slice=  220;
 subplot(2,2,1)
-imagesc(softout1(:,:,slice)');
+imagesc(E1(:,:,slice)');
 axis tight equal off
-%caxis([0.4 0.6])
-caxis([0.46 0.47])
+caxis([-0.1 0.2])
 colormap(gray)
 
 subplot(2,2,2)
-imagesc(softout2(:,:,slice)');
+imagesc(E2(:,:,slice)');
 axis tight equal off
-caxis([0.17 0.18])
-%caxis([0 0.5])
-colormap(map)
+caxis([-0.1 0.2])
 
 subplot(2,2,3)
-imagesc(softout3(:,:,slice)');
+imagesc(E3(:,:,slice)');
 axis tight equal off
-caxis([0 0.5])
+caxis([-0.1 0.2])
 
 subplot(2,2,4)
-imagesc(softout4(:,:,slice)');
+imagesc(E4(:,:,slice)');
 axis tight equal off
-caxis([0 0.5])
-%%
-gamma = 1;
-c1 =0.1;
-c2 = 0.0001;
-x = 0:0.01:2;
-y = 0.1*log((x+c1)./(2-x+c2));
-plot(x,y)
-%%
-c1 = 1;
-c2 = 0.0001;
-gammma = 0.1;
-maxvalE1 = max(M1E1(mask1));
-minvalE1 = min(M1E1(mask1));
-maxvalE2 = max(M2E1(mask2));
-minvalE2 = min(M2E1(mask2));
-maxvalE3 = max(M3E1(mask3));
-minvalE3 = min(M3E1(mask3));
-
-gammaoutM1(mask1) = gammma*log((M1E1(mask1) - minvalE1+c1)./(maxvalE1 - M1E1(mask1)+c2));
-gammaoutM2(mask2) = gammma*log((M2E1(mask2) - minvalE2+c1)./(maxvalE2 - M2E1(mask2)+c2));
-gammaoutM3(mask3) = gammma*log((M3E1(mask3) - minvalE3+c1)./(maxvalE3 - M3E1(mask3)+c2));
-%%
-%histogram
-class = 1;
-
-temp1 = gammaoutM1(M1GT == class);
-temp2 = gammaoutM2(M2GT == class);
-temp3 = gammaoutM3(M3GT == class);
-
-edges = [-0.5 -0.5:0.01:0.5 0.5];
-hold on
-histogram(temp1,edges,'Normalization','probability');
-histogram(temp2,edges,'Normalization','probability');
-histogram(temp3,edges,'Normalization','probability');
-%%
-%histogram
-class = 1;
-
-temp1 = IoutM1E4(M1GT == class);
-temp2 = IoutM2E4(M2GT == class);
-temp3 = IoutM3E4(M3GT == class);
-
-edges = [0.1 0.1:0.0025:0.35 0.35];
-hold on
-histogram(temp1,edges,'Normalization','probability');
-histogram(temp2,edges,'Normalization','probability');
-histogram(temp3,edges,'Normalization','probability');
-%%
-imagesc(gammaoutM2(:,:,100)');
+caxis([-0.1 0.2])
