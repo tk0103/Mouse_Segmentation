@@ -48,16 +48,16 @@ M3GT = reshape(M3GT,siz);
 
 %%
 %temp = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\8chInput_M3.raw','*double');
-temp = load_raw('C:\\Users\\yourb\\Desktop\\8chM3.raw','*double');
+temp = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInputleakly_M3.raw','*double');
 %%
-temp = reshape(temp,[8 544 544 860]);
+temp = reshape(temp,[7 544 544 860]);
 %%
-temp1 = temp(5,:,:,:); temp1 = squeeze(temp1);
-temp2 = temp(6,:,:,:); temp2 = squeeze(temp2);
-temp3 = temp(7,:,:,:); temp3 = squeeze(temp3);
-temp4 = temp(8,:,:,:); temp4 = squeeze(temp4);
+temp1 = temp(1,:,:,:); temp1 = squeeze(temp1);
+temp2 = temp(2,:,:,:); temp2 = squeeze(temp2);
+temp3 = temp(3,:,:,:); temp3 = squeeze(temp3);
+temp4 = temp(4,:,:,:); temp4 = squeeze(temp4);
 %%
-slice = 375;
+slice = 230;
 subplot(2,2,1)
 imagesc(temp1(:,:,slice)');
 axis tight equal off
@@ -65,17 +65,17 @@ axis tight equal off
 subplot(2,2,2);
 imagesc(temp2(:,:,slice)');
 axis tight equal off
-caxis([0 1])
+%caxis([0 1])
 
 subplot(2,2,3);
 imagesc(temp3(:,:,slice)');
 axis tight equal off
-caxis([0 1])
+%caxis([0 1])
 
 subplot(2,2,4);
 imagesc(temp4(:,:,slice)');
 axis tight equal off
-caxis([0 1])
+%caxis([0 1])
 %%
 JI = CalcuJI(Testresult,M3GT,4);
 disp(JI);
@@ -83,7 +83,7 @@ disp(JI);
 Dice = CalcuDice(Testresult,M3GT,4);
 disp(Dice);
 %%
-slice = 192;
+slice = 242;
 imagesc(Testresult(:,:,slice)');
 axis tight equal off
 %colormap gray
@@ -91,17 +91,31 @@ caxis([0 4])
 %%
 slice = 230;
 
-subplot(1,2,1)
+
+%subplot(1,3,1)
 imagesc(M3E1(:,:,slice)');
 axis tight equal off
-caxis([0 0.7])
 colormap(gray)
+caxis([0 0.7])
+%%
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+slice = 365;
+
+subplot(1,2,1)
+imagesc(Testresult(:,:,slice)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
 
 subplot(1,2,2)
-imagesc(M2E1(:,:,slice)');
+imagesc(M3GT(:,:,slice)');
 axis tight equal off
-caxis([0 0.7])
-
+caxis([0 4])
+colormap(map)
 %%
 M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M1GT.raw','*uint8');
 M3GT = reshape(M3GT,siz);

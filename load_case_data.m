@@ -25,6 +25,7 @@ M3E2 = load_raw([InputPath CasePath{10,:} '.raw'],'*double');
 M3E3 = load_raw([InputPath CasePath{11,:} '.raw'],'*double');
 M3E4 = load_raw([InputPath CasePath{12,:} '.raw'],'*double');
 
+
 M1GT = load_raw([InputPath CasePath{13,:} '.raw'],'*uint8');
 M2GT = load_raw([InputPath CasePath{14,:} '.raw'],'*uint8');
 M3GT = load_raw([InputPath CasePath{15,:} '.raw'],'*uint8');
@@ -135,71 +136,47 @@ maxval = max(pM3E4(:)); minval = min(pM3E4(:));
 normM3E4 = (M3E4 - minval)/(maxval - minval);
 
 %%
-output = zeros([6 544 544 860]);
-output(1,:,:,:) = M2E1;
-output(2,:,:,:) = M2E2;
-output(3,:,:,:) = M2E3;
-output(4,:,:,:) = M2E4;
-output(5,:,:,:) = newPP2;
-output(6,:,:,:) = newPP3;
-
-save_raw(output,'C:\\Users\\yourb\\Desktop\\6chInput_M2_notnorm.raw','*double')
+output = zeros([7 544 544 860]);
+output(1,:,:,:) = IoutM1E1;
+output(2,:,:,:) = IoutM1E2;
+output(3,:,:,:) = IoutM1E3;
+output(4,:,:,:) = IoutM1E4;
+output(5,:,:,:) = PP1;
+output(6,:,:,:) = PP2;
+output(7,:,:,:) = PP3;
+%%
+save_raw(output,'C:\\Users\\yourb\\Desktop\\7chInput_M1_prc99.93.raw','*double')
 
 %%
 M18ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M1_notnorm.raw','*double');
 M28ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M2_notnorm.raw','*double');
 M38ch = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\7chInput_M3_notnorm.raw','*double');
-%%
 siz = [7 544 544 860];
 M18ch = reshape(M18ch,siz); M28ch = reshape(M28ch,siz); M38ch = reshape(M38ch,siz);
 
-
 %%
-tempM1 = zeros([6 544  544 860]);
-tempM2 = zeros([6 544  544 860]);
-tempM3 = zeros([6 544  544 860]);
+PP1 = M18ch(1,:,:,:);
+PP2 = M18ch(2,:,:,:);
+PP3 = M18ch(3,:,:,:);
+PP1 = squeeze(PP1);
+PP2 = squeeze(PP2);
+PP3 = squeeze(PP3);
 %%
-tempM1(1:4,:,:,:) = M18ch(1:4,:,:,:);
-tempM2(1:4,:,:,:) = M28ch(1:4,:,:,:);
-tempM3(1:4,:,:,:) = M38ch(1:4,:,:,:);
-%%
-tempM1(5:6,:,:,:) = M18ch(6:7,:,:,:);
-tempM2(5:6,:,:,:) = M28ch(6:7,:,:,:);
-tempM3(5:6,:,:,:) = M38ch(6:7,:,:,:);
-%%
-save_raw(tempM1,'C:\\Users\\yourb\\Desktop\\6chInput_M1_notnorm.raw','*double')
-save_raw(tempM2,'C:\\Users\\yourb\\Desktop\\6chInput_M2_notnorm.raw','*double')
-save_raw(tempM3,'C:\\Users\\yourb\\Desktop\\6chInput_M3_notnorm.raw','*double')
-
-%%
-M28ch = load_raw('C:\\Users\\yourb\\Desktop\\6chInput_M2.raw','*double');
-M28ch = reshape(M28ch,[6 544 544 860]);
-%%
-temp1 = M28ch(1,:,:,:);
-temp2 = M28ch(5,:,:,:);
-temp3 = M28ch(6,:,:,:);
-
-
-
-%%
-temp1 = squeeze(temp1);
-temp2 = squeeze(temp2);
-temp3 = squeeze(temp3);
-%%
-slice = 370;
+slice = 325;
 subplot(2,2,1)
-imagesc(temp1(:,:,slice)');
+imagesc(PP1(:,:,slice)');
 axis tight equal
+colormap(gray)
 
 subplot(2,2,2)
-imagesc(temp2(:,:,slice)');
+imagesc(PP2(:,:,slice)');
 axis tight equal
-caxis([0 1])
+%caxis([0 1])
 
 subplot(2,2,3)
-imagesc(temp3(:,:,slice)');
+imagesc(PP3(:,:,slice)');
 axis tight equal
-caxis([0 1])
+%caxis([0 1])
 
 %%
 softout1 = load_raw('C:\\Users\\yourb\\Desktop\\softou1.raw','*double');
@@ -246,3 +223,51 @@ imagesc(softout4(:,:,slice)');
 axis tight equal off
 caxis([0 0.5])
 %%
+gamma = 1;
+c1 =0.1;
+c2 = 0.0001;
+x = 0:0.01:2;
+y = 0.1*log((x+c1)./(2-x+c2));
+plot(x,y)
+%%
+c1 = 1;
+c2 = 0.0001;
+gammma = 0.1;
+maxvalE1 = max(M1E1(mask1));
+minvalE1 = min(M1E1(mask1));
+maxvalE2 = max(M2E1(mask2));
+minvalE2 = min(M2E1(mask2));
+maxvalE3 = max(M3E1(mask3));
+minvalE3 = min(M3E1(mask3));
+
+gammaoutM1(mask1) = gammma*log((M1E1(mask1) - minvalE1+c1)./(maxvalE1 - M1E1(mask1)+c2));
+gammaoutM2(mask2) = gammma*log((M2E1(mask2) - minvalE2+c1)./(maxvalE2 - M2E1(mask2)+c2));
+gammaoutM3(mask3) = gammma*log((M3E1(mask3) - minvalE3+c1)./(maxvalE3 - M3E1(mask3)+c2));
+%%
+%histogram
+class = 1;
+
+temp1 = gammaoutM1(M1GT == class);
+temp2 = gammaoutM2(M2GT == class);
+temp3 = gammaoutM3(M3GT == class);
+
+edges = [-0.5 -0.5:0.01:0.5 0.5];
+hold on
+histogram(temp1,edges,'Normalization','probability');
+histogram(temp2,edges,'Normalization','probability');
+histogram(temp3,edges,'Normalization','probability');
+%%
+%histogram
+class = 1;
+
+temp1 = IoutM1E4(M1GT == class);
+temp2 = IoutM2E4(M2GT == class);
+temp3 = IoutM3E4(M3GT == class);
+
+edges = [0.1 0.1:0.0025:0.35 0.35];
+hold on
+histogram(temp1,edges,'Normalization','probability');
+histogram(temp2,edges,'Normalization','probability');
+histogram(temp3,edges,'Normalization','probability');
+%%
+imagesc(gammaoutM2(:,:,100)');
