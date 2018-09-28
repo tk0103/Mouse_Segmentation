@@ -135,11 +135,11 @@ IoutM3E4 = (energyE4 - min(energyE4(mask))) ./ (max(energyE4(mask) - min(energyE
 %%
 %histogram
 class = 1;
-temp1 = IoutM1E4(M1GT == class);
-temp2 = IoutM2E4(M2GT == class);
-temp3 = IoutM3E4(M3GT == class);
+temp1 = E1M1(M1GT == class);
+temp2 = E1M2(M2GT == class);
+temp3 = E1M3(M3GT == class);
 
-edges = [0 0:0.01:1.6 1.6];
+edges = [0 0:0.005:1.2 1.2];
 hold on
 histogram(temp1,edges,'Normalization','probability');
 histogram(temp2,edges,'Normalization','probability');
