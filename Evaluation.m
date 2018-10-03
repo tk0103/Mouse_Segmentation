@@ -123,28 +123,24 @@ class  = 1;
 [h3,p3] = lillietest(pM3E3(pM3GT == class));
 
 %%
-%energyE1 = pM1E1; energyE2 = pM1E2; energyE3 = pM1E3; energyE4 = pM1E4; mask = pmask1;
-%energyE1 = pM2E1; energyE2 = pM2E2; energyE3 = pM2E3; energyE4 = pM2E4; mask = pmask2;
-energyE1 = pM3E1; energyE2 = pM3E2; energyE3 = pM3E3; energyE4 = pM3E4; mask = pmask3;
-
-IoutM3E1 = (energyE1 - min(energyE1(mask))) ./ (max(energyE1(mask) - min(energyE1(mask)))).*(prctile(energyE1(mask),97,1)- prctile(energyE1(mask),3,1)) + prctile(energyE1(mask),3,1);
-IoutM3E2 = (energyE2 - min(energyE2(mask))) ./ (max(energyE2(mask) - min(energyE2(mask)))).*(prctile(energyE2(mask),97,1)- prctile(energyE2(mask),3,1)) + prctile(energyE2(mask),3,1);
-IoutM3E3 = (energyE3 - min(energyE3(mask))) ./ (max(energyE3(mask) - min(energyE3(mask)))).*(prctile(energyE3(mask),97,1)- prctile(energyE3(mask),3,1)) + prctile(energyE3(mask),3,1);
-IoutM3E4 = (energyE4 - min(energyE4(mask))) ./ (max(energyE4(mask) - min(energyE4(mask)))).*(prctile(energyE4(mask),97,1)- prctile(energyE4(mask),3,1)) + prctile(energyE4(mask),3,1);
-
-%%
 %histogram
-class = 1;
-temp1 = IoutM1E4(M1GT == class);
-temp2 = IoutM2E4(M2GT == class);
-temp3 = IoutM3E4(M3GT == class);
+class = 4;
+temp1 = IoutM3E1(M3GT == class);
+temp2 = IoutM3E2(M3GT == class);
+temp3 = IoutM3E3(M3GT == class);
+temp4 = IoutM3E4(M3GT == class);
 
-edges = [0 0:0.01:1.6 1.6];
+%edges = [0 0:0.005:0.8 0.8];
+%edges = [0 0:0.01:1.0 1.0];
+edges = [-0.1 -0.1:0.005:0.5 0.5];
+
 hold on
 histogram(temp1,edges,'Normalization','probability');
 histogram(temp2,edges,'Normalization','probability');
 histogram(temp3,edges,'Normalization','probability');
-
+histogram(temp4,edges,'Normalization','probability');
+legend('26.9-36.0','36.0-51.9','51.9-78.9','78.9-119','Location','northeast')
+%legend('Mouse1','Mouse2','Mouse3')
 %%
 st = 164; en = 439; 
 pmask1 = zeros(siz); pmask2 = zeros(siz); pmask3 = zeros(siz);
@@ -154,14 +150,20 @@ pmask1 = logical(pmask1); pmask2 = logical(pmask2); pmask3 = logical(pmask3);
 energyE1 = M1E1; energyE2 = M1E2; energyE3 = M1E3; energyE4 = M1E4; mask = pmask1;
 %energyE1 = M2E1; energyE2 = M2E2; energyE3 = M2E3; energyE4 = M2E4; mask = pmask2;
 %energyE1 = M3E1; energyE2 = M3E2; energyE3 = M3E3; energyE4 = M3E4; mask = pmask3;
-
-IoutM1E1 = (energyE1 - prctile(energyE1(mask),3,1)) ./ (prctile(energyE1(mask),99.9,1) - prctile(energyE1(mask),3,1));
-IoutM1E2 = (energyE2 - prctile(energyE2(mask),3,1)) ./ (prctile(energyE2(mask),99.9,1) - prctile(energyE2(mask),3,1));
-IoutM1E3 = (energyE3 - prctile(energyE3(mask),3,1)) ./ (prctile(energyE3(mask),99.9,1) - prctile(energyE3(mask),3,1));
-IoutM1E4 = (energyE4 - prctile(energyE4(mask),3,1)) ./ (prctile(energyE4(mask),99.9,1) - prctile(energyE4(mask),3,1));
+%%
+IoutM3E1 = (energyE1 - prctile(energyE1(mask),3,1)) ./ (prctile(energyE1(mask),99.9,1) - prctile(energyE1(mask),3,1));
+IoutM3E2 = (energyE2 - prctile(energyE2(mask),3,1)) ./ (prctile(energyE2(mask),99.9,1) - prctile(energyE2(mask),3,1));
+IoutM3E3 = (energyE3 - prctile(energyE3(mask),3,1)) ./ (prctile(energyE3(mask),99.9,1) - prctile(energyE3(mask),3,1));
+IoutM3E4 = (energyE4 - prctile(energyE4(mask),3,1)) ./ (prctile(energyE4(mask),99.9,1) - prctile(energyE4(mask),3,1));
 
 %%
-save_raw(IoutM3E1,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E1.raw','*double')
-save_raw(IoutM3E2,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E2.raw','*double')
-save_raw(IoutM3E3,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E3.raw','*double')
-save_raw(IoutM3E4,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E4.raw','*double')
+outputE1 = zeros([1 544 544 860]);
+outputE1 = IoutM1E1;
+%%
+save_raw(IoutM3E1,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E1.raw','*double');
+save_raw(IoutM3E2,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E2.raw','*double');
+save_raw(IoutM3E3,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E3.raw','*double');
+save_raw(IoutM3E4,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E4.raw','*double');
+
+%%
+imagesc(IoutM3E4(:,:,220)');

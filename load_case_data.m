@@ -16,14 +16,14 @@ M1E1 = load_raw([InputPath CasePath{1,:} '.raw'],'*double');
 M1E2 = load_raw([InputPath CasePath{2,:} '.raw'],'*double');
 M1E3 = load_raw([InputPath CasePath{3,:} '.raw'],'*double');
 M1E4 = load_raw([InputPath CasePath{4,:} '.raw'],'*double');
-M1E1 = load_raw([InputPath CasePath{5,:} '.raw'],'*double');
-M1E2 = load_raw([InputPath CasePath{6,:} '.raw'],'*double');
-M1E3 = load_raw([InputPath CasePath{7,:} '.raw'],'*double');
-M1E4 = load_raw([InputPath CasePath{8,:} '.raw'],'*double');
-M1E1 = load_raw([InputPath CasePath{9,:} '.raw'],'*double');
-M1E2 = load_raw([InputPath CasePath{10,:} '.raw'],'*double');
-M1E3 = load_raw([InputPath CasePath{11,:} '.raw'],'*double');
-M1E4 = load_raw([InputPath CasePath{12,:} '.raw'],'*double');
+M2E1 = load_raw([InputPath CasePath{5,:} '.raw'],'*double');
+M2E2 = load_raw([InputPath CasePath{6,:} '.raw'],'*double');
+M2E3 = load_raw([InputPath CasePath{7,:} '.raw'],'*double');
+M2E4 = load_raw([InputPath CasePath{8,:} '.raw'],'*double');
+M3E1 = load_raw([InputPath CasePath{9,:} '.raw'],'*double');
+M3E2 = load_raw([InputPath CasePath{10,:} '.raw'],'*double');
+M3E3 = load_raw([InputPath CasePath{11,:} '.raw'],'*double');
+M3E4 = load_raw([InputPath CasePath{12,:} '.raw'],'*double');
 
 
 M1GT = load_raw([InputPath CasePath{13,:} '.raw'],'*uint8');
@@ -37,9 +37,9 @@ mask3 = load_raw([InputPath CasePath{18,:} '.raw'],'*uint8');
 siz = [544 544  860];
 M1E1 = reshape(M1E1,siz); M1E2 = reshape(M1E2,siz); M1E3 = reshape(M1E3,siz);  M1E4 = reshape(M1E4,siz);
 M1GT = reshape(M1GT,siz); mask1 = reshape(mask1,siz); mask1 = logical(mask1);
-M1E1 = reshape(M1E1,siz); M1E2 = reshape(M1E2,siz); M1E3 = reshape(M1E3,siz); M1E4 = reshape(M1E4,siz);
+M2E1 = reshape(M2E1,siz); M2E2 = reshape(M2E2,siz); M2E3 = reshape(M2E3,siz); M2E4 = reshape(M2E4,siz);
 M2GT = reshape(M2GT,siz); mask2 = reshape(mask2,siz); mask2 = logical(mask2);
-M1E1 = reshape(M1E1,siz); M1E2 = reshape(M1E2,siz); M1E3 = reshape(M1E3,siz); M1E4 = reshape(M1E4,siz); 
+M3E1 = reshape(M3E1,siz); M3E2 = reshape(M3E2,siz); M3E3 = reshape(M3E3,siz); M3E4 = reshape(M3E4,siz); 
 M3GT = reshape(M3GT,siz); mask3 = reshape(mask3,siz); mask3 = logical(mask3);
 
 %%
@@ -107,33 +107,6 @@ newPP1(:,:,st:en) = PP1;
 newPP2(:,:,st:en) = PP2;
 newPP3(:,:,st:en) = PP3;
 newPP4(:,:,st:en) = PP4;
-%%
-maxval = max(pM1E1(:)); minval = min(pM1E1(:));
-normM1E1 = (M1E1 - minval)/(maxval - minval);
-maxval = max(pM1E2(:)); minval = min(pM1E2(:));
-normM1E2 = (M1E2 - minval)/(maxval - minval);
-maxval = max(pM1E3(:)); minval = min(pM1E3(:));
-normM1E3 = (M1E3 - minval)/(maxval - minval);
-maxval = max(pM1E4(:)); minval = min(pM1E4(:));
-normM1E4 = (M1E4 - minval)/(maxval - minval);
-
-maxval = max(pM2E1(:)); minval = min(pM2E1(:));
-normM2E1 = (M1E1 - minval)/(maxval - minval);
-maxval = max(pM2E2(:)); minval = min(pM2E2(:));
-normM2E2 = (M1E2 - minval)/(maxval - minval);
-maxval = max(pM2E3(:)); minval = min(pM2E3(:));
-normM2E3 = (M1E3 - minval)/(maxval - minval);
-maxval = max(pM2E4(:)); minval = min(pM2E4(:));
-normM2E4 = (M1E4 - minval)/(maxval - minval);
-
-maxval = max(pM3E1(:)); minval = min(pM3E1(:));
-normM3E1 = (M1E1 - minval)/(maxval - minval);
-maxval = max(pM3E2(:)); minval = min(pM3E2(:));
-normM3E2 = (M1E2 - minval)/(maxval - minval);
-maxval = max(pM3E3(:)); minval = min(pM3E3(:));
-normM3E3 = (M1E3 - minval)/(maxval - minval);
-maxval = max(pM3E4(:)); minval = min(pM3E4(:));
-normM3E4 = (M1E4 - minval)/(maxval - minval);
 
 %%
 output = zeros([7 544 544 860]);
@@ -163,14 +136,14 @@ PP2 = squeeze(PP2);
 PP3 = squeeze(PP3);
 
 %%
-M1E1 = M17ch(1,:,:,:);
-M1E2 = M17ch(2,:,:,:);
-M1E3 = M17ch(3,:,:,:);
-M1E4 = M17ch(4,:,:,:);
-M1E1 = squeeze(M1E1);
-M1E2 = squeeze(M1E2);
-M1E3 = squeeze(M1E3);
-M1E4 = squeeze(M1E4);
+M3E1 = M37ch(1,:,:,:);
+M3E2 = M37ch(2,:,:,:);
+M3E3 = M37ch(3,:,:,:);
+M3E4 = M37ch(4,:,:,:);
+M3E1 = squeeze(M3E1);
+M3E2 = squeeze(M3E2);
+M3E3 = squeeze(M3E3);
+M3E4 = squeeze(M3E4);
 %%
 slice = 340;
 subplot(2,2,1)

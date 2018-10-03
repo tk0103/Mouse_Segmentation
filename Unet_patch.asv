@@ -35,16 +35,16 @@ caxis([0 4])
 %Test
 st = 164; en = 439;
 %temp = load_raw('C:\\Users\\yourb\\Desktop\\U_net_result\\7ch\\Results_trM1_ValiM2\\TestResultM3.raw','*uint8');
-temp = load_raw('C:\\Users\\yourb\\Desktop\\ResultOut_tr1vali2Te3.raw','*uint8');
+temp = load_raw('C:\\Users\\yourb\\Desktop\\ResultOut_tr3vali1Te2.raw','*uint8');
 
 temp = reshape(temp,siz);
 Testresult = zeros(siz); pmask3 = zeros(siz);
-pmask3(:,:,st:en) = mask3(:,:,st:en); 
+pmask3(:,:,st:en) = mask2(:,:,st:en); 
 pmask3 = logical(pmask3);
 Testresult(pmask3) = temp(pmask3);
 
 %GT
-M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M3GT.raw','*uint8');
+M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M2GT.raw','*uint8');
 M3GT = reshape(M3GT,siz);
 %%
 %temp = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\8chInput_M3.raw','*double');
