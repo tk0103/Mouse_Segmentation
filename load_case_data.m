@@ -128,9 +128,9 @@ siz = [7 544 544 860];
 M17ch = reshape(M17ch,siz); M27ch = reshape(M27ch,siz); M37ch = reshape(M37ch,siz);
 
 %%
-PP1 = M17ch(5,:,:,:);
-PP2 = M17ch(6,:,:,:);
-PP3 = M17ch(7,:,:,:);
+PP1 = M37ch(5,:,:,:);
+PP2 = M37ch(6,:,:,:);
+PP3 = M37ch(7,:,:,:);
 PP1 = squeeze(PP1);
 PP2 = squeeze(PP2);
 PP3 = squeeze(PP3);
@@ -145,21 +145,22 @@ M3E2 = squeeze(M3E2);
 M3E3 = squeeze(M3E3);
 M3E4 = squeeze(M3E4);
 %%
-slice = 340;
-subplot(2,2,1)
-imagesc(PP1(:,:,slice)');
-axis tight equal
-colormap(gray)
+slice1 = 230;
+slice2  = 365;
+subplot(1,3,1)
+imagesc(PP1(:,:,slice1)');
+axis tight equal off
 caxis([0 1])
+colormap(map)
 
-subplot(2,2,2)
-imagesc(PP2(:,:,slice)');
-axis tight equal
+subplot(1,3,2)
+imagesc(PP2(:,:,slice2)');
+axis tight equal off
 %caxis([0 1])
 
-subplot(2,2,3)
-imagesc(PP3(:,:,slice)');
-axis tight equal
+subplot(1,3,3)
+imagesc(PP3(:,:,slice2)');
+axis tight equal off
 %caxis([0 1])
 %%
 map = [0, 0, 0

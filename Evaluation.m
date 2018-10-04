@@ -35,7 +35,7 @@ P = GraphModel.Hi(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
 Q = GraphModel.Hj(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
 
 sig = 0.0174;
-dif = (E1test(P) - E1test(Q))/( sig);
+dif = (E1test(P) - E1test(Q))/(sig);
 edges = [-2 -2:0.05:3 3];
 xlim([-2 3]);
 yyaxis left
@@ -147,9 +147,9 @@ pmask1 = zeros(siz); pmask2 = zeros(siz); pmask3 = zeros(siz);
 pmask1(:,:,st:en) = mask1(:,:,st:en); pmask2(:,:,st:en) = mask2(:,:,st:en); pmask3(:,:,st:en) = mask3(:,:,st:en);
 pmask1 = logical(pmask1); pmask2 = logical(pmask2); pmask3 = logical(pmask3); 
 %%
-energyE1 = M1E1; energyE2 = M1E2; energyE3 = M1E3; energyE4 = M1E4; mask = pmask1;
+%energyE1 = M1E1; energyE2 = M1E2; energyE3 = M1E3; energyE4 = M1E4; mask = pmask1;
 %energyE1 = M2E1; energyE2 = M2E2; energyE3 = M2E3; energyE4 = M2E4; mask = pmask2;
-%energyE1 = M3E1; energyE2 = M3E2; energyE3 = M3E3; energyE4 = M3E4; mask = pmask3;
+energyE1 = M3E1; energyE2 = M3E2; energyE3 = M3E3; energyE4 = M3E4; mask = pmask3;
 %%
 IoutM3E1 = (energyE1 - prctile(energyE1(mask),3,1)) ./ (prctile(energyE1(mask),99.9,1) - prctile(energyE1(mask),3,1));
 IoutM3E2 = (energyE2 - prctile(energyE2(mask),3,1)) ./ (prctile(energyE2(mask),99.9,1) - prctile(energyE2(mask),3,1));
@@ -157,13 +157,7 @@ IoutM3E3 = (energyE3 - prctile(energyE3(mask),3,1)) ./ (prctile(energyE3(mask),9
 IoutM3E4 = (energyE4 - prctile(energyE4(mask),3,1)) ./ (prctile(energyE4(mask),99.9,1) - prctile(energyE4(mask),3,1));
 
 %%
-outputE1 = zeros([1 544 544 860]);
-outputE1 = IoutM1E1;
-%%
-save_raw(IoutM3E1,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E1.raw','*double');
-save_raw(IoutM3E2,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E2.raw','*double');
-save_raw(IoutM3E3,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E3.raw','*double');
-save_raw(IoutM3E4,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E4.raw','*double');
-
-%%
-imagesc(IoutM3E4(:,:,220)');
+imagesc(IoutM2E4(:,:,360)');
+axis tight equal off
+caxis([-0.4 1.0])
+colormap(gray)
