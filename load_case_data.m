@@ -171,24 +171,13 @@ map = [0, 0, 0
 
 
 %%
-slice=  220;
-subplot(2,2,1)
-imagesc(M1E1(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])
-colormap(gray)
+slice=  225;
 
-subplot(2,2,2)
-imagesc(M1E2(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])
+subplot(2,1,1)
+imagesc(M3E1(:,:,slice)');
+axis tight equal
 
-subplot(2,2,3)
-imagesc(M1E3(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])
+subplot(2,1,2)
+imagesc(J(:,:,slice)');
+axis tight equal
 
-subplot(2,2,4)
-imagesc(M1E4(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])

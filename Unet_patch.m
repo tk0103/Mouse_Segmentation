@@ -1,11 +1,11 @@
 %mask
 st = 164; en = 439;
-num_of_patch_bla = 1000;
+num_of_patch_bla = 4000;
 num_of_patch_Lkid = 1000;
 num_of_patch_Rkid = 1000;
 num_of_patch_bg = 2000;
 
-Label = M3GT;
+Label = M1GT;
 Input_Label = zeros(siz);
 Input_Label(:,:,st:en) = Label(:,:,st:en);
 
@@ -17,16 +17,22 @@ bla = [blax,blay,blaz];
 Lkid = [Lkidx,Lkidy,Lkidz];
 Rkid = [Rkidx,Rkidy,Rkidz];
 bg = [bgx,bgy,bgz];
+%%
+bla(:,4) = 1;
+Lkid(:,4) = 5;
+Rkid(:,4) = 5;
+bg(:,4) = 5;
 
+%%
 %Random sampling
 idx = randperm(size(bla,1),num_of_patch_bla); bla = bla(idx,:);
 idx = randperm(size(Lkid,1),num_of_patch_Lkid); Lkid = Lkid(idx,:);
 idx = randperm(size(Rkid,1),num_of_patch_Rkid); Rkid = Rkid(idx,:);
 idx = randperm(size(bg,1),num_of_patch_bg); bg = bg(idx,:);
 coordi = [bla; Lkid; Rkid; bg;];
-
+%%
 %dave
-csvwrite("C:\Users\yourb\Desktop\tr_M3.csv",coordi)
+csvwrite("C:\Users\yourb\Desktop\new_tr1.csv",coordi)
 %%
 imagesc(M3GT(:,:,360)')
 axis tight equal
@@ -35,7 +41,7 @@ caxis([0 4])
 %Test
 st = 164; en = 439;
 %temp = load_raw('C:\\Users\\yourb\\Desktop\\U_net_result\\7ch\\Results_trM1_ValiM2\\TestResultM3.raw','*uint8');
-temp = load_raw('C:\\Users\\yourb\\Desktop\\Result_ValidationOut_tr2vali1Te3.raw','*uint8');
+temp = load_raw('C:\\Users\\yourb\\Desktop\\Result_vali.raw','*uint8');
 
 temp = reshape(temp,siz);
 Testresult = zeros(siz); pmask3 = zeros(siz);
@@ -44,7 +50,7 @@ pmask3 = logical(pmask3);
 Testresult(pmask3) = temp(pmask3);
 
 %GT
-M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M1GT.raw','*uint8');
+M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M2GT.raw','*uint8');
 M3GT = reshape(M3GT,siz);
 
 %%
@@ -60,18 +66,18 @@ map = [0, 0, 0
     0.2, 0.7, 0.6
     0.8, 0.7, 0.3
     0.9, 0.9, 0];
-
-slice1 = 330;
+%%
+slice1 = 375;
 slice2 = 230;
 
 subplot(2,2,1)
-imagesc(temp(:,:,slice1)');
+imagesc(Testresult(:,:,slice1)');
 axis tight equal off
 caxis([0 4])
 colormap(map)
 
 subplot(2,2,2)
-imagesc(M3GT(:,:,slice1)');
+imagesc(M2GT(:,:,slice1)');
 axis tight equal off
 caxis([0 4])
 colormap(map)
@@ -83,7 +89,7 @@ caxis([0 4])
 colormap(map)
 
 subplot(2,2,4)
-imagesc(M3GT(:,:,slice2)');
+imagesc(M2GT(:,:,slice2)');
 axis tight equal off
 caxis([0 4])
 colormap(map)
@@ -116,33 +122,33 @@ colormap(gray)
 
 
 %%
-temp1 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Results_trM2_ValiM1\softou1.raw','*double');
-temp2 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Results_trM2_ValiM1\softou2.raw','*double');
-temp3 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Results_trM2_ValiM1\softou3.raw','*double');
-temp4 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Results_trM2_ValiM1\softou4.raw','*double');
+temp1 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Result_test\softou1.raw','*double');
+temp2 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Result_test\softou2.raw','*double');
+temp3 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Result_test\softou3.raw','*double');
+temp4 = load_raw('C:\Users\yourb\Documents\GitHub\3D-Unet\Result_test\softou4.raw','*double');
 temp1 = reshape(temp1,siz); temp2 = reshape(temp2,siz); temp3 = reshape(temp3,siz); temp4 = reshape(temp4,siz);
 
 %%
-slice = 360;
+slice = 245;
 subplot(2,2,1)
 imagesc(temp1(:,:,slice)');
 axis tight equal off
-caxis([0 0.5])
+caxis([0.1 0.3])
 
 subplot(2,2,2);
 imagesc(temp2(:,:,slice)');
 axis tight equal off
-caxis([0 0.5])
+caxis([0.1 0.3])
 
 subplot(2,2,3);
 imagesc(temp3(:,:,slice)');
 axis tight equal off
-caxis([0 0.5])
+caxis([0.1 0.3])
 
 subplot(2,2,4);
 imagesc(temp4(:,:,slice)');
 axis tight equal off
-caxis([0 0.5])
+caxis([0.1 0.3])
 
 
 %%
@@ -246,3 +252,15 @@ for index = 1:size(coordinate,1)
     temp2 = temp2(20:24-1,20:24-1,20:24-1);  
     testvaliimage(x-2:x+2-1,y-2:y+2-1,z-2:z+2-1) = temp2;
 end
+
+%%
+outout  = (M1E1 - mean(M1E1(M1GT==1))) /  std(M1E1(M1GT==1))*0.8-1;
+
+%%
+%histogram
+class = 1;
+temp1 = outout(M1GT == class);
+edges = [-1 -1:0.01:3 3];
+hold on
+histogram(temp1,edges,'Normalization','probability');
+%legend('Mouse1','Mouse2','Mouse3')

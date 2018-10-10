@@ -128,9 +128,9 @@ siz = [7 544 544 860];
 M17ch = reshape(M17ch,siz); M27ch = reshape(M27ch,siz); M37ch = reshape(M37ch,siz);
 
 %%
-PP1 = M17ch(5,:,:,:);
-PP2 = M17ch(6,:,:,:);
-PP3 = M17ch(7,:,:,:);
+PP1 = M37ch(5,:,:,:);
+PP2 = M37ch(6,:,:,:);
+PP3 = M37ch(7,:,:,:);
 PP1 = squeeze(PP1);
 PP2 = squeeze(PP2);
 PP3 = squeeze(PP3);
@@ -145,21 +145,22 @@ M3E2 = squeeze(M3E2);
 M3E3 = squeeze(M3E3);
 M3E4 = squeeze(M3E4);
 %%
-slice = 340;
-subplot(2,2,1)
-imagesc(PP1(:,:,slice)');
-axis tight equal
-colormap(gray)
+slice1 = 230;
+slice2  = 365;
+subplot(1,3,1)
+imagesc(PP1(:,:,slice1)');
+axis tight equal off
 caxis([0 1])
+colormap(map)
 
-subplot(2,2,2)
-imagesc(PP2(:,:,slice)');
-axis tight equal
+subplot(1,3,2)
+imagesc(PP2(:,:,slice2)');
+axis tight equal off
 %caxis([0 1])
 
-subplot(2,2,3)
-imagesc(PP3(:,:,slice)');
-axis tight equal
+subplot(1,3,3)
+imagesc(PP3(:,:,slice2)');
+axis tight equal off
 %caxis([0 1])
 %%
 map = [0, 0, 0
@@ -171,23 +172,61 @@ map = [0, 0, 0
 
 %%
 slice=  220;
-subplot(2,2,1)
-imagesc(M1E1(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])
-colormap(gray)
 
-subplot(2,2,2)
-imagesc(M1E2(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])
+subplot(2,1,1)
+imagesc(M3E1(:,:,slice)');
 
-subplot(2,2,3)
-imagesc(M1E3(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])
+subplot(2,1,2)
+imagesc(J(:,:,slice)');
 
-subplot(2,2,4)
-imagesc(M1E4(:,:,slice)');
-axis tight equal off
-caxis([-0.1 0.2])
+%%
+valx1 = numel(M1E1(M1GT==1));
+valx2 = numel(M2E1(M2GT==1));
+valx3 = numel(M3E1(M3GT==1));
+
+valy1 = mean(M1E1(M1GT==1));
+valy2 = mean(M2E1(M2GT==1));
+valy3 = mean(M3E1(M3GT==1));
+
+a1 = valx1*valy1;
+a2 = valx2*valy2;
+a3 = valx3*valy3;
+%%
+
+edge = 100:100:250000;
+y1 = a1 ./edge;
+y2 = a2 ./edge;
+y3 = a3 ./edge;
+%%
+x = [valx1,valx2,valx3];
+y = [valy1,valy2,valy3];
+%%
+hold on
+plot(edge,y1)
+plot(edge,y2)
+plot(edge,y3)
+plot(x,y,'*');
+ylim([0 10])
+legend('Mouse1','Mouse2','Mouse3')
+
+%%
+b12 = (valx2*valy2 - valx1*valy1)/(valx2 - valx1);
+a12 = valx1*valy1 - b12*valx1;
+y12 = a12./edge + b12;
+
+
+b13 = (valx3*valy3 - valx1*valy1)/(valx3 - valx1);
+a13 = valx1*valy1 - b13*valx1;
+y13 = a13./edge + b13;
+
+b23 = (valx3*valy3 - valx2*valy2)/(valx3 - valx2);
+a23 = valx2*valy2 - b23*valx2;
+y23 = a23./edge + b23;
+%%
+hold on
+plot(edge,y12);
+plot(edge,y13);
+plot(edge,y23);
+plot(x,y,'*');
+ylim([0 5])
+legend('1&2','1&3','2&3')
