@@ -73,11 +73,16 @@ wmask1 = load_raw([InputPath CasePath{7,:} '.raw'],'*uint8');
 wmask2 = load_raw([InputPath CasePath{8,:} '.raw'],'*uint8');
 wmask3 = load_raw([InputPath CasePath{9,:} '.raw'],'*uint8');
 
-siz2 = [544,544,790];
-wM1E1 = reshape(wM1E1,siz2); wM1GT = reshape(wM1GT,siz); wmask1 = reshape(wmask1,siz); wmask1 = logical(wmask1);
-wM2E1 = reshape(wM2E1,siz2); wM2GT = reshape(wM2GT,siz); wmask2 = reshape(wmask2,siz); wmask2 = logical(wmask2);
-wM3E1 = reshape(wM3E1,siz2); wM3GT = reshape(wM3GT,siz); wmask3 = reshape(wmask3,siz); wmask3 = logical(wmask3);
-
+siz3 = [544,544,790];
+wM1E1 = reshape(wM1E1,siz3); 
+wM2E1 = reshape(wM2E1,siz3);
+wM3E1 = reshape(wM3E1,siz3); 
+wM1GT = reshape(wM1GT,siz);
+wM2GT = reshape(wM2GT,siz); 
+wM3GT = reshape(wM3GT,siz); 
+wmask1 = reshape(wmask1,siz); wmask1 = logical(wmask1);
+wmask2 = reshape(wmask2,siz); wmask2 = logical(wmask2);
+wmask3 = reshape(wmask3,siz); wmask3 = logical(wmask3);
 %%
 temp = zeros([4 544 544 860]);
 temp(1,:,:,:) = M3GT;
@@ -171,13 +176,20 @@ map = [0, 0, 0
 
 
 %%
-slice=  225;
+out = M3GT;
+out(out==4) = 0;
+%%
+slice=  230;
+imagesc(out(:,:,slice)');
 
-subplot(2,1,1)
-imagesc(M3E1(:,:,slice)');
-axis tight equal
-
-subplot(2,1,2)
-imagesc(J(:,:,slice)');
-axis tight equal
-
+axis tight equal off
+caxis([0 4])
+colormap(map)
+%%
+imagesc(pwM1E1(:,:,slice2)');
+colormap(gray)
+caxis([0 0.7])
+axis tight equal off
+%%
+ rectangle('Position',[315,250,70,70],'FaceColor','none','EdgeColor','r',...
+    'LineWidth',1)

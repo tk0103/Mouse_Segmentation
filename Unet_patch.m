@@ -1,9 +1,9 @@
 %mask
 st = 164; en = 439;
 num_of_patch_bla = 4000;
-num_of_patch_Lkid = 1000;
-num_of_patch_Rkid = 1000;
-num_of_patch_bg = 2000;
+num_of_patch_Lkid = 4000;
+num_of_patch_Rkid = 4000;
+num_of_patch_bg = 8000;
 
 Label = M1GT;
 Input_Label = zeros(siz);
@@ -40,8 +40,8 @@ caxis([0 4])
 %%
 %Test
 st = 164; en = 439;
-%temp = load_raw('C:\\Users\\yourb\\Desktop\\U_net_result\\7ch\\Results_trM1_ValiM2\\TestResultM3.raw','*uint8');
-temp = load_raw('C:\\Users\\yourb\\Desktop\\Result_vali.raw','*uint8');
+temp = load_raw('C:\\Users\\yourb\\Documents\\GitHub\\3D-Unet\\Result_PPTrM2_ValiM1_TeM3\\Result_PPTrM2_ValiM1_TeM3.raw','*uint8');
+%temp = load_raw('C:\\Users\\yourb\\Desktop\\Result_3cM2.raw','*uint8');
 
 temp = reshape(temp,siz);
 Testresult = zeros(siz); pmask3 = zeros(siz);
@@ -50,8 +50,15 @@ pmask3 = logical(pmask3);
 Testresult(pmask3) = temp(pmask3);
 
 %GT
-M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M2GT.raw','*uint8');
+M3GT = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M3GT.raw','*uint8');
 M3GT = reshape(M3GT,siz);
+%%
+M3GT = load_raw('C:\Users\yourb\Desktop\NZ_unet\M1GT.raw','*uint8');
+M3GT = reshape(M3GT,siz);
+%%
+imagesc(M3GT(:,:,240)');
+colormap(map)
+axis tight equal
 
 %%
 JI = CalcuJI(Testresult,M3GT,4);
@@ -59,7 +66,30 @@ disp(JI);
 
 Dice = CalcuDice(Testresult,M3GT,4);
 disp(Dice);
+%%
+imagesc(Testresult(:,:,slice2)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
 
+%%
+imagesc(M3GT(:,:,slice2)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+%%
+subplot(2,1,1)
+imagesc(M1E1(:,:,slice1)');
+axis tight equal off
+caxis([0 0.7])
+colormap(gray)
+
+
+subplot(2,1,2)
+imagesc(M1E1(:,:,slice2)');
+axis tight equal off
+caxis([0 0.7])
+colormap(gray)
 %%
 map = [0, 0, 0
     0.1, 0.5, 0.8
@@ -67,7 +97,7 @@ map = [0, 0, 0
     0.8, 0.7, 0.3
     0.9, 0.9, 0];
 %%
-slice1 = 375;
+slice1 = 370;
 slice2 = 230;
 
 subplot(2,2,1)
@@ -77,7 +107,7 @@ caxis([0 4])
 colormap(map)
 
 subplot(2,2,2)
-imagesc(M2GT(:,:,slice1)');
+imagesc(M3GT(:,:,slice1)');
 axis tight equal off
 caxis([0 4])
 colormap(map)
@@ -89,32 +119,32 @@ caxis([0 4])
 colormap(map)
 
 subplot(2,2,4)
-imagesc(M2GT(:,:,slice2)');
+imagesc(M3GT(:,:,slice2)');
 axis tight equal off
 caxis([0 4])
 colormap(map)
 
 %%
 subplot(2,2,1)
-imagesc(M1E1(:,:,slice1)');
+imagesc(M2E1(:,:,slice1)');
 axis tight equal off
 caxis([0 0.7])
 colormap(gray)
 
 subplot(2,2,2)
-imagesc(M1E1(:,:,slice1)');
+imagesc(M2E1(:,:,slice1)');
 axis tight equal off
 caxis([0 0.7])
 colormap(gray)
 
 subplot(2,2,3)
-imagesc(M1E1(:,:,slice2)');
+imagesc(M2E1(:,:,slice2)');
 axis tight equal off
 caxis([0 0.7])
 colormap(gray)
 
 subplot(2,2,4)
-imagesc(M1E1(:,:,slice2)');
+imagesc(M2E1(:,:,slice2)');
 axis tight equal off
 caxis([0 0.7])
 colormap(gray)
@@ -179,14 +209,31 @@ end
 
 csvwrite("C:\Users\yourb\Desktop\test_coordinate_nopad52.csv",coordi)
 
+%%
+In7chM1 = load_raw('D:\NZ_unet\7chInput_M1.raw','*double');
+In7chM2 = load_raw('D:\NZ_unet\7chInput_M2.raw','*double');
+In7chM3 = load_raw('D:\NZ_unet\7chInput_M3.raw','*double');
 
-
-
-
-
-
-
-
+%%
+In7chM1 = reshape(In7chM1,[7 544 544 860]);
+In7chM2 = reshape(In7chM2,[7 544 544 860]);
+In7chM3 = reshape(In7chM3,[7 544 544 860]);
+%%
+PP1 = In7chM3(1,:,:,:);
+PP2 = In7chM3(2,:,:,:);
+PP3 = In7chM3(3,:,:,:);
+PP1 = squeeze(PP1);
+PP2 = squeeze(PP2);
+PP3 = squeeze(PP3);
+%%
+imagesc(PP3(:,:,245)');
+%%
+OutPP = zeros(3,544,544,860);
+OutPP(1,:,:,:) = PP1;
+OutPP(2,:,:,:) = PP2;
+OutPP(3,:,:,:) = PP3;
+%%
+save_raw(OutPP,'C:\\Users\\yourb\\Desktop\\InputPP_M3.raw','*double');
 %%
 pa_siz = 44/2;
 pat_num = 7000;

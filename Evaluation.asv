@@ -35,7 +35,7 @@ P = GraphModel.Hi(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
 Q = GraphModel.Hj(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
 
 sig = 0.0174;
-dif = (E1test(P) - E1test(Q))/( sig);
+dif = (E1test(P) - E1test(Q))/(sig);
 edges = [-2 -2:0.05:3 3];
 xlim([-2 3]);
 yyaxis left
@@ -51,24 +51,200 @@ xlabel('I_p - I_q / \sigma')
 plot(x,z,'LineWidth',3);
 
 %%
-edge = [0 0:0.01:1.4 1.4];
+edge = 0:0.01:1.0;
 hold on
-histogram(pM1E1(pM1GT ==2),edge,'Normalization','probability','EdgeAlpha',0.4);
-histogram(pM1E1(pM1GT ==4),edge,'Normalization','probability','EdgeAlpha',0.4);
-xlabel('K’²’l')
-ylabel('‘‘Ξ•p“x')
-mutest =0.273128082034521;
-sigtest = sqrt(0.0014);
-y = pdf('Normal',edge,mutest,sigtest)*0.07;
-y = y./sum(y(:));
-plot(edge,y,'Color',[0.2 0.6 0.2],'LineWidth',2)
+histogram(pM3E2(pM3GT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM3E2(pM3GT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM3E2(pM3GT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM3E2(pM3GT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4);
+%xlabel('CT value')
+%legend('Bladder','L','R','back')
+
+%mutest =0.459;
+%sigtest = sqrt(0.081);
+mutest =0.4589;
+sigtest = sqrt(0.0081);
+y1 = pdf('Normal',edge,mutest,sigtest);
+%y1 = y1./sum(y1(:));
+plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
+
+%mutest =0.350;
+%sigtest = sqrt(0.0376);
+mutest =0.35;
+sigtest = sqrt(0.0376);
+y2 = pdf('Normal',edge,mutest,sigtest);
+%y2 = y2./sum(y2(:));
+plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
+
+%mutest =0.3775;
+%sigtest = sqrt(0.0838);
+mutest =0.3775;
+sigtest = sqrt(0.0838);
+y3 = pdf('Normal',edge,mutest,sigtest);
+%y3 = y3./sum(y3(:));
+plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
+
+%mutest =0.2169;
+%sigtest = sqrt(0.00074);
+mutest =0.2169;
+sigtest = sqrt(0.0007411);
+y4 = pdf('Normal',edge,mutest,sigtest);
+%y4 = y4./sum(y4(:));
+plot(edge,y4,'Color',[204 153 255]/255,'LineWidth',2)
+%%
+
 
 %%
-mutest =0.273128082034521;
-sigtest = sqrt(0.0014);
-y = pdf('Normal',edge,mutest,sigtest)*0.07;
-y = y./sum(y(:));
-plot(edge,y);
+%energy2 
+edge =[0 0.01:0.01:0.99 1.0];
+
+bincounts = histc(pM3E2(pM3GT ==1),edge);
+bin1 = bincounts./sum(bincounts(:))* (numel(pM3E2(pM3GT ==1))/ sumval);
+
+bincounts = histc(pM3E2(pM3GT ==2),edge);
+bin2 = bincounts./sum(bincounts(:))* (numel(pM3E2(pM3GT ==2))/ sumval);
+
+bincounts = histc(pM3E2(pM3GT ==3),edge);
+bin3 = bincounts./sum(bincounts(:))* (numel(pM3E2(pM3GT ==3))/ sumval);
+sumval = numel(pM3E2(pM3GT ==1))+numel(pM3E2(pM3GT ==2))+numel(pM3E2(pM3GT ==3));
+
+
+bar(edge,bin1,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[51 102 255]/255);
+hold on
+bar(edge,bin2,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 135 0]/255);
+bar(edge,bin3,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 255 0]/255);
+
+
+mutest =0.4589; sigtest = sqrt(0.0081);
+y1 = pdf('Normal',edge,mutest,sigtest);
+y1 = y1./sum(y1(:));
+plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
+
+mutest =0.35; sigtest = sqrt(0.0376);
+y2 = pdf('Normal',edge,mutest,sigtest);
+y2 = y2./sum(y2(:));
+plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
+
+mutest =0.3775; sigtest = sqrt(0.0838);
+y3 = pdf('Normal',edge,mutest,sigtest);
+y3 = y3./sum(y3(:));
+plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
+xlim([0 1.0])
+%%
+%energy1 initial mouse2
+edge =[0 0.01:0.01:0.99 1.0];
+sumval = numel(pM1E2(pM1GT ==1))+numel(pM1E2(pM1GT ==2))+numel(pM1E2(pM1GT ==3));
+bincounts = histc(pM1E2(pM1GT ==1),edge);
+bin1 = bincounts./sum(bincounts(:))* (numel(pM1E2(pM1GT ==1))/ sumval);
+
+bincounts = histc(pM1E2(pM1GT ==2),edge);
+bin2 = bincounts./sum(bincounts(:))* (numel(pM1E2(pM1GT ==2))/ sumval);
+
+bincounts = histc(pM1E2(pM1GT ==3),edge);
+bin3 = bincounts./sum(bincounts(:))* (numel(pM1E2(pM1GT ==3))/ sumval);
+
+
+bar(edge,bin1,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[51 102 255]/255);
+hold on
+bar(edge,bin2,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 135 0]/255);
+bar(edge,bin3,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 255 0]/255);
+
+
+mutest =1.047; sigtest = sqrt(0.78);
+%mutest =0.487; sigtest = sqrt(0.0185);
+y1 = pdf('Normal',edge,mutest,sigtest);
+y1 = y1./sum(y1(:));
+plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
+
+
+mutest =0.388; sigtest = sqrt(0.0425);
+%mutest =0.334; sigtest = sqrt(0.0043);
+y2 = pdf('Normal',edge,mutest,sigtest);
+y2 = y2./sum(y2(:));
+plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
+
+
+mutest =0.37; sigtest = sqrt(0.0188);
+%mutest =0.352; sigtest = sqrt(0.0063);
+y3 = pdf('Normal',edge,mutest,sigtest);
+y3 = y3./sum(y3(:));
+plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
+xlim([0 1.0])
+
+%%
+imagesc(pM1E2(:,:,206)');
+axis tight equal off
+colormap(gray)
+caxis([ 0 0.7])
+%%
+%energy3
+edge =[0 0.01:0.01:0.99 1.0];
+
+bincounts = histc(pM3E3(pM3GT ==1),edge);
+bin1 = bincounts./sum(bincounts(:))* (numel(pM3E3(pM3GT ==1))/ sumval);
+
+bincounts = histc(pM3E3(pM3GT ==2),edge);
+bin2 = bincounts./sum(bincounts(:))* (numel(pM3E3(pM3GT ==2))/ sumval);
+
+bincounts = histc(pM3E3(pM3GT ==3),edge);
+bin3 = bincounts./sum(bincounts(:))* (numel(pM3E3(pM3GT ==3))/ sumval);
+sumval = numel(pM3E3(pM3GT ==1))+numel(pM3E3(pM3GT ==2))+numel(pM3E3(pM3GT ==3));
+
+bar(edge,bin1,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[51 102 255]/255);
+hold on
+bar(edge,bin2,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 135 0]/255);
+bar(edge,bin3,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 255 0]/255);
+
+%mutest =0.3067; sigtest = sqrt(0.0022);
+mutest =0.46; sigtest = sqrt(0.0787);
+y1 = pdf('Normal',edge,mutest,sigtest);
+y1 = y1./sum(y1(:));
+plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
+
+%mutest =0.3067; sigtest = sqrt(0.0022);
+mutest =0.26; sigtest = sqrt(0.0058);
+y2 = pdf('Normal',edge,mutest,sigtest);
+y2 = y2./sum(y2(:));
+plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
+
+%mutest =0.268; sigtest = sqrt(0.0216);
+mutest =0.265; sigtest = sqrt(0.003);
+%y3 = pdf('Normal',edge,mutest,sigtest);
+y3 = y3./sum(y3(:));
+plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
+
+%%
+%energy4edge =[0 0.01:0.01:0.99 1.0];
+
+bincounts = histc(pM3E4(pM3GT ==1),edge);
+bin1 = bincounts./sum(bincounts(:))* (numel(pM3E4(pM3GT ==1))/ sumval);
+
+bincounts = histc(pM3E4(pM3GT ==2),edge);
+bin2 = bincounts./sum(bincounts(:))* (numel(pM3E4(pM3GT ==2))/ sumval);
+
+bincounts = histc(pM3E4(pM3GT ==3),edge);
+bin3 = bincounts./sum(bincounts(:))* (numel(pM3E4(pM3GT ==3))/ sumval);
+sumval = numel(pM3E4(pM3GT ==1))+numel(pM3E4(pM3GT ==2))+numel(pM3E4(pM3GT ==3));
+
+bar(edge,bin1,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[51 102 255]/255);
+hold on
+bar(edge,bin2,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 135 0]/255);
+bar(edge,bin3,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 255 0]/255);
+
+mutest =0.2549; sigtest = sqrt(0.0008);
+y1 = pdf('Normal',edge,mutest,sigtest);
+y1 = y1./sum(y1(:));
+plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
+
+mutest =0.2344; sigtest = sqrt(0.0031);
+y2 = pdf('Normal',edge,mutest,sigtest);
+y2 = y2./sum(y2(:));
+plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
+
+mutest =0.240; sigtest = sqrt(0.0066);
+y3 = pdf('Normal',edge,mutest,sigtest);
+y3 = y3./sum(y3(:));
+plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
 
 %%
 %Distance feature
@@ -100,22 +276,40 @@ hold on
 histogram(pM3E4(pM3GT==1),edge,'Facecolor','y','Normalization','probability','FaceAlpha',0.3);
 %histogram(pM3E4(pM3GT==2),edge,'Facecolor','red','Normalization','probability','FaceAlpha',0.3);
 %histogram(pM3E4(pM3GT==3),edge,'Facecolor','blue','Normalization','probability','FaceAlpha',0.3);
-
+%%
+hisval1 = pM2E1(pM2GT==2);  hisval2 = pM2E4(pM2GT==2);
+hisval3 = pM2E1(pM2GT==2);  hisval4 = pM2E3(pM2GT==2);
+hisval5 = pM2E1(pM2GT==2);  hisval6 = pM2E2(pM2GT==2);
+hissize = 3000;
+hisval1 = hisval1(1:hissize); hisval2 = hisval2(1:hissize);
+hisval3 = hisval3(1:hissize); hisval4 = hisval4(1:hissize);
+hisval5 = hisval5(1:hissize); hisval6 = hisval6(1:hissize);
 %%
 hold on
-scatter(pM3E1(pM3GT==3),pM3E4(pM3GT==3),'.');
-scatter(pM3E1(pM3GT==3),pM3E3(pM3GT==3),'.');
-scatter(pM3E1(pM3GT==3),pM3E2(pM3GT==3),'.');
-
-scatter(pM3E1(pM3GT==1),pM3E4(pM3GT==1),'.');
-scatter(pM3E1(pM3GT==1),pM3E3(pM3GT==1),'.');
-scatter(pM3E1(pM3GT==1),pM3E2(pM3GT==1),'.');
+scatter(hisval1,hisval2,'.');
+scatter(hisval3,hisval4,'.');
+scatter(hisval5,hisval6,'.');
 axis tight equal
-xlim([0.1 2.5]);
-ylim([0.1 2.5]);
-xlabel('Energy1')
-ylabel('Energy2,Energy3,Energy4')
-legend('E1&E4(¶t‘)','E1&E3(¶t‘)','E1&E2(¶t‘)','E1&E4(δNγχ)','E1&E3(δNγχ)','E1&E2(δNγχ)','Location','northwest')
+xlim([0.15 0.4]);
+ylim([0.15 0.4]);
+xlabel('27-36 keV')
+ylabel('36-52 keV, 52-79 keV, 79-118 keV')
+%legend('E1&E4(¶t‘)','E1&E3(¶t‘)','E1&E2(¶t‘)')
+%%
+hold on
+%scatter(pM3E1(pM3GT==3),pM3E4(pM3GT==3),'.');
+%scatter(pM3E1(pM3GT==3),pM3E3(pM3GT==3),'.');
+%scatter(pM3E1(pM3GT==3),pM3E2(pM3GT==3),'.');
+
+scatter(pM2E1(pM2GT==1),pM2E4(pM2GT==1),'.');
+scatter(pM2E1(pM2GT==1),pM2E3(pM2GT==1),'.');
+scatter(pM2E1(pM2GT==1),pM2E2(pM2GT==1),'.');
+axis tight equal
+xlim([0.1 0.7]);
+ylim([0.1 0.7]);
+xlabel('27-36 keV')
+ylabel('36-52 keV, 52-79 keV, 79-118 keV')
+%legend('E1&E4(¶t‘)','E1&E3(¶t‘)','E1&E2(¶t‘)','E1&E4(δNγχ)','E1&E3(δNγχ)','E1&E2(δNγχ)','Location','northwest')
 %%
 class  = 1;
 [h1,p1] = lillietest(pM1E3(pM1GT == class));
@@ -124,20 +318,27 @@ class  = 1;
 
 %%
 %histogram
-class = 1;
+class = 2;
 temp1 = M1E1(M1GT == class);
 temp2 = M1E2(M1GT == class);
 temp3 = M1E3(M1GT == class);
-temp3 = M1E4(M1GT == class);
-temp3 = wM1E1(wM1GT == class);
+temp4 = M1E4(M1GT == class);
 
-edges = [0 0:0.01:3 3];
+
+temp5 = wM1E1(M1GT == class);
+
+%edges = [0 0:0.005:0.8 0.8];
+edges = [0 0:0.01:1 1];
+%edges = [-0.1 -0.1:0.005:0.5 0.5];
+
 hold on
 histogram(temp1,edges,'Normalization','probability');
 histogram(temp2,edges,'Normalization','probability');
 histogram(temp3,edges,'Normalization','probability');
 histogram(temp4,edges,'Normalization','probability');
-legend('26.9-36.0','26.9-36.0','26.9-36.0','26.9-36.0')
+histogram(temp5,edges,'Normalization','probability');
+%legend('26.9-36.0','36.0-51.9','51.9-78.9','78.9-119','Location','northeast')
+%legend('Mouse1','Mouse2','Mouse3')
 %%
 st = 164; en = 439; 
 pmask1 = zeros(siz); pmask2 = zeros(siz); pmask3 = zeros(siz);
@@ -152,15 +353,73 @@ IoutM3E1 = (energyE1 - prctile(energyE1(mask),3,1)) ./ (prctile(energyE1(mask),9
 IoutM3E2 = (energyE2 - prctile(energyE2(mask),3,1)) ./ (prctile(energyE2(mask),99.9,1) - prctile(energyE2(mask),3,1));
 IoutM3E3 = (energyE3 - prctile(energyE3(mask),3,1)) ./ (prctile(energyE3(mask),99.9,1) - prctile(energyE3(mask),3,1));
 IoutM3E4 = (energyE4 - prctile(energyE4(mask),3,1)) ./ (prctile(energyE4(mask),99.9,1) - prctile(energyE4(mask),3,1));
+%%
+imagesc(M2E4(280:380,210:310,230)');
+colormap(gray);
+axis equal tight off
+caxis([0 0.7]);
+%%
+imagesc(out(:,:,360)');
+colormap(map);
+axis equal tight off
+caxis([0 4]);
+%%
+%colormap gray
+ rectangle('Position',[140,250,50,50],'FaceColor','none','EdgeColor','r',...
+    'LineWidth',2)
+%%
+out = pM1GT;
+out(pM1GT==4) =0;
+%%
+slice = 66;
+y =265;
+rangex = [270,380];
+rangey = [y-55,y+55];
+test1 = pM2E2(:,y,slice);
+test2 = pM2E2(:,y,slice);
+
+
+subplot(3,4,[1,6])
+imagesc(pM2E2(:,:,slice)');
+caxis([0,0.7])
+colormap gray
+axis equal tight off
+rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
+    'LineWidth',1)
+xlim(rangex);
+ylim(rangey);
+
+
+subplot(3,4,[3,8])
+imagesc(pM2GT(:,:,slice)');
+%colormap(map)
+caxis([0,4])
+axis equal tight off
+ rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
+    'LineWidth',1)
+xlim(rangex);
+ylim(rangey);
+
+
+M1 = movmean(test1,3);
+subplot(3,4,[9,10])
+h= plot([test1]);
+h(1).Color = 'r';
+xlim(rangex);
+ylim([0,0.7]);
+%legend({'Gray value'});
+
+
+M2 = movmean(test2,3);
+subplot(3,4,[11,12])
+h= plot([test2]);
+h(1).Color = 'r';
+xlim(rangex);
+ylim([0,0.7]);
+%legend({'Gray value'});
 
 %%
-outputE1 = zeros([1 544 544 860]);
-outputE1 = IoutM1E1;
-%%
-save_raw(IoutM3E1,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E1.raw','*double');
-save_raw(IoutM3E2,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E2.raw','*double');
-save_raw(IoutM3E3,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E3.raw','*double');
-save_raw(IoutM3E4,'C:\\Users\\yourb\\Desktop\\Inputprc99.9_3_M3E4.raw','*double');
-
-%%
-imagesc(IoutM3E4(:,:,220)');
+imagesc(M1E2(130:220,240:330,360)');
+colormap(gray);
+axis equal tight off
+caxis([0 0.7]);

@@ -4,8 +4,6 @@ pM3E1 = M3E1(:,:,st:en); pM3E2 = M3E2(:,:,st:en); pM3E3 = M3E3(:,:,st:en); pM3E4
 siz2 = size(pM1E1);
 %clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask2 mask3 M1GT M2GT M3GT
 
-
-
 %%
 %train_mouse2_mouse3 test_mouse1
 Xtr = [[pM2E2(pmask2); pM3E2(pmask3)] [pM2E3(pmask2); pM3E3(pmask3)] [pM2E4(pmask2); pM3E4(pmask3)] ];
@@ -31,16 +29,6 @@ JI= CalcuJI(Imap,pM1GT,K-1);
 disp("EM_MAP result")
 disp(JI);
 %%
-temp = zeros(siz2);
-temp(pmask2) = PP(:,2);
-%%
-imagesc(temp(:,:,245)');
-caxis([ 0 1])
-%%
-%GraphCut
-GraphModel = CreateFullyConnectedGraphWithMask(pmask1);
-
-%Reaginal term
 RP = cell(1,K);
 for k = 1:K
     RP{1,k} = -log(PP(:,k)+eps);
@@ -48,6 +36,11 @@ for k = 1:K
 end
 RP = cell2mat(RP);
 RP = real(RP);
+
+%GraphCut
+GraphModel = CreateFullyConnectedGraphWithMask(pmask1);
+
+
 
 %Shape term
 [E1,E2] = Create_shape(L,GraphModel,pmask1,siz2);
@@ -75,6 +68,7 @@ PreE = 0;
 Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
+
 
 while(flag ~=1)
     GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda,N);
@@ -104,3 +98,57 @@ disp(JI);
 %sumJI(n) = sum(JI(:));
 %disp(n);
 %end
+%%
+save_raw(Output,'C:\\Users\\yourb\\Desktop\\M1GC.raw','*uint8')
+%%
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+%%
+Imapout = Imap;
+Imapout(Imap==4) = 0;
+pM1GTout = pM1GT;
+pM1GTout(pM1GT==4) = 0;
+%%
+slice1 = 206;
+slice2 = 66;
+
+subplot(2,2,1)
+imagesc(Imapout(:,:,slice1)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+subplot(2,2,2)
+imagesc(pM1GTout(:,:,slice1)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+subplot(2,2,3)
+imagesc(Imapout(:,:,slice2)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+subplot(2,2,4)
+imagesc(pM1GTout(:,:,slice2)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+%%
+%subplot(2,1,1)
+imagesc(Imapout(:,:,slice2)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+%%
+subplot(2,1,2)
+imagesc(pM1E1(:,:,slice1)');
+axis tight equal off
+caxis([0 0.7])
+colormap(gray)
+

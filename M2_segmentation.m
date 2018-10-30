@@ -1,8 +1,9 @@
+st = 164; en = 439;
 pM1E1 = M1E1(:,:,st:en); pM1E2 = M1E2(:,:,st:en); pM1E3 = M1E3(:,:,st:en); pM1E4 = M1E4(:,:,st:en); pM1GT = M1GT(:,:,st:en); pmask1 = mask1(:,:,st:en);
 pM2E1 = M2E1(:,:,st:en); pM2E2 = M2E2(:,:,st:en); pM2E3 = M2E3(:,:,st:en); pM2E4 = M2E4(:,:,st:en); pM2GT = M2GT(:,:,st:en); pmask2 = mask2(:,:,st:en);
 pM3E1 = M3E1(:,:,st:en); pM3E2 = M3E2(:,:,st:en); pM3E3 = M3E3(:,:,st:en); pM3E4 = M3E4(:,:,st:en); pM3GT = M3GT(:,:,st:en); pmask3 = mask3(:,:,st:en);
 siz2 = size(pM1E1);
-%clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask2 mask3 M1GT M2GT M3GT
+clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask2 mask3 M1GT M2GT M3GT
 %%
 %train_mouse1 mouse3 test_mouse2
 Xtr = [[pM1E2(pmask1); pM3E2(pmask3)] [pM1E3(pmask1); pM3E3(pmask3)] [pM1E4(pmask1); pM3E4(pmask3)] ];
@@ -12,6 +13,10 @@ XGTtr = [pM1GT(pmask1); pM3GT(pmask3)];
 
 %%
 %initial_value
+K=4;
+sig1 = 5; %bladder
+sig2 = 3; %kidneys
+
 for k = 1:K
     tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3); 
     S.mu(k,1) = mean(tmp1(XGTtr == k));
@@ -24,12 +29,14 @@ clearvars tmp1 tmp2 tmp3
 
 %Atlas_guided EM2
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask2,pM1GT,pM3GT);
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask2,siz2);
+[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask2,siz2);
 JI= CalcuJI(Imap,pM2GT,K-1);
 disp("EM_MAP result")
 disp(JI);
 
+
 %%
+
 %GraphCut
 GraphModel = CreateFullyConnectedGraphWithMask(pmask2);
 
@@ -96,3 +103,64 @@ disp(JI);
 %sumJI(n) = sum(JI(:));
 %disp(n);
 %end
+
+%%
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+%%
+Imapout = Output;
+Imapout(Output==4) = 0;
+pM2GTout = pM2GT;
+pM2GTout(pM2GT==4) = 0;
+%%
+save_raw(Output,'C:\\Users\\yourb\\Desktop\\M2GC.raw','*uint8')
+%%
+slice1 = 206;
+slice2 = 66;
+
+subplot(2,2,1)
+imagesc(Imapout(:,:,slice1)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+subplot(2,2,2)
+imagesc(pM2GTout(:,:,slice1)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+subplot(2,2,3)
+imagesc(Imapout(:,:,slice2)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+subplot(2,2,4)
+imagesc(pM2GTout(:,:,slice2)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+%%
+subplot(2,1,1)
+imagesc(pM2E1(:,:,slice1)');
+axis tight equal off
+caxis([0 0.7])
+colormap(gray)
+
+subplot(2,1,2)
+imagesc(pM2E1(:,:,slice2)');
+axis tight equal off
+caxis([0 0.7])
+colormap(gray)
+
+
+%%
+imagesc(Imapout(:,:,slice1)');
+axis tight equal off
+caxis([0 4])
+colormap(map)

@@ -17,6 +17,7 @@ sig1 = 5; sig2 = 3; K = 4;
 for k = 1:K
     tmp1 = Xtr(:,1); tmp2 = Xtr(:,2); tmp3 = Xtr(:,3);
     S.mu(k,1) = mean(tmp1(XGTtr == k));
+   
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
@@ -46,7 +47,7 @@ temp(pmask2) = Feat(:,3);
 imagesc(temp(:,:,180)');
 axis tight equal off
 colormap(gray)
-caxis([50 250])
+%caxis([0 350])
 %%
 temp1 = pM1GT==1;
 temp2 = pM1GT==2;
@@ -148,20 +149,20 @@ voronoiFig(pmask3) = voronoiOut;
 
 %%
 % for n =105
-
+n=1;
 N = size(RP,1);
 CurLabel = zeros(N,1)+K;
 PreLabel = zeros(N,1);
 Output = zeros(siz2);
 flag = 0;
 PreE = 0;
-Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h + eye(K);
+Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h(n) + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
 
 while(flag ~=1)
-    GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda,N);
-    GraphModel = SetNWeights(GraphModel,pM3E2(pmask3),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c);
+    GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda(n),N);
+    GraphModel = SetNWeights(GraphModel,pM3E2(pmask3),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
     [lowerBound, labels] = qpboMex([GraphModel.Vs,GraphModel.Vt],[GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]);
     labels = logical(labels);
     CurLabel(labels) = PropLabel(labels);

@@ -53,22 +53,30 @@ affine3(4,1:3) = transform3.c(1,:);
 affine3(4,4) = 1;
 affine3 = affine3d(affine3);
 invaffine3 = invert(affine3);
-
+%%
 IwM1E1 = apply_transformation_fast_3d( M1E1, invaffine1, siz );
-IwM1E2 = apply_transformation_fast_3d( M1E2, invaffine1, siz );
-IwM1E3 = apply_transformation_fast_3d( M1E3, invaffine1, siz );
-IwM1E4 = apply_transformation_fast_3d( M1E4, invaffine1, siz );
+%IwM1E2 = apply_transformation_fast_3d( M1E2, invaffine1, siz );
+%IwM1E3 = apply_transformation_fast_3d( M1E3, invaffine1, siz );
+%IwM1E4 = apply_transformation_fast_3d( M1E4, invaffine1, siz );
 
 IwM2E1 = apply_transformation_fast_3d( M2E1, invaffine2, siz );
-IwM2E2 = apply_transformation_fast_3d( M2E2, invaffine2, siz );
-IwM2E3 = apply_transformation_fast_3d( M2E3, invaffine2, siz );
-IwM2E4 = apply_transformation_fast_3d( M2E4, invaffine2, siz );
+%IwM2E2 = apply_transformation_fast_3d( M2E2, invaffine2, siz );
+%IwM2E3 = apply_transformation_fast_3d( M2E3, invaffine2, siz );
+%IwM2E4 = apply_transformation_fast_3d( M2E4, invaffine2, siz );
 
 IwM3E1 = apply_transformation_fast_3d( M3E1, invaffine3, siz );
-IwM3E2 = apply_transformation_fast_3d( M3E2, invaffine3, siz );
-IwM3E3 = apply_transformation_fast_3d( M3E3, invaffine3, siz );
-IwM3E4 = apply_transformation_fast_3d( M3E4, invaffine3, siz );
-
+%IwM3E2 = apply_transformation_fast_3d( M3E2, invaffine3, siz );
+%IwM3E3 = apply_transformation_fast_3d( M3E3, invaffine3, siz );
+%IwM3E4 = apply_transformation_fast_3d( M3E4, invaffine3, siz );
+%%
+save_raw(IwM1E2,'C:\\Users\\yourb\\Desktop\\IwM1E2.raw','*single');
+save_raw(IwM2E2,'C:\\Users\\yourb\\Desktop\\IwM2E2.raw','*single');
+save_raw(IwM3E2,'C:\\Users\\yourb\\Desktop\\IwM3E2.raw','*single');
+%%
+imagesc(IwM1E1(:,:,360)');
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
 
 %%
 %GT_transform
