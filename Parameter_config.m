@@ -29,7 +29,7 @@ shape(3,4) = 3; shape(4,3) = 3;
 
 %%
 %GraphCut Gridserch
-[lambda,h,c] =ndgrid(0.6:0.2:1.6 ,0.2:0.2:1.6, 0.2:0.2:1.6);
+[lambda,h,c] =ndgrid(0.8:0.2:2.0 ,0.4:0.2:1.6, 0.4:0.2:1.6);
 lambda = lambda(:);
 h = h(:);
 c = c(:);

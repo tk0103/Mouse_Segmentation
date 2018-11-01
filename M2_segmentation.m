@@ -33,8 +33,14 @@ atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask2,pM1GT,pM3GT);
 JI= CalcuJI(Imap,pM2GT,K-1);
 disp("EM_MAP result")
 disp(JI);
-
-
+%%
+temp = zeros(siz);
+temp(pmask2) = PP(:,3);
+%%
+imagesc(pM2E2(:,:,206)');
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
 %%
 
 %GraphCut
