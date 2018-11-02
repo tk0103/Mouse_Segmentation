@@ -2,7 +2,7 @@ pM1E1 = M1E1(:,:,st:en); pM1E2 = M1E2(:,:,st:en); pM1E3 = M1E3(:,:,st:en); pM1E4
 pM2E1 = M2E1(:,:,st:en); pM2E2 = M2E2(:,:,st:en); pM2E3 = M2E3(:,:,st:en); pM2E4 = M2E4(:,:,st:en); pM2GT = M2GT(:,:,st:en); pmask2 = mask2(:,:,st:en);
 pM3E1 = M3E1(:,:,st:en); pM3E2 = M3E2(:,:,st:en); pM3E3 = M3E3(:,:,st:en); pM3E4 = M3E4(:,:,st:en); pM3GT = M3GT(:,:,st:en); pmask3 = mask3(:,:,st:en);
 siz2 = size(pM1E1);
-%clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask2 mask3 M1GT M2GT M3GT
+clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask2 mask3 M1GT M2GT M3GT
 
 %%
 %train_mouse2_mouse3 test_mouse1
@@ -28,7 +28,18 @@ atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask1,pM2GT,pM3GT);
 JI= CalcuJI(Imap,pM1GT,K-1);
 disp("EM_MAP result")
 disp(JI);
+
 %%
+%Reaginal term
+tempPP1 = zeros(siz); tempPP2 = zeros(siz); tempPP3 = zeros(siz);
+tempPP1(pmask1) = PP(:,1); tempPP2(pmask1) = PP(:,2); tempPP3(pmask1) = PP(:,3);
+tempPP1 = imgaussfilt3(tempPP1,5);
+tempPP2 = imgaussfilt3(tempPP2,5);
+tempPP3 = imgaussfilt3(tempPP3,5);
+tempPP4 = 1 - tempPP1 - tempPP2 - tempPP3;
+PPout(:,1) = tempPP1(pmask1); PPout(:,2) = tempPP2(pmask1); 
+PPout(:,3) = tempPP3(pmask1); PPout(:,4) = tempPP4(pmask1);
+
 RP = cell(1,K);
 for k = 1:K
     RP{1,k} = -log(PP(:,k)+eps);
@@ -58,21 +69,22 @@ voronoiFig = zeros(siz2);
 voronoiFig(pmask1) = voronoiOut;
 
 %%
-%for n = 1:100
+%for n = 1:250
+n=1;
 N = size(RP,1);
 CurLabel = zeros(N,1)+K;
 PreLabel = zeros(N,1);
 Output = zeros(siz2);
 flag = 0;
 PreE = 0;
-Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h + eye(K);
+Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h(n) + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
 
 
 while(flag ~=1)
-    GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda,N);
-    GraphModel = SetNWeights(GraphModel,pM1E1(pmask1),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c);
+    GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda(n),N);
+    GraphModel = SetNWeights(GraphModel,pM1E1(pmask1),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
     [lowerBound, labels] = qpboMex([GraphModel.Vs,GraphModel.Vt],[GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]);
     labels = logical(labels);
     CurLabel(labels) = PropLabel(labels);
@@ -85,6 +97,7 @@ while(flag ~=1)
     if CurLabel == PreLabel
         flag = 1;
         Output(pmask1) = CurLabel;
+ 
     end
     
     PreLabel = CurLabel;
@@ -94,10 +107,10 @@ end
 JI= CalcuJI(Output,pM1GT,K-1);
 disp("GraphCut_JI")
 disp(JI);
-
-%sumJI(n) = sum(JI(:));
-%disp(n);
-%end
+% 
+% sumJI(n) = sum(JI(:));
+% disp(n);
+% end
 %%
 save_raw(Output,'C:\\Users\\yourb\\Desktop\\M1GC.raw','*uint8')
 %%

@@ -359,7 +359,11 @@ colormap(gray);
 axis equal tight off
 caxis([0 0.7]);
 %%
-imagesc(out(:,:,360)');
+temp = load_raw('C:\Users\yourb\Desktop\Animation\x64\Release\Data\M3GC2.raw','*uint8'); 
+temp = reshape(temp,siz2);
+temp(temp==4) = 0;
+%%
+imagesc(temp(255:365,235:345,66)');
 colormap(map);
 axis equal tight off
 caxis([0 4]);
@@ -368,34 +372,36 @@ caxis([0 4]);
  rectangle('Position',[140,250,50,50],'FaceColor','none','EdgeColor','r',...
     'LineWidth',2)
 %%
-out = pM2GT;
-out(pM2GT==4) =0;
+out = Imap;
+out(Imap==4) =0;
+%%
+
 %%
 slice = 66;
-y =255;
-rangex = [270,380];
+y =290;
+rangex = [255,365];
 rangey = [y-55,y+55];
-test1 = pM2E2(:,y,slice);
-test2 = pM2E2(:,y,slice);
+test1 = pM3E2(:,y-15,slice);
+test2 = pM3E2(:,y-15,slice);
 
 
 subplot(3,4,[1,6])
-imagesc(pM2E2(:,:,slice)');
+imagesc(pM3E2(:,:,slice)');
 caxis([0,0.7])
 colormap gray
 axis equal tight off
-rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
+rectangle('Position',[1,y-0.-15,436,1],'FaceColor','none','EdgeColor','r',...
     'LineWidth',1)
 xlim(rangex);
 ylim(rangey);
 
 
 subplot(3,4,[3,8])
-imagesc(pM2GT(:,:,slice)');
+imagesc(out(:,:,slice)');
 %colormap(map)
 caxis([0,4])
 axis equal tight off
- rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
+ rectangle('Position',[1,y-0.5-15,436,1],'FaceColor','none','EdgeColor','r',...
     'LineWidth',1)
 xlim(rangex);
 ylim(rangey);

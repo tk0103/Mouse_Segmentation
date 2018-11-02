@@ -10,9 +10,9 @@ sig2 = 3; %kidneys
 
 %%
 %GraphCut
-lambda = 0.02;
-h = 0.1;
-c=0.2;
+lambda = 2;
+h = 0.4;
+c = 1.2;
 %%
 %GraphCut prior
 graydiff = zeros(K);
@@ -29,8 +29,8 @@ shape(3,4) = 3; shape(4,3) = 3;
 
 %%
 %GraphCut Gridserch
-[lambda,h,c] =ndgrid(0.6:0.2:1.6 ,0.2:0.2:1.6, 0.2:0.2:1.6);
+[lambda,h,c] =ndgrid(0.04:2:10 ,0.4:0.8:4.0, 0.4:0.8:4.0);
 lambda = lambda(:);
 h = h(:);
 c = c(:);
-sumJI = zeros(size(h,1),1);
+OutputJI = zeros(size(h,1),3);

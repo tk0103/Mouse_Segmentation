@@ -41,12 +41,11 @@ disp("EM_MAP result")
 disp(JI);
 %%
 temp = zeros(siz2);
-temp(pmask2) = Feat(:,3);
+temp(pmask3) = PP(:,1);
 %%
-imagesc(temp(:,:,180)');
+imagesc(temp(:,:,slice2)');
 axis tight equal off
-colormap(gray)
-caxis([50 250])
+colormap(gray)%caxis([50 250])
 %%
 temp1 = pM1GT==1;
 temp2 = pM1GT==2;
@@ -106,7 +105,7 @@ axis tight equal off
 
 %%
 %Reaginal term
-tempPP1 = zeros(siz); tempPP2 = zeros(siz); tempPP3 = zeros(siz);
+tempPP1 = zeros(siz2); tempPP2 = zeros(siz2); tempPP3 = zeros(siz2);
 tempPP1(pmask3) = PP(:,1); tempPP2(pmask3) = PP(:,2); tempPP3(pmask3) = PP(:,3);
 tempPP1 = imgaussfilt3(tempPP1,5);
 tempPP2 = imgaussfilt3(tempPP2,5);
@@ -115,9 +114,10 @@ tempPP4 = 1 - tempPP1 - tempPP2 - tempPP3;
 PPout(:,1) = tempPP1(pmask3); PPout(:,2) = tempPP2(pmask3); 
 PPout(:,3) = tempPP3(pmask3); PPout(:,4) = tempPP4(pmask3);
 %%
-imagesc(tempPP4(:,:,310)');
-
-
+imagesc(tempPP1(:,:,75)');
+axis tight equal off
+colormap(gray)
+caxis([0 1.0])
 %%
 RP = cell(1,K);
 for k = 1:K
@@ -147,21 +147,20 @@ voronoiFig = zeros(siz2);
 voronoiFig(pmask3) = voronoiOut;
 
 %%
-% for n =105
-
+for n =2:125
 N = size(RP,1);
 CurLabel = zeros(N,1)+K;
 PreLabel = zeros(N,1);
 Output = zeros(siz2);
 flag = 0;
 PreE = 0;
-Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h + eye(K);
+Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h(n) + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
 
 while(flag ~=1)
-    GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda,N);
-    GraphModel = SetNWeights(GraphModel,pM3E2(pmask3),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c);
+    GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda(n),N);
+    GraphModel = SetNWeights(GraphModel,pM3E2(pmask3),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
     [lowerBound, labels] = qpboMex([GraphModel.Vs,GraphModel.Vt],[GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]);
     labels = logical(labels);
     CurLabel(labels) = PropLabel(labels);
@@ -184,14 +183,14 @@ JI= CalcuJI(Output,pM3GT,K-1);
 disp("GraphCut_JI")
 disp(JI);
 
-% sumJI(n) = sum(JI(:));
-% disp(n);
-% end
+OutputJI(n,:) = JI';
+disp(n);
+end
 %%
 imagesc(Output(:,:,220)');
 axis tight equal
 %%
-save_raw(Output,'C:\Users\yourb\Desktop\M3GC.raw','*uint8');
+save_raw(Imap,'C:\Users\yourb\Desktop\Imap.raw','*uint8');
 %%
 map = [0, 0, 0
     0.1, 0.5, 0.8
