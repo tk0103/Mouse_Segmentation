@@ -26,16 +26,14 @@ for k = 1:K
     S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
 end
 clearvars tmp1 tmp2 tmp3
-
+%%
 %Atlas_guided EM2
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask2,pM1GT,pM3GT);
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask2,siz2);
 JI= CalcuJI(Imap,pM2GT,K-1);
 disp("EM_MAP result")
 disp(JI);
-<<<<<<< HEAD
 
-=======
 %%
 temp = zeros(siz);
 temp(pmask2) = PP(:,3);
@@ -44,7 +42,7 @@ imagesc(pM2E2(:,:,206)');
 axis tight equal off
 colormap(gray)
 caxis([0 0.7])
->>>>>>> b5ca5b859ff01a0e29d3d2eae85e8ae5b932365d
+
 %%
 %Reaginal term
 siz2 = [544 544 276];
