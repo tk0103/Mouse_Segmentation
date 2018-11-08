@@ -21,7 +21,9 @@ for k = 1:K
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
 end
+S.Sigma(:,:,1) = sqrt(S.Sigma(:,:,1));
 clearvars tmp1 tmp2 tmp3
+
 %%
 %initial_value test
 for k = 1:K
@@ -35,6 +37,7 @@ clearvars tmp1 tmp2 tmp3
 %%
 %Atlas_guided EM
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask3,pM1GT,pM2GT);
+%%
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask3,siz2);
 JI= CalcuJI(Imap,pM3GT,K-1);
 disp("EM_MAP result")
@@ -114,10 +117,35 @@ tempPP4 = 1 - tempPP1 - tempPP2 - tempPP3;
 PPout(:,1) = tempPP1(pmask3); PPout(:,2) = tempPP2(pmask3); 
 PPout(:,3) = tempPP3(pmask3); PPout(:,4) = tempPP4(pmask3);
 %%
-imagesc(tempPP1(:,:,75)');
+temp1 = pM3E2(245:375,225:355,66);
+temp2 = pM3E2(246:376,226:356,66);
+temp3 = pM3GT(245:375,225:355,66);
+temp4 = zeros(size(temp1)); temp4(temp3 ==1) = 1;
+tempmask = pmask3(245:375,225:355,66);
+Z = temp1 - temp2;
+Zdash = Z.^2;
+%%
+temp = exp(-(Z.^2) /2);
+%temp(Z<0) = 1;
+%%
+tempout = zeros(size(temp));
+tempout(tempmask) =temp(tempmask);
+
+%%
+temp = zeros(siz2);
+temp(pmask3) = PP(:,1);
+temp =  temp(245:375,225:355,66);
+%%
+
+imagesc(temp');
 axis tight equal off
+caxis([0.995 1.0])
 colormap(gray)
-caxis([0 1.0])
+
+hold on
+contour(temp4',[1 1],'red');
+axis tight equal off
+
 %%
 RP = cell(1,K);
 for k = 1:K

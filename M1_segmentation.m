@@ -24,7 +24,7 @@ clearvars tmp1 tmp2 tmp3
 
 %Atlas_guided EM
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask1,pM2GT,pM3GT);
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask1,siz2);
+[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask1,siz2);
 JI= CalcuJI(Imap,pM1GT,K-1);
 disp("EM_MAP result")
 disp(JI);
@@ -67,6 +67,26 @@ end
 voronoiFig = zeros(siz2);
 [voronoiOut,~] = mistVoronoiDistanceTransform(uint8(voronoiIn(pmask1)));
 voronoiFig(pmask1) = voronoiOut;
+%%
+temp = zeros(siz2);
+temp(pmask1) = PP(:,2);
+
+%%
+imagesc(temp(110:300,140:330,206)');
+axis tight equal off
+colormap(gray)
+caxis([0 1.0]);
+%%
+imagesc(pM1E2(110:300,140:330,206)');
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
+%%
+pM1GT(pM1GT ==4) =0;
+imagesc(pM1GT(110:300,140:330,206)');
+axis tight equal off
+colormap(map)
+caxis([0 4])
 
 %%
 %for n = 1:250

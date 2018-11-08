@@ -379,11 +379,11 @@ out(Imap==4) =0;
 %%
 slice = 66;
 y =290;
-rangex = [255,365];
-rangey = [y-55,y+55];
+rangex = [265,355];
+rangey = [y-45,y+45];
 test1 = pM3E2(:,y-15,slice);
 test2 = pM3E2(:,y-15,slice);
-
+%265:355,245:335
 
 subplot(3,4,[1,6])
 imagesc(pM3E2(:,:,slice)');
@@ -397,7 +397,7 @@ ylim(rangey);
 
 
 subplot(3,4,[3,8])
-imagesc(out(:,:,slice)');
+imagesc(pM3E2(:,:,slice)');
 %colormap(map)
 caxis([0,4])
 axis equal tight off
@@ -406,7 +406,7 @@ axis equal tight off
 xlim(rangex);
 ylim(rangey);
 
-
+ 
 M1 = movmean(test1,3);
 subplot(3,4,[9,10])
 h= plot([test1]);

@@ -29,19 +29,20 @@ clearvars tmp1 tmp2 tmp3
 %%
 %Atlas_guided EM2
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask2,pM1GT,pM3GT);
+%%
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask2,siz2);
 JI= CalcuJI(Imap,pM2GT,K-1);
 disp("EM_MAP result")
 disp(JI);
 
 %%
-temp = zeros(siz);
-temp(pmask2) = PP(:,3);
+temp = zeros(siz2);
+temp(pmask2) = PP(:,2);
 %%
 imagesc(pM2E2(:,:,206)');
 axis tight equal off
-colormap(gray)
-caxis([0 0.7])
+%colormap(gray)
+%caxis([0 0.7])
 
 %%
 %Reaginal term
@@ -54,14 +55,15 @@ tempPP3 = imgaussfilt3(tempPP3,5);
 tempPP4 = 1 - tempPP1 - tempPP2 - tempPP3;
 PPout(:,1) = tempPP1(pmask2); PPout(:,2) = tempPP2(pmask2); 
 PPout(:,3) = tempPP3(pmask2); PPout(:,4) = tempPP4(pmask2);
+clearvars tempPP1 tempPP2 tempPP3 tempPP4
 %%
 temp = zeros(siz2);
 temp(pmask2) = PP(:,1);
 %%
-imagesc(temp(:,:,66)');
+imagesc(temp(:,:,206)');
 axis tight equal off
 colormap(gray)
-caxis([0 1.0]);
+%caxis([0 1.0]);
 
 
 
