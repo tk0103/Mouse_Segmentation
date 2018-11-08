@@ -20,7 +20,10 @@ for k = 1:K
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
+    
+  S.mu(k,1) = S.mu(k,1) - sqrt(S.Sigma(1,1,k));
 end
+
 clearvars tmp1 tmp2 tmp3
 %%
 %initial_value test
@@ -35,15 +38,16 @@ clearvars tmp1 tmp2 tmp3
 %%
 %Atlas_guided EM
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask3,pM1GT,pM2GT);
+%%
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask3,siz2);
 JI= CalcuJI(Imap,pM3GT,K-1);
 disp("EM_MAP result")
 disp(JI);
 %%
 temp = zeros(siz2);
-temp(pmask3) = PP(:,1);
+temp(pmask3) = atlas(:,1);
 %%
-imagesc(temp(:,:,slice2)');
+imagesc(temp(:,:,66)');
 axis tight equal off
 colormap(gray)%caxis([50 250])
 %%
@@ -147,7 +151,8 @@ voronoiFig = zeros(siz2);
 voronoiFig(pmask3) = voronoiOut;
 
 %%
-for n =2:125
+%for n =1:16
+n = 1;
 N = size(RP,1);
 CurLabel = zeros(N,1)+K;
 PreLabel = zeros(N,1);
@@ -185,12 +190,12 @@ disp(JI);
 
 OutputJI(n,:) = JI';
 disp(n);
-end
+%end
 %%
 imagesc(Output(:,:,220)');
 axis tight equal
 %%
-save_raw(Imap,'C:\Users\yourb\Desktop\Imap.raw','*uint8');
+save_raw(Output,'C:\Users\yourb\Desktop\M3GCwork.raw','*uint8');
 %%
 map = [0, 0, 0
     0.1, 0.5, 0.8

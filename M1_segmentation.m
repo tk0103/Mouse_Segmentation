@@ -67,10 +67,13 @@ end
 voronoiFig = zeros(siz2);
 [voronoiOut,~] = mistVoronoiDistanceTransform(uint8(voronoiIn(pmask1)));
 voronoiFig(pmask1) = voronoiOut;
-
 %%
-%for n = 1:250
-n=1;
+imagesc(voronoiFig(:,:,110)');
+axis tight equal off
+caxis([0 4])
+%%
+% for n = 1:27
+n = 1;
 N = size(RP,1);
 CurLabel = zeros(N,1)+K;
 PreLabel = zeros(N,1);
@@ -81,10 +84,9 @@ Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h(n) + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
 
-
 while(flag ~=1)
     GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda(n),N);
-    GraphModel = SetNWeights(GraphModel,pM1E1(pmask1),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
+    GraphModel = SetNWeights(GraphModel,pM1E2(pmask1),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
     [lowerBound, labels] = qpboMex([GraphModel.Vs,GraphModel.Vt],[GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]);
     labels = logical(labels);
     CurLabel(labels) = PropLabel(labels);
@@ -108,8 +110,8 @@ JI= CalcuJI(Output,pM1GT,K-1);
 disp("GraphCut_JI")
 disp(JI);
 % 
-% sumJI(n) = sum(JI(:));
-% disp(n);
+OutputJI(n,:) = JI';
+disp(n);
 % end
 %%
 save_raw(Output,'C:\\Users\\yourb\\Desktop\\M1GC.raw','*uint8')

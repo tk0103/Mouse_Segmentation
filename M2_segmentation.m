@@ -26,16 +26,13 @@ for k = 1:K
     S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
 end
 clearvars tmp1 tmp2 tmp3
-
+%%
 %Atlas_guided EM2
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask2,pM1GT,pM3GT);
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask2,siz2);
 JI= CalcuJI(Imap,pM2GT,K-1);
 disp("EM_MAP result")
 disp(JI);
-<<<<<<< HEAD
-
-=======
 %%
 temp = zeros(siz);
 temp(pmask2) = PP(:,3);
@@ -44,7 +41,6 @@ imagesc(pM2E2(:,:,206)');
 axis tight equal off
 colormap(gray)
 caxis([0 0.7])
->>>>>>> b5ca5b859ff01a0e29d3d2eae85e8ae5b932365d
 %%
 %Reaginal term
 siz2 = [544 544 276];
@@ -96,7 +92,8 @@ voronoiFig = zeros(siz2);
 voronoiFig(pmask2) = voronoiOut;
 
 %%
-for n =1:1
+%for n =1:12
+n = 1;
 N = size(RP,1);
 CurLabel = zeros(N,1)+K;
 PreLabel = zeros(N,1);
@@ -106,10 +103,10 @@ PreE = 0;
 Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h(n) + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
-
+%%
 while(flag ~=1)
     GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda(n),N);
-    GraphModel = SetNWeights(GraphModel,pM2E1(pmask2),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
+    GraphModel = SetNWeights(GraphModel,pM2E2(pmask2),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
     [lowerBound, labels] = qpboMex([GraphModel.Vs,GraphModel.Vt],[GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]);
     labels = logical(labels);
     CurLabel(labels) = PropLabel(labels);
@@ -132,9 +129,9 @@ JI= CalcuJI(Output,pM2GT,K-1);
 disp("GraphCut_JI")
 disp(JI);
 
-sumJI(n) = sum(JI(:));
+OutputJI(n,:) = JI';
 disp(n);
-end
+%end
 
 %%
 map = [0, 0, 0
@@ -148,7 +145,7 @@ Imapout(Output==4) = 0;
 pM2GTout = pM2GT;
 pM2GTout(pM2GT==4) = 0;
 %%
-save_raw(Output,'C:\\Users\\yourb\\Desktop\\M2GC.raw','*uint8')
+save_raw(Output,'C:\\Users\\yourb\\Desktop\\M2GCwork.raw','*uint8')
 %%
 slice1 = 206;
 slice2 = 66;
