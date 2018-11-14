@@ -51,39 +51,38 @@ xlabel('I_p - I_q / \sigma')
 plot(x,z,'LineWidth',3);
 
 %%
-edge = 0:0.01:1.0;
+edge = 0:0.01:2.7;
 hold on
-histogram(pM3E2(pM3GT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(pM3E2(pM3GT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(pM3E2(pM3GT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(pM3E2(pM3GT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM2E2(pM2GT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM2E2(pM2GT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM2E2(pM2GT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
 %xlabel('CT value')
 %legend('Bladder','L','R','back')
-
+%%
 %mutest =0.459;
 %sigtest = sqrt(0.081);
-mutest =0.4589;
-sigtest = sqrt(0.0081);
+mutest =1.17;
+sigtest = 0.786;
 y1 = pdf('Normal',edge,mutest,sigtest);
 %y1 = y1./sum(y1(:));
 plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
 
 %mutest =0.350;
 %sigtest = sqrt(0.0376);
-mutest =0.35;
-sigtest = sqrt(0.0376);
+mutest =0.385;
+sigtest = 0.0417;
 y2 = pdf('Normal',edge,mutest,sigtest);
 %y2 = y2./sum(y2(:));
 plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
 
 %mutest =0.3775;
 %sigtest = sqrt(0.0838);
-mutest =0.3775;
-sigtest = sqrt(0.0838);
+mutest =0.369;
+sigtest = 0.0187;
 y3 = pdf('Normal',edge,mutest,sigtest);
 %y3 = y3./sum(y3(:));
 plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
-
+%%
 %mutest =0.2169;
 %sigtest = sqrt(0.00074);
 mutest =0.2169;
@@ -96,39 +95,51 @@ plot(edge,y4,'Color',[204 153 255]/255,'LineWidth',2)
 
 %%
 %energy2 
-edge =[0 0.01:0.01:0.99 1.0];
+edge =[0 0.01:0.01:2.99 3.0];
+In = pM1E2;
+InGT = pM1GT;
 
-bincounts = histc(pM3E2(pM3GT ==1),edge);
-bin1 = bincounts./sum(bincounts(:))* (numel(pM3E2(pM3GT ==1))/ sumval);
+sumval = numel(In(InGT ==1))+numel(In(InGT ==2))+numel(In(InGT ==3));
+bincounts = histc(In(InGT ==1),edge);
+bin1 = bincounts./sum(bincounts(:))* (numel(In(InGT ==1))/ sumval);
 
-bincounts = histc(pM3E2(pM3GT ==2),edge);
-bin2 = bincounts./sum(bincounts(:))* (numel(pM3E2(pM3GT ==2))/ sumval);
+bincounts = histc(In(InGT ==2),edge);
+bin2 = bincounts./sum(bincounts(:))* (numel(In(InGT ==2))/ sumval);
 
-bincounts = histc(pM3E2(pM3GT ==3),edge);
-bin3 = bincounts./sum(bincounts(:))* (numel(pM3E2(pM3GT ==3))/ sumval);
-sumval = numel(pM3E2(pM3GT ==1))+numel(pM3E2(pM3GT ==2))+numel(pM3E2(pM3GT ==3));
+bincounts = histc(In(InGT ==3),edge);
+bin3 = bincounts./sum(bincounts(:))* (numel(In(InGT ==3))/ sumval);
+
 
 
 bar(edge,bin1,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[51 102 255]/255);
 hold on
 bar(edge,bin2,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 135 0]/255);
 bar(edge,bin3,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 255 0]/255);
+%%
+mu = S.mu; sigma = sqrt(S.Sigma);
+mu = GMMMu; sigma = sqrt(GMMSigma);
+edge =[0 0.01:0.01:0.99 1.0];
+hold on
+histogram(pM2E2(pM2GT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM2E2(pM2GT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM2E2(pM2GT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(pM2E2(pM2GT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4);
 
-
-mutest =0.4589; sigtest = sqrt(0.0081);
+mutest = mu(1,1); sigtest = sigma(1,1,1);
 y1 = pdf('Normal',edge,mutest,sigtest);
-y1 = y1./sum(y1(:));
 plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
 
-mutest =0.35; sigtest = sqrt(0.0376);
+mutest = mu(2,1); sigtest =  sigma(1,1,2);
 y2 = pdf('Normal',edge,mutest,sigtest);
-y2 = y2./sum(y2(:));
 plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
 
-mutest =0.3775; sigtest = sqrt(0.0838);
+mutest = mu(3,1); sigtest = sigma(1,1,3);
 y3 = pdf('Normal',edge,mutest,sigtest);
-y3 = y3./sum(y3(:));
 plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
+
+mutest = mu(4,1); sigtest = sigma(1,1,4);
+y4 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y4,'Color',[142 0 204]/255,'LineWidth',2)
 xlim([0 1.0])
 %%
 %energy1 initial mouse2
@@ -379,11 +390,11 @@ out(Imap==4) =0;
 %%
 slice = 66;
 y =290;
-rangex = [255,365];
-rangey = [y-55,y+55];
+rangex = [265,355];
+rangey = [y-45,y+45];
 test1 = pM3E2(:,y-15,slice);
 test2 = pM3E2(:,y-15,slice);
-
+%265:355,245:335
 
 subplot(3,4,[1,6])
 imagesc(pM3E2(:,:,slice)');
@@ -397,7 +408,7 @@ ylim(rangey);
 
 
 subplot(3,4,[3,8])
-imagesc(out(:,:,slice)');
+imagesc(pM3E2(:,:,slice)');
 %colormap(map)
 caxis([0,4])
 axis equal tight off
@@ -406,7 +417,7 @@ axis equal tight off
 xlim(rangex);
 ylim(rangey);
 
-
+ 
 M1 = movmean(test1,3);
 subplot(3,4,[9,10])
 h= plot([test1]);

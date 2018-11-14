@@ -9,8 +9,14 @@ clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask
 Xtr = [[pM2E2(pmask2); pM3E2(pmask3)] [pM2E3(pmask2); pM3E3(pmask3)] [pM2E4(pmask2); pM3E4(pmask3)] ];
 Xte = [pM1E2(pmask1) pM1E3(pmask1) pM1E4(pmask1)];
 XGTtr = [pM2GT(pmask2); pM3GT(pmask3)];
-%XGTte = [pM1GT(pmask1)];
-
+XGTte = [pM1GT(pmask1)];
+%%
+temp1 = zeros(siz2);
+temp1(pmask3) = 4;
+temp1(pM3GT == 1) =1;
+temp1(pM3GT == 2) =2;
+temp1(pM3GT == 3) =3;
+pM3GT = temp1;
 %%
 %initial_value
 for k = 1:K
@@ -19,16 +25,21 @@ for k = 1:K
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
+    S.mu(k,:) = S.mu(k,:) - 2*sqrt(diag(S.Sigma(:,:,k)))';
+    %S.Sigma(:,:,k) = (sqrt(S.Sigma(:,:,k))./2).^2;
 end
-clearvars tmp1 tmp2 tmp3
-
+% S.mu(1,:) = S.mu(1,:) -2*sqrt(diag(S.Sigma(:,:,1)))';
+ clearvars tmp1 tmp2 tmp3
+%%
 %Atlas_guided EM
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask1,pM2GT,pM3GT);
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask1,siz2);
+%%
+[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,likelihood] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask1,siz2,30);
 JI= CalcuJI(Imap,pM1GT,K-1);
 disp("EM_MAP result")
 disp(JI);
-
+%%
+histogram(pM1E2(pM1GT ==1));
 %%
 %Reaginal term
 tempPP1 = zeros(siz); tempPP2 = zeros(siz); tempPP3 = zeros(siz);
@@ -67,6 +78,28 @@ end
 voronoiFig = zeros(siz2);
 [voronoiOut,~] = mistVoronoiDistanceTransform(uint8(voronoiIn(pmask1)));
 voronoiFig(pmask1) = voronoiOut;
+
+%%
+temp = Imap;
+temp(Imap == 4) = 0;
+
+%%
+imagesc(temp(:,:,46)');
+axis tight equal off
+%colormap(gray)
+caxis([0 4]);
+%%
+imagesc(pM1E2(110:300,140:330,206)');
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
+%%
+pM1GT(pM1GT ==4) =0;
+imagesc(pM1GT(110:300,140:330,206)');
+axis tight equal off
+colormap(map)
+caxis([0 4])
+
 %%
 imagesc(voronoiFig(:,:,110)');
 axis tight equal off

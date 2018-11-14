@@ -23,24 +23,40 @@ for k = 1:K
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
-    S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
+    %S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
+    
+  %  S.Sigma(:,:,k) = (sqrt(S.Sigma(:,:,k))./4).^2;
 end
+ S.Sigma(:,:,1) = (sqrt(S.Sigma(:,:,1))./8).^2;
+ S.Sigma(:,:,2) = (sqrt(S.Sigma(:,:,2))./4).^2;
+ S.Sigma(:,:,3) = (sqrt(S.Sigma(:,:,3))./4).^2;
+%S.mu(1,:) = S.mu(1,:) +1*sqrt(diag(S.Sigma(:,:,1)))';
+%S.mu(2,:) = S.mu(2,:) +1*sqrt(diag(S.Sigma(:,:,2)))';
+%S.mu(3,:) = S.mu(3,:) +1*sqrt(diag(S.Sigma(:,:,3)))';
+
 clearvars tmp1 tmp2 tmp3
 %%
 %Atlas_guided EM2
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask2,pM1GT,pM3GT);
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask2,siz2);
+%%
+[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,lilelihood] = ...
+    AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask2,siz2,1);
 JI= CalcuJI(Imap,pM2GT,K-1);
 disp("EM_MAP result")
 disp(JI);
 %%
-temp = zeros(siz);
-temp(pmask2) = PP(:,3);
+temp = zeros(siz2);
+temp(pmask2) = atlas(:,1);
 %%
-imagesc(pM2E2(:,:,206)');
+temp = Imap;
+temp(Imap == 4) = 0;
+%%
+imagesc(Imap(:,:,246)');
 axis tight equal off
-colormap(gray)
-caxis([0 0.7])
+%caxis([0 0.00000000001])
+%colormap(gray)
+%caxis([0 0.7])
+
 %%
 %Reaginal term
 siz2 = [544 544 276];
@@ -52,14 +68,15 @@ tempPP3 = imgaussfilt3(tempPP3,5);
 tempPP4 = 1 - tempPP1 - tempPP2 - tempPP3;
 PPout(:,1) = tempPP1(pmask2); PPout(:,2) = tempPP2(pmask2); 
 PPout(:,3) = tempPP3(pmask2); PPout(:,4) = tempPP4(pmask2);
+clearvars tempPP1 tempPP2 tempPP3 tempPP4
 %%
 temp = zeros(siz2);
 temp(pmask2) = PP(:,1);
 %%
-imagesc(temp(:,:,66)');
+imagesc(temp(:,:,206)');
 axis tight equal off
 colormap(gray)
-caxis([0 1.0]);
+%caxis([0 1.0]);
 
 
 

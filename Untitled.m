@@ -37,8 +37,8 @@ save_raw(out,'C:\\Users\\yourb\\Desktop\\DiffE1E2_M3.raw','*double');
 M1GTnew = load_raw('C:\\Users\\yourb\\Desktop\\NZ_unet\\M3GT.raw','*uint8');
 M1GTnew = reshape(M1GTnew,[544 544 860]);
 %%
-slice = 335;
-imagesc(M1GTnew(:,:,slice)');
+slice = 25;
+imagesc(pM1GT(:,:,slice)');
 caxis([0 4]);
 axis tight equal
 %%
@@ -47,15 +47,14 @@ M1GTnew(M1GTnew==3) = 2;
 
 %%
 save_raw(M1GTnew,'C:\\Users\\yourb\\Desktop\\M3GT3class.raw','*uint8');
-
 %%
-temp1 = load_raw('\\tera\user\boku(ƒRƒXƒp‰ü‘P’†)\NZ_data\Mouse\3DVolume\Mouse1\M1E2.raw','*single');
-temp2 = load_raw('\\tera\user\boku(ƒRƒXƒp‰ü‘P’†)\NZ_data\Mouse\3DVolume\Mouse2\M2E2.raw','*single');
-temp3 = load_raw('\\tera\user\boku(ƒRƒXƒp‰ü‘P’†)\NZ_data\Mouse\3DVolume\Mouse3\M3E2.raw','*single');
+pM1GT = load_raw('C:\Users\yourb\Desktop\“h‚è’¼‚µŒ‹‰Ê\“h‚è’¼‚µŒ‹‰Ê\newM1GT.raw','*short');
+pM2GT = load_raw('C:\Users\yourb\Desktop\“h‚è’¼‚µŒ‹‰Ê\“h‚è’¼‚µŒ‹‰Ê\newM2GT.raw','*short');
+pM3GT = load_raw('C:\Users\yourb\Desktop\“h‚è’¼‚µŒ‹‰Ê\“h‚è’¼‚µŒ‹‰Ê\newM3GT.raw','*short');
 %%
-temp1 = reshape(temp1,siz);
-temp2 = reshape(temp2,siz);
-temp3 = reshape(temp3,siz);
+pM1GT = reshape(pM1GT,siz2);
+pM2GT = reshape(pM2GT,siz2);
+pM3GT = reshape(pM3GT,siz2);
 %%
 imagesc(temp3(:,:,250)');
 axis tight equal off

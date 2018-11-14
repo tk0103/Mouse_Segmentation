@@ -12,17 +12,27 @@ Xte = [pM3E2(pmask3) pM3E3(pmask3) pM3E4(pmask3)];
 XGTtr = [pM1GT(pmask1); pM2GT(pmask2)];
 XGTte = pM3GT(pmask3);
 %%
-sig1 = 5; sig2 = 3; K = 4;
 %initial_value
+K=4;
+sig1 = 5; %bladder
+sig2 = 3; %kidneys
+
 for k = 1:K
-    tmp1 = Xtr(:,1); tmp2 = Xtr(:,2); tmp3 = Xtr(:,3);
+    tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3); 
     S.mu(k,1) = mean(tmp1(XGTtr == k));
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
+    %S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
     
-  S.mu(k,1) = S.mu(k,1) - sqrt(S.Sigma(1,1,k));
+  %  S.Sigma(:,:,k) = (sqrt(S.Sigma(:,:,k))./4).^2;
 end
+ S.Sigma(:,:,1) = (sqrt(S.Sigma(:,:,1))./8).^2;
+ S.Sigma(:,:,2) = (sqrt(S.Sigma(:,:,2))./4).^2;
+ S.Sigma(:,:,3) = (sqrt(S.Sigma(:,:,3))./4).^2;
+%S.mu(1,:) = S.mu(1,:) +1*sqrt(diag(S.Sigma(:,:,1)))';
+%S.mu(2,:) = S.mu(2,:) +1*sqrt(diag(S.Sigma(:,:,2)))';
+%S.mu(3,:) = S.mu(3,:) +1*sqrt(diag(S.Sigma(:,:,3)))';
 
 clearvars tmp1 tmp2 tmp3
 %%
@@ -39,7 +49,7 @@ clearvars tmp1 tmp2 tmp3
 %Atlas_guided EM
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask3,pM1GT,pM2GT);
 %%
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask3,siz2);
+[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,lilelihood] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask3,siz2,30);
 JI= CalcuJI(Imap,pM3GT,K-1);
 disp("EM_MAP result")
 disp(JI);
@@ -118,10 +128,35 @@ tempPP4 = 1 - tempPP1 - tempPP2 - tempPP3;
 PPout(:,1) = tempPP1(pmask3); PPout(:,2) = tempPP2(pmask3); 
 PPout(:,3) = tempPP3(pmask3); PPout(:,4) = tempPP4(pmask3);
 %%
-imagesc(tempPP1(:,:,75)');
+temp1 = pM3E2(245:375,225:355,66);
+temp2 = pM3E2(246:376,226:356,66);
+temp3 = pM3GT(245:375,225:355,66);
+temp4 = zeros(size(temp1)); temp4(temp3 ==1) = 1;
+tempmask = pmask3(245:375,225:355,66);
+Z = temp1 - temp2;
+Zdash = Z.^2;
+%%
+temp = exp(-(Z.^2) /2);
+%temp(Z<0) = 1;
+%%
+tempout = zeros(size(temp));
+tempout(tempmask) =temp(tempmask);
+
+%%
+temp = zeros(siz2);
+temp(pmask3) = PP(:,1);
+temp =  temp(245:375,225:355,66);
+%%
+
+imagesc(temp');
 axis tight equal off
+caxis([0.995 1.0])
 colormap(gray)
-caxis([0 1.0])
+
+hold on
+contour(temp4',[1 1],'red');
+axis tight equal off
+
 %%
 RP = cell(1,K);
 for k = 1:K
