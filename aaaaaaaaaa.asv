@@ -25,7 +25,7 @@ maskM3 = zeros(siz2); maskM3(InGT == 4) = 4;
 maskM3(logical(mask_blaE2)) = 1; maskM3(logical(mask_LkidE2)) = 2; maskM3(logical(mask_RkidE2)) = 3;
 %%
 for k = 1:4
-    tmp1 = pM3E2; tmp2 = pM3E3; tmp3 = pM3E4;
+    tmp1 = pM2E2; tmp2 = pM2E3; tmp3 = pM2E4;
     S.mu(k,1) = mean(tmp1(maskM3 == k));
     S.mu(k,2) = mean(tmp2(maskM3 == k));
     S.mu(k,3) = mean(tmp3(maskM3 == k));
@@ -38,11 +38,11 @@ imagesc(maskM1E3(:,:,160)');
     caxis([0 4]);
     
 %%
-In = pM3E2; InGT = pM3GT; Eval = 1; %E2 = 1 E3 = 2 E4 = 3
+In = pM2E2; InGT = pM2GT; Eval = 1; %E2 = 1 E3 = 2 E4 = 3
 mu = S.mu; sigma = sqrt(S.Sigma);
 %mu = GMMMu; sigma = sqrt(GMMSigma);
 %edge =[0 0.01:0.01:2.99 3.0]; xlim([0 3.0])
-edge =[0 0.01:0.005:0.695 0.7]; xlim([0 0.7])
+edge =[0 0.01:0.005:0.75 0.8]; xlim([0 0.8])
 
 hold on
 histogram(In(InGT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);

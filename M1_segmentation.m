@@ -21,10 +21,10 @@ pM3GT = temp1;
 %initial_value
 for k = 1:K
     tmp1 = Xtr(:,1); tmp2 = Xtr(:,2); tmp3 = Xtr(:,3);
-    S.mu(k,1) = mean(tmp1(XGTtr == k));
-    S.mu(k,2) = mean(tmp2(XGTtr == k));
-    S.mu(k,3) = mean(tmp3(XGTtr == k));
-    S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
+    SS.mu(k,1) = mean(tmp1(XGTtr == k));
+    SS.mu(k,2) = mean(tmp2(XGTtr == k));
+    SS.mu(k,3) = mean(tmp3(XGTtr == k));
+    SS.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
    % S.mu(k,:) = S.mu(k,:) - 2*sqrt(diag(S.Sigma(:,:,k)))';
     %S.Sigma(:,:,k) = (sqrt(S.Sigma(:,:,k))./2).^2;
 end
