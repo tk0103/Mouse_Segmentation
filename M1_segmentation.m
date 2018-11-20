@@ -25,7 +25,7 @@ for k = 1:K
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
-    S.mu(k,:) = S.mu(k,:) - 2*sqrt(diag(S.Sigma(:,:,k)))';
+   % S.mu(k,:) = S.mu(k,:) - 2*sqrt(diag(S.Sigma(:,:,k)))';
     %S.Sigma(:,:,k) = (sqrt(S.Sigma(:,:,k))./2).^2;
 end
 % S.mu(1,:) = S.mu(1,:) -2*sqrt(diag(S.Sigma(:,:,1)))';
