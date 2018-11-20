@@ -1,4 +1,4 @@
-In = pM3E2; InGT = pM3GT; diff1 = 0.06; diff2 = 0.07;
+In = pM1E2; InGT = pM1GT; diff1 = 0.25; diff2 = 0.1;
 
 [N,edges] = histcounts(In(InGT ==1),'BinWidth',0.001);
 [~,I] = max(N); modeval(1) = (edges(I) + edges(I+1)) /2;
@@ -21,15 +21,15 @@ mask_LkidE2(Intemp > (modeval(2) - diff2) & Intemp < (modeval(2) + diff2) ) = 1;
 Intemp = zeros(siz2); mask_RkidE2 = zeros(siz2); Intemp(InGT == 3) = In(InGT == 3);
 mask_RkidE2(Intemp > (modeval(3) - diff2) & Intemp < (modeval(3) + diff2) ) = 1; 
 
-maskM3 = zeros(siz2); maskM3(InGT == 4) = 4;
-maskM3(logical(mask_blaE2)) = 1; maskM3(logical(mask_LkidE2)) = 2; maskM3(logical(mask_RkidE2)) = 3;
+maskM1 = zeros(siz2); maskM1(InGT == 4) = 4;
+maskM1(logical(mask_blaE2)) = 1; maskM1(logical(mask_LkidE2)) = 2; maskM1(logical(mask_RkidE2)) = 3;
 %%
+tmp1 = pM1E2; tmp2 = pM1E3; tmp3 = pM1E4;
 for k = 1:4
-    tmp1 = pM3E2; tmp2 = pM3E3; tmp3 = pM3E4;
-    S.mu(k,1) = mean(tmp1(maskM3 == k));
-    S.mu(k,2) = mean(tmp2(maskM3 == k));
-    S.mu(k,3) = mean(tmp3(maskM3 == k));
-    S.Sigma(:,:,k) = cov(([tmp1(maskM3 == k),tmp2(maskM3 == k),tmp3(maskM3 == k)]));
+    S.mu(k,1) = mean(tmp1(maskM1 == k));
+    S.mu(k,2) = mean(tmp2(maskM1 == k));
+    S.mu(k,3) = mean(tmp3(maskM1 == k));
+    S.Sigma(:,:,k) = cov(([tmp1(maskM1 == k),tmp2(maskM1 == k),tmp3(maskM1 == k)]));
 end
 clearvars tmp1 tmp2 tmp3
 %%

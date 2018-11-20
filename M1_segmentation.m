@@ -34,7 +34,7 @@ end
 %Atlas_guided EM
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask1,pM2GT,pM3GT);
 %%
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,likelihood] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask1,siz2,30);
+[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,likelihood] = AtlasGuidedEM_kubo(Xte,atlas,SS,K,pmask1,siz2,30);
 JI= CalcuJI(Imap,pM1GT,K-1);
 disp("EM_MAP result")
 disp(JI);
