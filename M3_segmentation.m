@@ -11,25 +11,33 @@ Xtr = [[pM1E2(pmask1); pM2E2(pmask2)] [pM1E3(pmask1); pM2E3(pmask2)] [pM1E4(pmas
 Xte = [pM3E2(pmask3) pM3E3(pmask3) pM3E4(pmask3)];
 XGTtr = [pM1GT(pmask1); pM2GT(pmask2)];
 XGTte = pM3GT(pmask3);
+
+%%
+%train_mouse1 mouse2 test_mouse3
+Xtr = [[pM1E2(pmask1); pM2E2(pmask2)] [pM1E3(pmask1); pM2E3(pmask2)] [pM1E4(pmask1); pM2E4(pmask2)] ];
+Xte = [pM3E2(pmask3) pM3E3(pmask3) pM3E4(pmask3)];
+XGTtr = [maskM1(pmask1); maskM2(pmask2)];
+XGTte = maskM3(pmask3);
+
 %%
 %initial_value
 K=4;
 sig1 = 5; %bladder
 sig2 = 3; %kidneys
 
-for k = 1:K
+for k = 1:K+1
     tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3); 
-    S.mu(k,1) = mean(tmp1(XGTtr == k));
-    S.mu(k,2) = mean(tmp2(XGTtr == k));
-    S.mu(k,3) = mean(tmp3(XGTtr == k));
-    S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
+    SS.mu(k,1) = mean(tmp1(XGTtr == k));
+    SS.mu(k,2) = mean(tmp2(XGTtr == k));
+    SS.mu(k,3) = mean(tmp3(XGTtr == k));
+    SS.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
     %S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
     
   %  S.Sigma(:,:,k) = (sqrt(S.Sigma(:,:,k))./4).^2;
 end
- S.Sigma(:,:,1) = (sqrt(S.Sigma(:,:,1))./8).^2;
- S.Sigma(:,:,2) = (sqrt(S.Sigma(:,:,2))./4).^2;
- S.Sigma(:,:,3) = (sqrt(S.Sigma(:,:,3))./4).^2;
+ %S.Sigma(:,:,1) = (sqrt(S.Sigma(:,:,1))./8).^2;
+ %S.Sigma(:,:,2) = (sqrt(S.Sigma(:,:,2))./4).^2;
+ %S.Sigma(:,:,3) = (sqrt(S.Sigma(:,:,3))./4).^2;
 %S.mu(1,:) = S.mu(1,:) +1*sqrt(diag(S.Sigma(:,:,1)))';
 %S.mu(2,:) = S.mu(2,:) +1*sqrt(diag(S.Sigma(:,:,2)))';
 %S.mu(3,:) = S.mu(3,:) +1*sqrt(diag(S.Sigma(:,:,3)))';
@@ -49,7 +57,7 @@ clearvars tmp1 tmp2 tmp3
 %Atlas_guided EM
 atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask3,pM1GT,pM2GT);
 %%
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,lilelihood] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pmask3,siz2,30);
+[Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,lilelihood] = AtlasGuidedEM_kubo(Xte,atlas,SS,K,pmask3,siz2,30);
 JI= CalcuJI(Imap,pM3GT,K-1);
 disp("EM_MAP result")
 disp(JI);
@@ -119,43 +127,26 @@ axis tight equal off
 
 %%
 %Reaginal term
-tempPP1 = zeros(siz2); tempPP2 = zeros(siz2); tempPP3 = zeros(siz2);
-tempPP1(pmask3) = PP(:,1); tempPP2(pmask3) = PP(:,2); tempPP3(pmask3) = PP(:,3);
+tempPP1 = zeros(siz2); tempPP1(pmask3) = PP(:,1); 
 tempPP1 = imgaussfilt3(tempPP1,5);
-tempPP2 = imgaussfilt3(tempPP2,5);
-tempPP3 = imgaussfilt3(tempPP3,5);
+tempPP2 = imgaussfilt3(PPtemp1,5);
+tempPP3 = imgaussfilt3(PPtemp2,5);
 tempPP4 = 1 - tempPP1 - tempPP2 - tempPP3;
+%%
 PPout(:,1) = tempPP1(pmask3); PPout(:,2) = tempPP2(pmask3); 
 PPout(:,3) = tempPP3(pmask3); PPout(:,4) = tempPP4(pmask3);
-%%
-temp1 = pM3E2(245:375,225:355,66);
-temp2 = pM3E2(246:376,226:356,66);
-temp3 = pM3GT(245:375,225:355,66);
-temp4 = zeros(size(temp1)); temp4(temp3 ==1) = 1;
-tempmask = pmask3(245:375,225:355,66);
-Z = temp1 - temp2;
-Zdash = Z.^2;
-%%
-temp = exp(-(Z.^2) /2);
-%temp(Z<0) = 1;
-%%
-tempout = zeros(size(temp));
-tempout(tempmask) =temp(tempmask);
 
 %%
 temp = zeros(siz2);
 temp(pmask3) = PP(:,1);
-temp =  temp(245:375,225:355,66);
+
 %%
 
-imagesc(temp');
+imagesc(pM2E1(:,:,235)');
 axis tight equal off
-caxis([0.995 1.0])
+%caxis([0.995 1.0])
 colormap(gray)
 
-hold on
-contour(temp4',[1 1],'red');
-axis tight equal off
 
 %%
 RP = cell(1,K);
@@ -165,7 +156,7 @@ for k = 1:K
 end
 RP = cell2mat(RP);
 RP = real(RP);
-
+%%
 
 %GraphCut
 GraphModel = CreateFullyConnectedGraphWithMask(pmask3);
@@ -186,6 +177,10 @@ voronoiFig = zeros(siz2);
 voronoiFig(pmask3) = voronoiOut;
 
 %%
+%GraphCut
+lambda = 0.8;
+h = 0.4;
+c = 0.4;
 %for n =1:16
 n = 1;
 N = size(RP,1);
@@ -194,13 +189,17 @@ PreLabel = zeros(N,1);
 Output = zeros(siz2);
 flag = 0;
 PreE = 0;
-Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h(n) + eye(K);
+Sigmat =  abs(bsxfun(@minus,GMMMu(1:K,1),GMMMu(1:K,1)'))*h(n) + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
+Kmat = ones(4);
 
+val = (pM3E1 + pM3E2 + pM3E3 + pM3E4)/4; 
 while(flag ~=1)
     GraphModel = SetTWeights(GraphModel,RP,CurLabel,PropLabel,lambda(n),N);
-    GraphModel = SetNWeights(GraphModel,pM3E2(pmask3),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
+    GraphModel = SetNWeights(GraphModel,val(pmask3),CurLabel,PropLabel,Sigmat,graydiff,shape,E1,E2,c(n));
+    %GraphModel = SetNWeights(GraphModel,pM3E2(pmask3),CurLabel,PropLabel,Sigmat,Kmat);
+    
     [lowerBound, labels] = qpboMex([GraphModel.Vs,GraphModel.Vt],[GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]);
     labels = logical(labels);
     CurLabel(labels) = PropLabel(labels);
@@ -227,7 +226,7 @@ OutputJI(n,:) = JI';
 disp(n);
 %end
 %%
-imagesc(Output(:,:,220)');
+imagesc(Output(:,:,205)');
 axis tight equal
 %%
 save_raw(Output,'C:\Users\yourb\Desktop\M3GCwork.raw','*uint8');

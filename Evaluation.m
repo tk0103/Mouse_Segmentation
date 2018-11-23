@@ -116,9 +116,9 @@ hold on
 bar(edge,bin2,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 135 0]/255);
 bar(edge,bin3,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 255 0]/255);
 %%
-mu = S.mu; sigma = sqrt(S.Sigma);
-mu = GMMMu; sigma = sqrt(GMMSigma);
-edge =[0 0.01:0.01:0.99 1.0];
+mu = STe.mu; sigma = sqrt(S.Sigma);
+%mu = GMMMu; sigma = sqrt(GMMSigma);
+edge =[0 0.01:0.01:2.99 3.0];
 hold on
 histogram(pM2E2(pM2GT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
 histogram(pM2E2(pM2GT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);

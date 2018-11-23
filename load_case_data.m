@@ -43,8 +43,8 @@ M3E1 = reshape(M3E1,siz); M3E2 = reshape(M3E2,siz); M3E3 = reshape(M3E3,siz); M3
 M3GT = reshape(M3GT,siz); mask3 = reshape(mask3,siz); mask3 = logical(mask3);
 
 %%
-imagesc(M1E1(:,:,272)');
-colormap(gray);
+imagesc(M1GT(:,:,286)');
+%colormap(gray);
 
 %%
 %Wide

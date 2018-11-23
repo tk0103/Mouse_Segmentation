@@ -10,9 +10,9 @@ sig2 = 3; %kidneys
 
 %%
 %GraphCut
-lambda = 18;
-h = 1;
-c = 0;
+lambda = 2;
+h = 0.4;
+c = 1.2;
 %%
 %GraphCut prior
 graydiff = zeros(K);

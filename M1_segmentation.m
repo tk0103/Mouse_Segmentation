@@ -8,18 +8,19 @@ clearvars M1E1 M1E2 M1E3 M1E4 M2E1 M2E2 M2E3 M2E4 M3E1 M3E2 M3E3 M3E4 mask1 mask
 %train_mouse2_mouse3 test_mouse1
 Xtr = [[pM2E2(pmask2); pM3E2(pmask3)] [pM2E3(pmask2); pM3E3(pmask3)] [pM2E4(pmask2); pM3E4(pmask3)] ];
 Xte = [pM1E2(pmask1) pM1E3(pmask1) pM1E4(pmask1)];
-XGTtr = [pM2GT(pmask2); pM3GT(pmask3)];
-XGTte = [pM1GT(pmask1)];
+%XGTtr = [pM2GT(pmask2); pM3GT(pmask3)];
+%XGTte = [pM1GT(pmask1)];
+
 %%
-temp1 = zeros(siz2);
-temp1(pmask3) = 4;
-temp1(pM3GT == 1) =1;
-temp1(pM3GT == 2) =2;
-temp1(pM3GT == 3) =3;
-pM3GT = temp1;
+%train_mouse2_mouse3 test_mouse1
+Xtr = [[pM2E2(pmask2); pM3E2(pmask3)] [pM2E3(pmask2); pM3E3(pmask3)] [pM2E4(pmask2); pM3E4(pmask3)] ];
+Xte = [pM1E2(pmask1) pM1E3(pmask1) pM1E4(pmask1)];
+XGTtr = [maskM2(pmask2); maskM3(pmask3)];
+XGTte = [maskM1(pmask1)];
+
 %%
 %initial_value
-for k = 1:K
+for k = 1:5
     tmp1 = Xtr(:,1); tmp2 = Xtr(:,2); tmp3 = Xtr(:,3);
     SS.mu(k,1) = mean(tmp1(XGTtr == k));
     SS.mu(k,2) = mean(tmp2(XGTtr == k));
