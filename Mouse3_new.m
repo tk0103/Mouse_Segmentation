@@ -36,4 +36,18 @@ JI= CalcuJI(Imap,pM3GT,K-1);
 disp("EM_MAP result")
 disp(JI);
 %%
-numel(Imap == 1)*6/pi;
+temp = Imap == 1; radi = power(bwarea(temp(:))*6/pi,1/3);
+D = bwdist(not(temp),'euclidean'); 
+[~,I] =  max(D(:)); [x,y,z] = ind2sub(siz2,I); coor(1,:) = [x y z radi]; 
+
+temp = Imap == 2; radi = power(bwarea(temp(:))*6/pi,1/3);
+D = bwdist(not(temp),'euclidean'); 
+[~,I] =  max(D(:)); [x,y,z] = ind2sub(siz2,I); coor(2,:) = [x y z radi]; 
+
+temp = Imap == 3; radi = power(bwarea(temp(:))*6/pi,1/3);
+D = bwdist(not(temp),'euclidean'); 
+[~,I] =  max(D(:)); [x,y,z] = ind2sub(siz2,I); coor(3,:) = [x y z radi]; 
+clearvars x y z radi I D temp
+%%
+newmaskM3 = zeros(siz2);
+new
