@@ -50,4 +50,3 @@ D = bwdist(not(temp),'euclidean');
 clearvars x y z radi I D temp
 %%
 newmaskM3 = zeros(siz2);
-new
