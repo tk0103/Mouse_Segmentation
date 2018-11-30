@@ -18,7 +18,22 @@ Xtr = [[pM1E2(pmask1); pM2E2(pmask2)] [pM1E3(pmask1); pM2E3(pmask2)] [pM1E4(pmas
 Xte = [pM3E2(pmask3) pM3E3(pmask3) pM3E4(pmask3)];
 XGTtr = [maskM1(pmask1); maskM2(pmask2)];
 XGTte = maskM3(pmask3);
+%%
+diff = M4E3- M4E2;
+%%
+temp = M3E2(mask3);
+histogram(temp,edge);
+hold on 
 
+edge =[0 0.01:0.01:0.79 0.8];
+histogram(M3E2(M3GT == 1),edge);
+histogram(M3E2(M3GT == 2),edge);
+histogram(M3E2(M3GT == 3),edge);
+%%
+imagesc(M4E2(:,:,195)');
+axis tight equal
+caxis([0 0.7])
+colormap(gray)
 %%
 %initial_value
 K=4;

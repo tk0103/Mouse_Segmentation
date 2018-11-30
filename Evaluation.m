@@ -116,14 +116,17 @@ hold on
 bar(edge,bin2,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 135 0]/255);
 bar(edge,bin3,1.0,'EdgeColor',[50 50 50]/255,'FaceColor',[255 255 0]/255);
 %%
-mu = STe.mu; sigma = sqrt(S.Sigma);
-%mu = GMMMu; sigma = sqrt(GMMSigma);
-edge =[0 0.01:0.01:2.99 3.0];
+In = M2E2; InGT = M2GT;
+%mu = SS.mu; sigma = sqrt(SS.Sigma);
+mu = GMMMu; sigma = sqrt(GMMSigma);
+edge =[0 0.01:0.01:0.79 0.8];
+xlim([0 0.8])
+
 hold on
-histogram(pM2E2(pM2GT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(pM2E2(pM2GT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(pM2E2(pM2GT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(pM2E2(pM2GT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(In(InGT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(In(InGT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(In(InGT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(In(InGT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4);
 
 mutest = mu(1,1); sigtest = sigma(1,1,1);
 y1 = pdf('Normal',edge,mutest,sigtest);
@@ -140,7 +143,6 @@ plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
 mutest = mu(4,1); sigtest = sigma(1,1,4);
 y4 = pdf('Normal',edge,mutest,sigtest);
 plot(edge,y4,'Color',[142 0 204]/255,'LineWidth',2)
-xlim([0 1.0])
 %%
 %energy1 initial mouse2
 edge =[0 0.01:0.01:0.99 1.0];

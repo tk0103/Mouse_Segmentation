@@ -26,7 +26,7 @@ K=4;
 sig1 = 5; %bladder
 sig2 = 3; %kidneys
 
-for k = 1:5
+for k = 1:4
     tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3); 
     SS.mu(k,1) = mean(tmp1(XGTtr == k));
     SS.mu(k,2) = mean(tmp2(XGTtr == k));
