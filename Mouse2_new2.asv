@@ -125,51 +125,16 @@ for k = 1:3
     SRkid.Sigma(:,:,k) = cov(([tmp1(mask == k),tmp2(mask == k),tmp3(mask == k)]));
 end
 clearvars tmp1 tmp2 tmp3
+
 %%
-Sbla.mu(1,:) = GMMMu(1,:) +0.5*sqrt(diag(GMMSigma(:,:,1)))';
-Sbla.mu(2,:) = GMMMu(1,:) -0.5*sqrt(diag(GMMSigma(:,:,1)))';
-Sbla.mu(3,:) = GMMMu(4,:); 
-
-Sbla.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,1))./4).^2;
-Sbla.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,1))./4).^2;
-Sbla.Sigma(:,:,3) =  GMMSigma(:,:,4);
-
-SLkid.mu(1,:) = GMMMu(2,:) -0.25*sqrt(diag(GMMSigma(:,:,2)))';
-SLkid.mu(2,:) = GMMMu(2,:) +0.25*sqrt(diag(GMMSigma(:,:,2)))';
-SLkid.mu(3,:) = GMMMu(4,:); 
-
-SLkid.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,2))./4).^2;
-SLkid.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,2))./4).^2;
-SLkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
-
-SRkid.mu(1,:) = GMMMu(3,:) -0.25*sqrt(diag(GMMSigma(:,:,3)))';
-SRkid.mu(2,:) = GMMMu(3,:) +0.25*sqrt(diag(GMMSigma(:,:,3)))';
-SRkid.mu(3,:) = GMMMu(4,:); 
-
-SRkid.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,3))./4).^2;
-SRkid.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,3))./4).^2;
-SRkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
-%%
-[Imapbla,~,~,GMMMubla,GMMSigmabla,GMMprobla,Featbla,likelihoodbla]...
+[Imapbla,~,~,GMMMubla,GMMSigmabla,~,~,~]...
     = AtlasGuidedEM_kubo(Xtebla,atlasbla,Sbla,3,blamask,siz,30);
-%%
+
 [ImapLkid,~,~,GMMMuLkid,GMMSigmaLkid,~,~,~]...
     = AtlasGuidedEM_kubo(XteLkid,atlasLkid,SLkid,3,Lkidmask,siz,30);
 
 [ImapRkid,~,~,GMMMuRkid,GMMSigmaRkid,~,~,~]...
     = AtlasGuidedEM_kubo(XteRkid,atlasRkid,SRkid,3,Rkidmask,siz,30);
-%%
-p_l = atlasbla;
-r = pM2E2 <  GMMMubla(2,1); 
-r = r(blamask);
-p_l(r,2) = 0;
-
-PP = Featbla.*p_l;
-PP = bsxfun(@rdivide,PP,sum(PP,2));
-
-[~,L] = max(PP,[],2);
-Imapbla = zeros(siz);
-Imapbla(blamask) = L;
 %%
 Imap2 = zeros(siz);
 Imap2(Imapbla == 1) = 1; Imap2(Imapbla == 2) = 1;
@@ -196,13 +161,13 @@ caxis([0 4])
 %mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
 %mu = GMMMubla; sigma = sqrt(GMMSigmabla);
 
-In = pM2E2; InGT = LkidGT;
+%In = pM2E2; InGT = LkidGT;
 %mu = SLkid.mu; sigma = sqrt(SLkid.Sigma);
-mu = GMMMuLkid; sigma = sqrt(GMMSigmaLkid);
+%mu = GMMMuLkid; sigma = sqrt(GMMSigmaLkid);
 
-%In = pM2E2; InGT = RkidGT;
-%mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
-%mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
+In = pM2E2; InGT = RkidGT;
+mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
+mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
 
 edge =[0 0:0.01:0.9 0.9];
 xlim([0 0.9])

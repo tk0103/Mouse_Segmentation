@@ -175,6 +175,31 @@ histogram(In(InGT ==5),edge,'EdgeAlpha',0.4);
 histogram(In(InGT ==6),edge,'EdgeAlpha',0.4);
 histogram(In(InGT ==7),edge,'EdgeAlpha',0.4);
 %%
-imagesc(cutGTM3(:,:,70)');
-axis tight equal off 
-caxis([0 7])
+In = pM2E2; InGT = pM2GT;
+%mu = SS.mu; sigma = sqrt(SS.Sigma);
+mu = GMMMu; sigma = sqrt(GMMSigma);
+
+edge =[0 0:0.01:0.9 0.9];
+xlim([0 0.9])
+
+hold on
+histogram(In(InGT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4,'FaceColor',[51 102 255]/255);
+histogram(In(InGT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4,'FaceColor',[255 135 0]/255);
+histogram(In(InGT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4,'FaceColor',[255 255 0]/255);
+histogram(In(InGT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4,'FaceColor',[142 0 204]/255);
+
+mutest = mu(1,1); sigtest = sigma(1,1,1);
+y1 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
+
+mutest = mu(2,1); sigtest =  sigma(1,1,2);
+y2 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
+
+mutest = mu(3,1); sigtest = sigma(1,1,3);
+y3 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
+
+mutest = mu(4,1); sigtest =  sigma(1,1,4);
+y4 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y4,'Color',[142 0 204]/255,'LineWidth',2)
