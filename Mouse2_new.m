@@ -16,7 +16,7 @@ for k = 1:K1
 end
 %%
 %Atlas_guided EM2
-atlas  = atlasfunc2(sig1,sig2,K1,siz,mask2,M1GT,M3GT,M4GT);
+atlas  = atlasfunc(sig1,sig2,K1,siz,mask2,M1GT,M3GT,M4GT);
 %%
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,likelihood] = ...
     AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask2,siz,30);
@@ -78,9 +78,9 @@ XteLkid = [M2E2(Lkidmask) M2E3(Lkidmask) M2E4(Lkidmask)];
 XteRkid = [M2E2(Rkidmask) M2E3(Rkidmask) M2E4(Rkidmask)];
 %%
 clearvars atlasbla atlasLkid atlasRkid
-atlasbla   = atlasfunc3(sig2,siz,mask2,blamask,GMMpro,0.8,1);
-atlasLkid  = atlasfunc3(sig2,siz,mask2,Lkidmask,GMMpro,0.8,2);
-atlasRkid  = atlasfunc3(sig2,siz,mask2,Rkidmask,GMMpro,0.8,3);
+atlasbla   = atlasfunc2(sig2,siz,mask2,blamask,GMMpro,0.8,1);
+atlasLkid  = atlasfunc2(sig2,siz,mask2,Lkidmask,GMMpro,0.8,2);
+atlasRkid  = atlasfunc2(sig2,siz,mask2,Rkidmask,GMMpro,0.8,3);
 %%
 imagesc(M2E2(:,:,210)');
 %%
