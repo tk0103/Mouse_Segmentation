@@ -268,92 +268,99 @@ Xte = [M4E1(mask4) M4E2(mask4)];
 XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
 %%
 %Number of Energy 2
-Xtr = [[M1E1(mask1); M2E1(mask2); M3E1(mask3)] [M1E3(mask1); M2E3(mask2); M3E3(mask3)]];
+Xtr = [[M1E1(mask1); M2E1(mask2); M4E1(mask4)] [M1E3(mask1); M2E3(mask2); M4E3(mask4)]];
 Xte = [M4E1(mask4) M4E3(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 2
-Xtr = [[M1E1(mask1); M2E1(mask2); M3E1(mask3)] [M1E4(mask1); M2E4(mask2); M3E4(mask3)]];
-Xte = [M4E1(mask4) M4E4(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E1(mask1); M2E1(mask2); M4E1(mask4)] [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
+Xte = [M3E1(mask3) M3E4(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 2
-Xtr = [[M1E2(mask1); M2E2(mask2); M3E2(mask3)] [M1E3(mask1); M2E3(mask2); M3E3(mask3)]];
-Xte = [M4E2(mask4) M4E3(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E2(mask1); M2E2(mask2); M4E2(mask4)] [M1E3(mask1); M2E3(mask2); M4E3(mask4)]];
+Xte = [M3E2(mask3) M3E3(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 2
-Xtr = [[M1E2(mask1); M2E2(mask2); M3E2(mask3)] [M1E4(mask1); M2E4(mask2); M3E4(mask3)]];
-Xte = [M4E2(mask4) M4E4(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E2(mask1); M2E2(mask2); M4E2(mask4)] [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
+Xte = [M3E2(mask3) M3E4(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 2
-Xtr = [[M1E3(mask1); M2E3(mask2); M3E3(mask3)] [M1E4(mask1); M2E4(mask2); M3E4(mask3)]];
-Xte = [M4E3(mask4) M4E4(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E3(mask1); M2E3(mask2); M4E3(mask4)] [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
+Xte = [M3E3(mask3) M3E4(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 3
-Xtr = [[M1E1(mask1); M2E1(mask2); M3E1(mask3)] [M1E2(mask1); M2E2(mask2); M3E2(mask3)]...
-       [M1E3(mask1); M2E3(mask2); M3E3(mask3)]];
-Xte = [M4E1(mask4) M4E2(mask4) M4E3(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E1(mask1); M2E1(mask2); M4E1(mask4)] [M1E2(mask1); M2E2(mask2); M4E2(mask4)]...
+       [M1E3(mask1); M2E3(mask2); M4E3(mask4)]];
+Xte = [M3E1(mask3) M3E2(mask3) M3E3(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 3
-Xtr = [[M1E1(mask1); M2E1(mask2); M3E1(mask3)] [M1E2(mask1); M2E2(mask2); M3E2(mask3)]...
-       [M1E4(mask1); M2E4(mask2); M3E4(mask3)]];
-Xte = [M4E1(mask4) M4E2(mask4) M4E4(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E1(mask1); M2E1(mask2); M4E1(mask4)] [M1E2(mask1); M2E2(mask2); M4E2(mask4)]...
+       [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
+Xte = [M3E1(mask3) M3E2(mask3) M3E4(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 3
-Xtr = [[M1E2(mask1); M2E2(mask2); M3E2(mask3)] [M1E3(mask1); M2E3(mask2); M3E3(mask3)]...
-       [M1E4(mask1); M2E4(mask2); M3E4(mask3)]];
-Xte = [M4E2(mask4) M4E3(mask4) M4E4(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E2(mask1); M2E2(mask2); M4E2(mask4)] [M1E3(mask1); M2E3(mask2); M4E3(mask4)]...
+       [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
+Xte = [M3E2(mask3) M3E3(mask3) M3E4(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 %%
 %Number of Energy 4
-Xtr = [[M1E1(mask1); M2E1(mask2); M3E1(mask3)] [M1E2(mask1); M2E2(mask2); M3E2(mask3)] ...
-       [M1E3(mask1); M2E3(mask2); M3E3(mask3)] [M1E4(mask1); M2E4(mask2); M3E4(mask3)]];
-Xte = [M4E1(mask4) M4E2(mask4) M4E3(mask4) M4E4(mask4)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+Xtr = [[M1E1(mask1); M2E1(mask2); M4E1(mask4)] [M1E2(mask1); M2E2(mask2); M4E2(mask4)] ...
+       [M1E3(mask1); M2E3(mask2); M4E3(mask4)] [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
+Xte = [M3E1(mask3) M3E2(mask3) M3E3(mask3) M3E4(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 
 
 
 
 
 %%
-%Number of Energy 1
-for k = 1:K1
+%initial_value
+for k = 1:K
     tmp1 = Xtr(:,1);
     S.mu(k,1) = mean(tmp1(XGTtr == k));
     S.Sigma(:,:,k) = cov((tmp1(XGTtr == k)));
+    S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
 end
+S.ComponentProportion =  S.ComponentProportion ./(sum( S.ComponentProportion));
 %%
-%Number of Energy 2
-for k = 1:K1
+%initial_value
+for k = 1:K
     tmp1 = Xtr(:,1); tmp2 = Xtr(:,2);
     S.mu(k,1) = mean(tmp1(XGTtr == k));
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k)]));
+    S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
 end
+S.ComponentProportion =  S.ComponentProportion ./(sum( S.ComponentProportion));
 %%
-%Number of Energy 3
-for k = 1:K1
+for k = 1:K
     tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3);
     S.mu(k,1) = mean(tmp1(XGTtr == k));
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
+    S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
 end
+S.ComponentProportion =  S.ComponentProportion ./(sum( S.ComponentProportion));
 %%
-%Number of Energy 4
-for k = 1:K1
+for k = 1:K
     tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3); tmp4 = Xtr(:,4);
     S.mu(k,1) = mean(tmp1(XGTtr == k));
     S.mu(k,2) = mean(tmp2(XGTtr == k));
     S.mu(k,3) = mean(tmp3(XGTtr == k));
     S.mu(k,4) = mean(tmp4(XGTtr == k));
     S.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k),tmp4(XGTtr == k)]));
+    S.ComponentProportion(k,1) = numel(tmp1(XGTtr == k));
 end
+S.ComponentProportion =  S.ComponentProportion ./(sum( S.ComponentProportion));
+
 %%
 %atlas mouse1
 atlas  = atlasfunc2(sig1,sig2,K,siz2,mask1,M2GT,M3GT);
@@ -364,6 +371,7 @@ atlas  = atlasfunc2(sig1,sig2,K,siz2,mask2,M1GT,M3GT);
 %%
 %atlas mouse3
 atlas  = atlasfunc2(sig1,sig2,K,siz2,mask3,M1GT,M2GT);
+
 %%
 %EM_MAP
 GMModel = fitgmdist(Xte,K,'start',S,'ProbabilityTolerance',1e-6,'Options',statset('Display','iter','MaxIter',15));
