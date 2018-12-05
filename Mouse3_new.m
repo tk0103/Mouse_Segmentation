@@ -6,35 +6,23 @@ XGTtr = [M1GT(mask1); M2GT(mask2) M4GT(mask4)];
 XGTte = M3GT(mask3);
 %%
 %initial_value
-K=4;
+K1 = 4; K2 = 3;
 sig1 = 5; %bladder
 sig2 = 3; %kidneys
 
-for k = 1:K
+for k = 1:K1
     tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3); 
     SS.mu(k,1) = mean(tmp1(XGTtr == k));
     SS.mu(k,2) = mean(tmp2(XGTtr == k));
     SS.mu(k,3) = mean(tmp3(XGTtr == k));
     SS.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
 end
-clearvars tmp1 tmp2 tmp3
 %%
-%initial_value test
-for k = 1:K
-    tmp1 = Xte(:,1); tmp2 = Xte(:,2); tmp3 = Xte(:,3);
-    STe.mu(k,1) = mean(tmp1(XGTte == k));
-    STe.mu(k,2) = mean(tmp2(XGTte == k));
-    STe.mu(k,3) = mean(tmp3(XGTte == k));
-    STe.Sigma(:,:,k) = cov(([tmp1(XGTte == k),tmp2(XGTte == k),tmp3(XGTte == k)]));
-end
-clearvars tmp1 tmp2 tmp3
-%%
-%Atlas_guided EM
-atlas  = atlasfunc2(sig1,sig2,K,siz2,mask3,M1GT,M2GT);
+atlas  = atlasfunc2(sig1,sig2,K1,siz,mask3,M1GT,M2GT,M4GT);
 %%
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,lilelihood] ...
-    = AtlasGuidedEM_kubo(Xte,atlas,SS,K,mask3,siz2,30);
-JI1= CalcuJI(Imap,M3GT,K-1);
+    = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask3,siz,30);
+JI1= CalcuJI(Imap,M3GT,K1-1);
 disp("EM_MAP result")
 disp(JI1);
 %%
@@ -42,83 +30,178 @@ imagesc(Imap(:,:,155)');
 axis tight equal off
 caxis([0 4])
 %%
-newmaskM3 = zeros(siz2);
-for n = 1:3
-    temp = Imap == n;
-    radi = power(bwarea(temp(:))/4/pi*3,1/3);
-    D = bwdist(temp,'euclidean');
-    temp = D < radi;
-    newmaskM3(temp) = 1;
+blamask = zeros(siz); blamaxcomp = zeros(siz);
+L1 = bwconncomp(Imap == 1);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
+blamaxcomp(L1.PixelIdxList{idx}) = 1; 
+tmp = bwdist(logical(blamaxcomp)) <  power(bwarea(blamaxcomp(:))/4/pi*3,1/3);
+blamask(tmp) = 1;
+blamask = logical(and(blamask,mask3)); 
+
+Lmaxcomp = zeros(siz); Lkidmask = zeros(siz);
+L1 = bwconncomp(Imap == 2);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
+Lmaxcomp(L1.PixelIdxList{idx}) = 1;
+tmp = bwdist(logical(Lmaxcomp)) < power(bwarea(Lmaxcomp(:))/4/pi*3,1/3);
+Lkidmask(tmp) = 1;
+Lkidmask = logical(and(Lkidmask,mask3));
+
+Rmaxcomp = zeros(siz); Rkidmask = zeros(siz);
+L1 = bwconncomp(Imap == 3);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
+Rmaxcomp(L1.PixelIdxList{idx}) = 1;
+tmp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
+Rkidmask(tmp) = 1;
+Rkidmask = logical(and(Rkidmask,mask2));
+LRAND = and(Rkidmask,Lkidmask);
+
+[XX,YY,ZZ] = meshgrid(1:siz(1),1:siz(2),1:siz(3));
+tmp = bwdist(logical(not(Lmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RLkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
+
+tmp = bwdist(logical(not(Rmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RRkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
+
+tmp = zeros(siz);
+tmp(RLkid > RRkid) = 1;
+tmp2 = and(tmp,LRAND);
+Rkidmask = logical(Rkidmask - LRAND + tmp2); 
+
+tmp(RRkid > RLkid) = 1;
+tmp2 = and(tmp,LRAND);
+Lkidmask = logical(Lkidmask - LRAND + tmp2);
+
+%%
+Xtebla  = [M3E2(blamask)  M3E3(blamask)  M3E4(blamask)];
+XteLkid = [M3E2(Lkidmask) M3E3(Lkidmask) M3E4(Lkidmask)];
+XteRkid = [M3E2(Rkidmask) M3E3(Rkidmask) M3E4(Rkidmask)];
+%%
+clearvars atlasbla atlasLkid atlasRkid
+atlasbla   = atlasfunc3(sig2,siz,mask3,blamask,GMMpro,0.8,1);
+atlasLkid  = atlasfunc3(sig2,siz,mask3,Lkidmask,GMMpro,0.8,2);
+atlasRkid  = atlasfunc3(sig2,siz,mask3,Rkidmask,GMMpro,0.8,3);
+%%
+GT = zeros(siz);  GT(blamask) = cutM2GT(blamask);
+blaGT = zeros(siz); blaGT(blamask) = 3;
+blaGT(GT == 1) = 1; blaGT(GT == 5) = 2; 
+
+GT = zeros(siz);  GT(Lkidmask) = cutM2GT(Lkidmask);
+LkidGT = zeros(siz); LkidGT(Lkidmask) = 3;
+LkidGT(GT == 2) = 1; LkidGT(GT == 6) = 2;
+
+GT = zeros(siz);  GT(Rkidmask) = cutM2GT(Rkidmask);
+RkidGT = zeros(siz); RkidGT(Rkidmask) = 3;
+RkidGT(GT == 3) = 1; RkidGT(GT == 7) = 2; 
+
+%%
+tmp1 = M3E2; tmp2 = M3E3; tmp3 = M3E4; mask = blaGT;
+for k = 1:K2
+    Sbla.mu(k,1) = mean(tmp1(mask == k));
+    Sbla.mu(k,2) = mean(tmp2(mask == k));
+    Sbla.mu(k,3) = mean(tmp3(mask == k));
+    Sbla.Sigma(:,:,k) = cov(([tmp1(mask == k),tmp2(mask == k),tmp3(mask == k)]));
 end
-newmaskM3 = and(newmaskM3,mask3);
-newmaskM3 = logical(newmaskM3);
-%%
-GT3 = zeros(siz2);
-GT3(newmaskM3) = M3GT(newmaskM3);
-%%
-tmp1 = pM3E2; tmp2 = pM3E3; tmp3 = pM3E4; mask = cutGTM3;
-for k = 1:7
-    S.mu(k,1) = mean(tmp1(mask == k));
-    S.mu(k,2) = mean(tmp2(mask == k));
-    S.mu(k,3) = mean(tmp3(mask == k));
-    S.Sigma(:,:,k) = cov(([tmp1(mask == k),tmp2(mask == k),tmp3(mask == k)]));
+
+mask = LkidGT;
+for k = 1:K2
+    SLkid.mu(k,1) = mean(tmp1(mask == k));
+    SLkid.mu(k,2) = mean(tmp2(mask == k));
+    SLkid.mu(k,3) = mean(tmp3(mask == k));
+    SLkid.Sigma(:,:,k) = cov(([tmp1(mask == k),tmp2(mask == k),tmp3(mask == k)]));
 end
-clearvars tmp1 tmp2 tmp3
-%%
-temp = cutGTM3 == 1; temp2 = cutGTM3 == 5;
-val1 = sum(temp(:)); val2 = sum(temp2(:));
-blaratio = val1/ (val1 + val2);
 
-temp = cutGTM3 == 2; temp2 = cutGTM3 == 6;
-val1 = sum(temp(:)); val2 = sum(temp2(:));
-Lkidration = val1/ (val1 + val2);
+mask = RkidGT;
+for k = 1:K2
+    SRkid.mu(k,1) = mean(tmp1(mask == k));
+    SRkid.mu(k,2) = mean(tmp2(mask == k));
+    SRkid.mu(k,3) = mean(tmp3(mask == k));
+    SRkid.Sigma(:,:,k) = cov(([tmp1(mask == k),tmp2(mask == k),tmp3(mask == k)]));
+end
+%%
+Sbla.mu(1,:) = GMMMu(1,:) +0.5*sqrt(diag(GMMSigma(:,:,1)))';
+Sbla.mu(2,:) = GMMMu(1,:) -0.5*sqrt(diag(GMMSigma(:,:,1)))';
+Sbla.mu(3,:) = GMMMu(4,:); 
 
-temp = cutGTM3 == 3; temp2 = cutGTM3 == 7;
-val1 = sum(temp(:)); val2 = sum(temp2(:));
-Rkidration = val1/ (val1 + val2);
+Sbla.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,1))./4).^2;
+Sbla.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,1))./4).^2;
+Sbla.Sigma(:,:,3) =  GMMSigma(:,:,4);
+
+SLkid.mu(1,:) = GMMMu(2,:) -0.25*sqrt(diag(GMMSigma(:,:,2)))';
+SLkid.mu(2,:) = GMMMu(2,:) +0.25*sqrt(diag(GMMSigma(:,:,2)))';
+SLkid.mu(3,:) = GMMMu(4,:); 
+
+SLkid.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,2))./4).^2;
+SLkid.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,2))./4).^2;
+SLkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
+
+SRkid.mu(1,:) = GMMMu(3,:) -0.25*sqrt(diag(GMMSigma(:,:,3)))';
+SRkid.mu(2,:) = GMMMu(3,:) +0.25*sqrt(diag(GMMSigma(:,:,3)))';
+SRkid.mu(3,:) = GMMMu(4,:); 
+
+SRkid.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,3))./4).^2;
+SRkid.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,3))./4).^2;
+SRkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
 
 %%
-%Atlas_guided EM
-clearvars atlasnew
-atlasnew  = atlasfunc3(sig1,sig2,siz2,mask3,newmaskM3,GMMpro,blaratio,Lkidration,Rkidration);
-Snew.mu = GMMMu; Snew.Sigma = GMMSigma;
-Xtenew = [pM3E2(newmaskM3) pM3E3(newmaskM3) pM3E4(newmaskM3)];
+[Imapbla,~,~,GMMMubla,GMMSigmabla,GMMprobla,Featbla,likelihoodbla]...
+    = AtlasGuidedEM_kubo(Xtebla,atlasbla,Sbla,K2,blamask,siz,30);
+
+[ImapLkid,~,~,GMMMuLkid,GMMSigmaLkid,~,~,~]...
+    = AtlasGuidedEM_kubo(XteLkid,atlasLkid,SLkid,K2,Lkidmask,siz,30);
+
+[ImapRkid,~,~,GMMMuRkid,GMMSigmaRkid,~,~,~]...
+    = AtlasGuidedEM_kubo(XteRkid,atlasRkid,SRkid,K2,Rkidmask,siz,30);
 %%
-[Imap2,~,PP2,GMMMu2,GMMSigma2,GMMpro2,~,likelihood2] ...
-    = AtlasGuidedEM_kubo(Xtenew,atlasnew,S,7,newmaskM3,siz2,30);
-JI2= CalcuJI(Imap2,M3GT,K-1);
-disp("EM_MAP result")
+p_l = atlasbla;
+r = M3E2 <  GMMMubla(2,1); 
+r = r(blamask);
+p_l(r,2) = 0;
+
+PP = Featbla.*p_l;
+PP = bsxfun(@rdivide,PP,sum(PP,2));
+
+[~,L] = max(PP,[],2);
+Imapbla = zeros(siz);
+Imapbla(blamask) = L;
+%%
+Imap2 = zeros(siz);
+Imap2(Imapbla == 1) = 1; Imap2(Imapbla == 2) = 1;
+Imap2(ImapLkid == 1) = 2; Imap2(ImapLkid == 2) = 2;
+Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
+JI2= CalcuJI(Imap2,M3GT,K2);
 disp(JI2);
+
 %%
-Imap3 = Imap2;
-Imap3(Imap2 == 5) = 1;
-Imap3(Imap2 == 6) = 2;
-Imap3(Imap2 == 7) = 3;
-JI2= CalcuJI(Imap3,M3GT,K-1);
-disp("EM_MAP result")
-disp(JI2);
-%%
-imagesc(pM3E2(:,:,200)');
+imagesc(3(:,:,210)');
 axis tight equal off
-caxis([0 0.7]);
+caxis([0 0.7])
 colormap(gray)
 %%
-In = pM3E2; InGT = cutGTM3;
-%mu = S.mu; sigma = sqrt(S.Sigma);
-%mu = GMMMu; sigma = sqrt(GMMSigma);
-mu = GMMMu2; sigma = sqrt(GMMSigma2);
-edge =[0 0:0.01:1.2 1.2];
-xlim([0 1.2])
+imagesc(ImapLkid(:,:,210)');
+axis tight equal off
+caxis([0 4])
+%%
+In = M3E2; InGT = blaGT;
+mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
+%mu = GMMMubla; sigma = sqrt(GMMSigmabla);
+
+%In = M3E2; InGT = LkidGT;
+%mu = SLkid.mu; sigma = sqrt(SLkid.Sigma);
+%mu = GMMMuLkid; sigma = sqrt(GMMSigmaLkid);
+
+%In = M3E2; InGT = RkidGT;
+%mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
+%mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
+
+edge =[0 0:0.01:0.7 0.7];
+xlim([0 0.7])
 
 hold on
 histogram(In(InGT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
 histogram(In(InGT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
 histogram(In(InGT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(In(InGT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4);
-
-histogram(In(InGT ==5),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(In(InGT ==6),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(In(InGT ==7),edge,'Normalization','pdf','EdgeAlpha',0.4);
 
 mutest = mu(1,1); sigtest = sigma(1,1,1);
 y1 = pdf('Normal',edge,mutest,sigtest);
@@ -131,39 +214,11 @@ plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
 mutest = mu(3,1); sigtest = sigma(1,1,3);
 y3 = pdf('Normal',edge,mutest,sigtest);
 plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
-
-mutest = mu(4,1); sigtest = sigma(1,1,4);
-y4 = pdf('Normal',edge,mutest,sigtest);
-plot(edge,y4,'Color',[142 0 204]/255,'LineWidth',2)
-
-mutest = mu(5,1); sigtest = sigma(1,1,5);
-y5 = pdf('Normal',edge,mutest,sigtest);
-plot(edge,y5,'Color',[35 167 22]/255,'LineWidth',2)
-
-mutest = mu(6,1); sigtest = sigma(1,1,6);
-y6 = pdf('Normal',edge,mutest,sigtest);
-plot(edge,y6,'Color',[15 82 188]/255,'LineWidth',2)
-
-mutest = mu(7,1); sigtest = sigma(1,1,7);
-y7 = pdf('Normal',edge,mutest,sigtest);
-plot(edge,y7,'Color',[204 0 0]/255,'LineWidth',2)
-
+hold off
 %%
-In = pM3E2; InGT = cutGTM3;
-edge =[0 0:0.01:2.5 2.5];
+edge =[0 0:0.01:0.7 0.7];
+In = M3E2; InGT = RkidGT;
 hold on
 histogram(In(InGT ==1),edge,'EdgeAlpha',0.4);
 histogram(In(InGT ==2),edge,'EdgeAlpha',0.4);
 histogram(In(InGT ==3),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==4),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==5),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==6),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==7),edge,'EdgeAlpha',0.4);
-%%
-In = pM3E2; InGT = GT3;
-edge =[0 0:0.01:2.0 2.0];
-hold on
-histogram(In(InGT ==1),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==2),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==3),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==4),edge,'EdgeAlpha',0.4);

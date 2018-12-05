@@ -1,5 +1,5 @@
 Xtr = [[M1E2(mask1); M3E2(mask3); M4E2(mask4)] [M1E3(mask1); M3E3(mask3); M4E3(mask4)] ...
-    [M1E4(mask1); M3E4(mask3); M4E4(mask4)]];
+      [M1E4(mask1); M3E4(mask3); M4E4(mask4)]];
 Xte = [M2E2(mask2) M2E3(mask2) M2E4(mask2)];
 XGTtr = [M1GT(mask1); M3GT(mask3); M4GT(mask4)];
 XGTte = M2GT(mask2);
