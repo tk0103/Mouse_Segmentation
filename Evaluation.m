@@ -171,3 +171,13 @@ h(1).Color = 'r';
 xlim(rangex);
 ylim([0,0.7]);
 %legend({'Gray value'});
+
+%%
+scatter3(ptemp_k1,ptemp_k2,ptemp_k3,'.');
+hold on
+scatter3(ptemp_b1,ptemp_b2,ptemp_b3,'.');
+xlim([0.1 0.35]); xlabel('26-36 keV')
+ylim([0.1 0.35]); ylabel('36-52 keV')
+zlim([0.1 0.35]); zlabel('52-79 keV')
+axis tight equal
+%legend('left-kidney','background')

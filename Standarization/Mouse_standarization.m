@@ -54,29 +54,25 @@ affine1 = zeros(4,4);
 affine1(1:3,1:3) = transform1.b .*transform1.T;
 affine1(4,1:3) = transform1.c(1,:);
 affine1(4,4) = 1;
-affine1 = affine3d(affine1);
-invaffine1 = invert(affine1);
+invaffine1 = invert(affine3d(affine1));
 
 affine2 = zeros(4,4);
 affine2(1:3,1:3) = transform2.b .*transform2.T;
 affine2(4,1:3) = transform2.c(1,:);
 affine2(4,4) = 1;
-affine2 = affine3d(affine2);
-invaffine2 = invert(affine2);
+invaffine2 = invert(affine3d(affine2));
 
 affine3 = zeros(4,4);
 affine3(1:3,1:3) = transform3.b .*transform3.T;
 affine3(4,1:3) = transform3.c(1,:);
 affine3(4,4) = 1;
-affine3 = affine3d(affine3);
-invaffine3 = invert(affine3);
+invaffine3 = invert(affine3d(affine3));
 
 affine4 = zeros(4,4);
 affine4(1:3,1:3) = transform4.b .*transform4.T;
 affine4(4,1:3) = transform4.c(1,:);
 affine4(4,4) = 1;
-affine4 = affine3d(affine4);
-invaffine4 = invert(affine4);
+invaffine4 = invert(affine3d(affine4));
 %%
 IwM1E1 = apply_transformation_fast_3d( M1E1, invaffine1, siz );
 IwM1E2 = apply_transformation_fast_3d( M1E2, invaffine1, siz );
@@ -104,8 +100,7 @@ colormap(gray)
 %caxis([0 0.7])
 %%
 %GT_transform
-IwM1GT = zeros(siz); IwM2GT = zeros(siz); IwM3GT = zeros(siz); IwM4GT = zeros(siz);
-
+IwM1GT = zeros(siz);
 for k =1:3
     mask = M1GT==k;
     nmask = not(mask);
@@ -123,6 +118,7 @@ for k =1:3
 end
 IwM1GT(IwM1GT==0) = 4;
 
+IwM2GT = zeros(siz);
 for k =1:3
     mask = M2GT==k;
     nmask = not(mask);
@@ -140,6 +136,7 @@ for k =1:3
 end
 IwM2GT(IwM2GT==0) = 4;
 
+IwM3GT = zeros(siz);
 for k =1:3
     mask = M3GT==k;
     nmask = not(mask);
@@ -157,7 +154,7 @@ for k =1:3
 end
 IwM3GT(IwM3GT==0) = 4;
 
-
+IwM4GT = zeros(siz);
 for k =1:3
     mask = M4GT==k;
     nmask = not(mask);
@@ -194,29 +191,25 @@ L = bwlabeln(M1bg);
 tube1(L==1) = true;
 SE = strel('disk',16);
 mask1 = imdilate(tube1,SE);
-mask1 = or(mask1,M1bg);
-mask1 = not(mask1);
+mask1 = not(or(mask1,M1bg));
 
 tube2 = false(siz);
 L = bwlabeln(M2bg);
 tube2(L==1) = true;
 mask2 = imdilate(tube2,SE);
-mask2 = or(mask2,M2bg);
-mask2 = not(mask2);
+mask2 = not(or(mask2,M2bg));
 
 tube3 = false(siz);
 L = bwlabeln(M3bg);
 tube3(L==1) = true;
 mask3 = imdilate(tube3,SE);
-mask3 = or(mask3,M3bg);
-mask3 = not(mask3);
+mask3 = not(or(mask3,M3bg));
 
 tube4 = false(siz);
 L = bwlabeln(M4bg);
 tube4(L==1) = true;
 mask4 = imdilate(tube4,SE);
-mask4 = or(mask4,M4bg);
-mask4 = not(mask4);
+mask4 = not(or(mask4,M4bg));
 %%
 imagesc(mask4(:,:,400)');
 %%
@@ -233,7 +226,6 @@ pIwM3E1(mask3) = IwM3E1(mask3); pIwM3E2(mask3) = IwM3E2(mask3); pIwM3E3(mask3) =
 pIwM4E1 = zeros(siz); pIwM4E2 = zeros(siz);  pIwM4E3 = zeros(siz);  pIwM4E4 = zeros(siz); pIwM4GT = zeros(siz);
 pIwM4E1(mask4) = IwM4E1(mask4); pIwM4E2(mask4) = IwM4E2(mask4); pIwM4E3(mask4) = IwM4E3(mask4); pIwM4E4(mask4) = IwM4E4(mask4); pIwM4GT(mask4) = IwM4GT(mask4);
 %%
-
 ind = find(IwM1GT == 1); [~,~,z] = ind2sub(siz,ind);
 minmunZ(1) = min(z);
 
