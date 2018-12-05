@@ -1,9 +1,9 @@
 %train_mouse2_mouse3 test_mouse1
-Xtr = [[M2E2(mask2); M3E2(mask3); M4E2(mask4)] [M2E3(mask2); M3E3(mask3); M4E3(mask4)]...
-      [M2E4(mask2); M3E4(mask3); M4E4(mask4)] ];
-Xte = [M1E2(mask1) M1E3(mask1) M1E4(mask1)];
-XGTtr = [M2GT(mask2); M3GT(mask3); M4GT(mask4)];
-XGTte = M1GT(mask1);
+Xtr = [[M1E2(mask1); M2E2(mask2); M3E2(mask3)] [M1E3(mask1); M2E3(mask2); M3E3(mask3)]...
+      [M1E4(mask1); M2E4(mask2); M3E4(mask3)] ];
+Xte = [M4E2(mask4) M4E3(mask4) M4E4(mask4)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask3)];
+XGTte = M4GT(mask4);
 %%
 %initial_value
 K1 = 4; K2 = 3;
@@ -17,10 +17,10 @@ for k = 1:K1
     SS.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
 end 
 %%
-atlas  = atlasfunc2(sig1,sig2,K1,siz,mask1,M2GT,M3GT,M4GT);
+atlas  = atlasfunc2(sig1,sig2,K1,siz,mask4,M1GT,M2GT,M3GT);
 %%
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,likelihood]...
-    = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask1,siz,30);
+    = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask4,siz,30);
 JI1= CalcuJI(Imap,M1GT,K1-1);
 disp("EM_MAP result")
 disp(JI1);

@@ -3,10 +3,9 @@ Xtr = [[M1E2(mask1); M3E2(mask3); M4E2(mask4)] [M1E3(mask1); M3E3(mask3); M4E3(m
 Xte = [M2E2(mask2) M2E3(mask2) M2E4(mask2)];
 XGTtr = [M1GT(mask1); M3GT(mask3); M4GT(mask4)];
 XGTte = M2GT(mask2);
-mask = logical(mask2);
 %%
 K1 = 4;
-sig1 = 3; %bladder 
+sig1 = 5; %bladder 
 sig2 = 3; %kidneys
 for k = 1:K1
     tmp1 = Xtr(:,1);   tmp2 = Xtr(:,2);  tmp3 = Xtr(:,3); 
@@ -203,7 +202,7 @@ mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
 %mu = SLkid.mu; sigma = sqrt(SLkid.Sigma);
 %mu = GMMMuLkid; sigma = sqrt(GMMSigmaLkid);
 
-%In = pM2E2; InGT = RkidGT;
+%In = M2E2; InGT = RkidGT;
 %mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
 %mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
 
@@ -231,7 +230,6 @@ hold off
 edge =[0 0:0.01:1.0 1.0];
 In = M2E2; InGT = RkidGT;
 hold on
-
 histogram(In(InGT ==1),edge,'EdgeAlpha',0.4);
 histogram(In(InGT ==2),edge,'EdgeAlpha',0.4);
 histogram(In(InGT ==3),edge,'EdgeAlpha',0.4);
