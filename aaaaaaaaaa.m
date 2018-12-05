@@ -1,6 +1,6 @@
-%In = pM1E2; InGT = pM1GT; diff1 = 0.25; diff2 = 0.1;
-%In = pM2E2; InGT = pM2GT; diff1 = 0.06; diff2 = 0.1;
-In = pM3E2; InGT = pM3GT; diff1 = 0.06; diff2 = 0.07;
+In = M1E2; InGT = M1GT; diff1 = 0.25; diff2 = 0.1;
+%In = M2E2; InGT = M2GT; diff1 = 0.06; diff2 = 0.1;
+%In = M3E2; InGT = M3GT; diff1 = 0.06; diff2 = 0.07;
 
 [N,edges] = histcounts(In(InGT ==1),'BinWidth',0.001);
 [~,I] = max(N); modeval(1) = (edges(I) + edges(I+1)) /2;
@@ -23,29 +23,29 @@ mask_LkidE2(Intemp > (modeval(2) - diff2) & Intemp < (modeval(2) + diff2) ) = 1;
 Intemp = zeros(siz); mask_RkidE2 = zeros(siz); Intemp(InGT == 3) = In(InGT == 3);
 mask_RkidE2(Intemp > (modeval(3) - diff2) & Intemp < (modeval(3) + diff2) ) = 1; 
 
-cutM3GT = zeros(siz);  cutM3GT(InGT == 4) = 4;
-mask_blaE2 = logical(mask_blaE2); cutM3GT(mask_blaE2) = 1; 
-mask_LkidE2 = logical(mask_LkidE2); cutM3GT(mask_LkidE2) = 2;
-mask_RkidE2 = logical(mask_RkidE2);cutM3GT(mask_RkidE2) = 3; 
-cutM3GT(and(InGT == 1,not(mask_blaE2))) = 5;
-cutM3GT(and(InGT == 2,not(mask_LkidE2))) = 6;
-cutM3GT(and(InGT == 3,not(mask_RkidE2))) = 7;
+cutM1GT = zeros(siz);  cutM1GT(InGT == 4) = 4;
+mask_blaE2 = logical(mask_blaE2); cutM1GT(mask_blaE2) = 1; 
+mask_LkidE2 = logical(mask_LkidE2); cutM1GT(mask_LkidE2) = 2;
+mask_RkidE2 = logical(mask_RkidE2);cutM1GT(mask_RkidE2) = 3; 
+cutM1GT(and(InGT == 1,not(mask_blaE2))) = 5;
+cutM1GT(and(InGT == 2,not(mask_LkidE2))) = 6;
+cutM1GT(and(InGT == 3,not(mask_RkidE2))) = 7;
 
-cutM3GT = uint8(cutM3GT);
+cutM1GT = uint8(cutM1GT);
 %%
 maskM1 = zeros(siz);
-maskM1(cutM3GT == 1) = 1;
-maskM1(cutM3GT == 2) = 1;
-maskM1(cutM3GT == 3) = 1;
+maskM1(cutM1GT == 1) = 1;
+maskM1(cutM1GT == 2) = 1;
+maskM1(cutM1GT == 3) = 1;
 %maskM3(cutGTM3 == 4) = 1;
 maskM1 = logical(maskM1);
 %%
-imagesc(cutM3GT(:,:,75)');
+imagesc(cutM1GT(:,:,75)');
     axis tight equal off
     caxis([0 7]);
    % colormap(map)
 %%
-In = pM1E2; InGT = cutM3GT; Eval = 1; %E2 = 1 E3 = 2 E4 = 3
+In = pM1E2; InGT = cutM1GT; Eval = 1; %E2 = 1 E3 = 2 E4 = 3
 mu = S.mu; sigma = sqrt(S.Sigma);
 %mu = GMMMu; sigma = sqrt(GMMSigma);
 edge =[0 0.01:0.01:2.99 3.0]; xlim([0 3.0])
@@ -73,7 +73,7 @@ plot(edge,y4,'Color',[142 0 204]/255,'LineWidth',2)
 y5 = pdf('Normal',edge,mu(5,Eval),sigma(Eval,Eval,5));
 plot(edge,y5,'Color',[0 128 0]/255,'LineWidth',2)
 %%
-tmp1 = pM3E2; tmp2 = pM3E3; tmp3 = pM3E4; mask = cutM3GT;
+tmp1 = pM3E2; tmp2 = pM3E3; tmp3 = pM3E4; mask = cutM1GT;
 for k = 1:4
     S.mu(k,1) = mean(tmp1(mask == k));
     S.mu(k,2) = mean(tmp2(mask == k));
@@ -82,7 +82,7 @@ for k = 1:4
 end
 clearvars tmp1 tmp2 tmp3
 %%
-In = pM3E2; InGT = cutM3GT(newmaskM3);
+In = pM3E2; InGT = cutM1GT(newmaskM3);
 proval = numel(In(InGT == 5)) / (numel(In(InGT == 2) + numel(In(InGT == 3))));
 %%
 atlas(:,2) = atlas(:,2) - atlas(:,2) .* proval;

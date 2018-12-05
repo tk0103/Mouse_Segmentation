@@ -10,6 +10,11 @@ landmouse3 = [252,282,695; 295,272,696; 232,211,579; 300,191,580; ];
 landmouse4 = [260,290,699; 285,257,700; 183,256,584; 233,200,584; ];
 
 %%
+landmouse1 = [ 307,281,670; 266,295,670;  296,209,555; 219,232,555; ];
+landmouse2 = [266,286,643;298,260,644; 294,347,528; 349,304,526;  ];
+landmouse3 = [295,272,696; 252,282,695;300,191,580;  232,211,579;  ];
+landmouse4 = [ 285,257,700; 260,290,699;  233,200,584;  183,256,584;];
+%%
 threold = 10;
 [~,Z1,transform1] = procrustes(landmouse4,landmouse1,'Reflection',false);
 [~,Z2,transform2] = procrustes(landmouse4,landmouse2,'Reflection',false);
@@ -93,22 +98,10 @@ IwM4E2 = apply_transformation_fast_3d( M4E2, invaffine4, siz );
 IwM4E3 = apply_transformation_fast_3d( M4E3, invaffine4, siz );
 IwM4E4 = apply_transformation_fast_3d( M4E4, invaffine4, siz );
 %%
-imagesc(IwM4E3(:,:,400)');
+imagesc(IwM4E1(:,:,420)');
 axis tight equal off
 colormap(gray)
-caxis([0 0.7])
-%%
-save_raw(IwM1E2,'C:\\Users\\yourb\\Desktop\\IwM1E2.raw','*single');
-save_raw(IwM2E2,'C:\\Users\\yourb\\Desktop\\IwM2E2.raw','*single');
-save_raw(IwM3E2,'C:\\Users\\yourb\\Desktop\\IwM3E2.raw','*single');
-save_raw(IwM4E2,'C:\\Users\\yourb\\Desktop\\IwM4E2.raw','*single');
-%%
-
-save_raw(IwM1GT,'C:\\Users\\yourb\\Desktop\\IwM1GT.raw','*uint8');
-save_raw(IwM2GT,'C:\\Users\\yourb\\Desktop\\IwM2GT.raw','*uint8');
-save_raw(IwM3GT,'C:\\Users\\yourb\\Desktop\\IwM3GT.raw','*uint8');
-save_raw(IwM4GT,'C:\\Users\\yourb\\Desktop\\IwM4GT.raw','*uint8');
-
+%caxis([0 0.7])
 %%
 %GT_transform
 IwM1GT = zeros(siz); IwM2GT = zeros(siz); IwM3GT = zeros(siz); IwM4GT = zeros(siz);
@@ -225,6 +218,8 @@ mask4 = imdilate(tube4,SE);
 mask4 = or(mask4,M4bg);
 mask4 = not(mask4);
 %%
+imagesc(mask4(:,:,400)');
+%%
 %mask processing
 pIwM1E1 = zeros(siz); pIwM1E2 = zeros(siz);  pIwM1E3 = zeros(siz);  pIwM1E4 = zeros(siz); pIwM1GT = zeros(siz);
 pIwM1E1(mask1) = IwM1E1(mask1); pIwM1E2(mask1) = IwM1E2(mask1); pIwM1E3(mask1) = IwM1E3(mask1); pIwM1E4(mask1) = IwM1E4(mask1); pIwM1GT(mask1) = IwM1GT(mask1);
@@ -237,44 +232,46 @@ pIwM3E1(mask3) = IwM3E1(mask3); pIwM3E2(mask3) = IwM3E2(mask3); pIwM3E3(mask3) =
 
 pIwM4E1 = zeros(siz); pIwM4E2 = zeros(siz);  pIwM4E3 = zeros(siz);  pIwM4E4 = zeros(siz); pIwM4GT = zeros(siz);
 pIwM4E1(mask4) = IwM4E1(mask4); pIwM4E2(mask4) = IwM4E2(mask4); pIwM4E3(mask4) = IwM4E3(mask4); pIwM4E4(mask4) = IwM4E4(mask4); pIwM4GT(mask4) = IwM4GT(mask4);
-
 %%
 
-ind = find(pIwM1GT == 1); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM1GT == 1); [~,~,z] = ind2sub(siz,ind);
 minmunZ(1) = min(z);
 
-ind = find(pIwM2GT == 1); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM2GT == 1); [~,~,z] = ind2sub(siz,ind);
 minmunZ(2) = min(z);
 
-ind = find(pIwM3GT == 1); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM3GT == 1); [~,~,z] = ind2sub(siz,ind);
 minmunZ(3) = min(z);
 
-ind = find(pIwM4GT == 1); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM4GT == 1); [~,~,z] = ind2sub(siz,ind);
 minmunZ(4) = min(z);
 st = min(minmunZ);
 disp(min(minmunZ));
 
-ind = find(pIwM1GT == 3); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM1GT == 3); [~,~,z] = ind2sub(siz,ind);
 maximumZ(1) = max(z);
 
-ind = find(pIwM2GT == 3); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM2GT == 3); [~,~,z] = ind2sub(siz,ind);
 maximumZ(2) = max(z);
 
-ind = find(pIwM3GT == 3); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM3GT == 3); [~,~,z] = ind2sub(siz,ind);
 maximumZ(3) = max(z);
 
-ind = find(pIwM4GT == 3); [~,~,z] = ind2sub(siz,ind);
+ind = find(IwM4GT == 3); [~,~,z] = ind2sub(siz,ind);
 maximumZ(4) = max(z);
 disp(max(maximumZ));
 en  = max(maximumZ);
 %%
-pIwM1E1 = pIwM1E1(:,:,st:en); pIwM1E2 = pIwM1E2(:,:,st:en); pIwM1E3 = pIwM1E3(:,:,st:en); pIwM1E4 = pIwM1E4(:,:,st:en); pIwM1GT = pIwM1GT(:,:,st:en); mask1 = mask1(:,:,st:en);
-pIwM2E1 = pIwM2E1(:,:,st:en); pIwM2E2 = pIwM2E2(:,:,st:en); pIwM2E3 = pIwM2E3(:,:,st:en); pIwM2E4 = pIwM2E4(:,:,st:en); pIwM2GT = pIwM2GT(:,:,st:en); mask2 = mask2(:,:,st:en);
-pIwM3E1 = pIwM3E1(:,:,st:en); pIwM3E2 = pIwM3E2(:,:,st:en); pIwM3E3 = pIwM3E3(:,:,st:en); pIwM3E4 = pIwM3E4(:,:,st:en); pIwM3GT = pIwM3GT(:,:,st:en); mask3 = mask3(:,:,st:en);
-pIwM4E1 = pIwM4E1(:,:,st:en); pIwM4E2 = pIwM4E2(:,:,st:en); pIwM4E3 = pIwM4E3(:,:,st:en); pIwM4E4 = pIwM4E4(:,:,st:en); pIwM4GT = pIwM4GT(:,:,st:en); mask4 = mask4(:,:,st:en);
+pIwM1E1 = pIwM1E1(:,:,st:en); pIwM1E2 = pIwM1E2(:,:,st:en); pIwM1E3 = pIwM1E3(:,:,st:en); pIwM1E4 = pIwM1E4(:,:,st:en);  mask1 = mask1(:,:,st:en);
+pIwM2E1 = pIwM2E1(:,:,st:en); pIwM2E2 = pIwM2E2(:,:,st:en); pIwM2E3 = pIwM2E3(:,:,st:en); pIwM2E4 = pIwM2E4(:,:,st:en); mask2 = mask2(:,:,st:en);
+pIwM3E1 = pIwM3E1(:,:,st:en); pIwM3E2 = pIwM3E2(:,:,st:en); pIwM3E3 = pIwM3E3(:,:,st:en); pIwM3E4 = pIwM3E4(:,:,st:en);  mask3 = mask3(:,:,st:en);
+pIwM4E1 = pIwM4E1(:,:,st:en); pIwM4E2 = pIwM4E2(:,:,st:en); pIwM4E3 = pIwM4E3(:,:,st:en); pIwM4E4 = pIwM4E4(:,:,st:en);  mask4 = mask4(:,:,st:en);
 siz2 = size(pIwM1E1);
 
-
+pIwM1GT = pIwM1GT(:,:,st:en);
+pIwM2GT = pIwM2GT(:,:,st:en);
+pIwM3GT = pIwM3GT(:,:,st:en);
+pIwM4GT = pIwM4GT(:,:,st:en);
 %%
 nhood = zeros(3,3,3);
 nhood(2,2,2) = 1.0;
@@ -292,17 +289,29 @@ SE = strel('arbitrary',nhood);
 boneM1 = true(siz); boneM1ori = true(siz); tmp = true(siz);
 boneM1ori(pIwM1E1 < graythresh(pIwM1E1(mask1))) = 0;
 boneM1(pIwM1E1 < graythresh(pIwM1E1(mask1))) = 0;
-diffM1 = pIwM1E2 - pIwM1E4;
+diffM1 = pIwM1E2 - pIwM1E1;
 tmp(diffM1 < 0.01) = 0;
+tmp2 = zeros(siz); L1 = bwconncomp(tmp);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList));
+tmp2(L1.PixelIdxList{idx}) = 1;
+%%
+maxval = 2;
+for n = 1:maxval
+    tmp2 = imdilate(tmp,SE);
+end
+for n = 1:maxval
+    tmp2 = imerode(tmp,SE);
+end
+%%
 boneM1 = boneM1 - tmp;
 negative = find(boneM1<0);
 boneM1(negative) = zeros(size(negative));
 %%
-imagesc(pIwM4E2(:,:,375)');
-axis tight equal off
-caxis([0 0.7])
+a = IwM1E2(boneM1);
 %%
-maxval = 4;
+imagesc(pIwM4GT(:,:,204)');
+%%
+maxval = 2;
 for n = 1:maxval
     boneM1 = imdilate(boneM1,SE);
 end
@@ -312,10 +321,20 @@ end
 
 BWM1 = zeros(siz);
 L1 = bwconncomp(boneM1);
-numPixels = cellfun(@numel,L1.PixelIdxList);
-[~,idx] = max(numPixels);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList));
 BWM1(L1.PixelIdxList{idx}) = 1;
 boneM1 = and(boneM1ori,BWM1);
+%%
+pmask1 = mask1 - boneM1; pmask1 = logical(pmask1);
+ pIwM1E2 = zeros(siz); 
+ pIwM1E2(pmask1) = IwM1E2(pmask1);
+%%
+edge = [-0.1 -0.1:0.001:3.1 3.1];
+histogram(a,edge);
+%%
+imagesc(boneM1(:,:,270)');
+axis tight equal off
+%caxis([0 0.7])
 %%
 boneM2 = true(siz); boneM2ori = true(siz); tmp = true(siz);
 boneM2ori(pIwM2E1 < graythresh(pIwM2E1(mask2))) = 0;
@@ -412,7 +431,7 @@ pIwM4E1 = zeros(siz); pIwM4E2 = zeros(siz);  pIwM4E3 = zeros(siz);  pIwM4E4 = ze
 pIwM4E1(pmask4) = IwM4E1(pmask4); pIwM4E2(pmask4) = IwM4E2(pmask4); pIwM4E3(pmask4) = IwM4E3(pmask4); pIwM4E4(pmask4) = IwM4E4(pmask4); pIwM4GT(pmask4) = IwM4GT(pmask4);
 
 %%
-imagesc(pIwM1GT(:,:,395)');
+imagesc(IwM1GT(:,:,400)');
 axis tight equal off
 %caxis([0 0.7])
 %colormap(gray)

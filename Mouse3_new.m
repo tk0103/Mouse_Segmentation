@@ -1,10 +1,9 @@
-%train_mouse1 mouse2 test_mouse3
-Xtr = [[pM1E2(pmask1); pM2E2(pmask2)] [pM1E3(pmask1); pM2E3(pmask2)] [pM1E4(pmask1); pM2E4(pmask2)] ];
-Xte = [pM3E2(pmask3) pM3E3(pmask3) pM3E4(pmask3)];
-XGTtr = [pM1GT(pmask1); pM2GT(pmask2)];
-XGTte = pM3GT(pmask3);
-%%
-imagesc(maskM1(:,:,200)');
+%train_mouse1 mouse2 mouse4 test_mouse3
+Xtr = [[M1E2(mask1); M2E2(mask2) M4E2(mask4)] [M1E3(mask1); M2E3(mask2) M4E3(mask4)]...
+      [M1E4(mask1); M2E4(mask2)] M4E4(mask4)];
+Xte = [M3E2(mask3) M3E3(mask3) M3E4(mask3)];
+XGTtr = [M1GT(mask1); M2GT(mask2) M4GT(mask4)];
+XGTte = M3GT(mask3);
 %%
 %initial_value
 K=4;
@@ -31,11 +30,11 @@ end
 clearvars tmp1 tmp2 tmp3
 %%
 %Atlas_guided EM
-atlas  = atlasfunc2(sig1,sig2,K,siz2,pmask3,pM1GT,pM2GT);
+atlas  = atlasfunc2(sig1,sig2,K,siz2,mask3,M1GT,M2GT);
 %%
 [Imap,L,PP,GMMMu,GMMSigma,GMMpro,Feat,lilelihood] ...
-    = AtlasGuidedEM_kubo(Xte,atlas,SS,K,pmask3,siz2,30);
-JI1= CalcuJI(Imap,pM3GT,K-1);
+    = AtlasGuidedEM_kubo(Xte,atlas,SS,K,mask3,siz2,30);
+JI1= CalcuJI(Imap,M3GT,K-1);
 disp("EM_MAP result")
 disp(JI1);
 %%
@@ -51,11 +50,11 @@ for n = 1:3
     temp = D < radi;
     newmaskM3(temp) = 1;
 end
-newmaskM3 = and(newmaskM3,pmask3);
+newmaskM3 = and(newmaskM3,mask3);
 newmaskM3 = logical(newmaskM3);
 %%
 GT3 = zeros(siz2);
-GT3(newmaskM3) = pM3GT(newmaskM3);
+GT3(newmaskM3) = M3GT(newmaskM3);
 %%
 tmp1 = pM3E2; tmp2 = pM3E3; tmp3 = pM3E4; mask = cutGTM3;
 for k = 1:7
@@ -81,13 +80,13 @@ Rkidration = val1/ (val1 + val2);
 %%
 %Atlas_guided EM
 clearvars atlasnew
-atlasnew  = atlasfunc3(sig1,sig2,siz2,pmask3,newmaskM3,GMMpro,blaratio,Lkidration,Rkidration);
+atlasnew  = atlasfunc3(sig1,sig2,siz2,mask3,newmaskM3,GMMpro,blaratio,Lkidration,Rkidration);
 Snew.mu = GMMMu; Snew.Sigma = GMMSigma;
 Xtenew = [pM3E2(newmaskM3) pM3E3(newmaskM3) pM3E4(newmaskM3)];
 %%
 [Imap2,~,PP2,GMMMu2,GMMSigma2,GMMpro2,~,likelihood2] ...
     = AtlasGuidedEM_kubo(Xtenew,atlasnew,S,7,newmaskM3,siz2,30);
-JI2= CalcuJI(Imap2,pM3GT,K-1);
+JI2= CalcuJI(Imap2,M3GT,K-1);
 disp("EM_MAP result")
 disp(JI2);
 %%
@@ -95,7 +94,7 @@ Imap3 = Imap2;
 Imap3(Imap2 == 5) = 1;
 Imap3(Imap2 == 6) = 2;
 Imap3(Imap2 == 7) = 3;
-JI2= CalcuJI(Imap3,pM3GT,K-1);
+JI2= CalcuJI(Imap3,M3GT,K-1);
 disp("EM_MAP result")
 disp(JI2);
 %%

@@ -49,7 +49,7 @@ M3GT = reshape(M3GT,siz); mask3 = reshape(mask3,siz); mask3 = logical(mask3);
 M4E1 = reshape(M4E1,siz); M4E2 = reshape(M4E2,siz); M4E3 = reshape(M4E3,siz); M4E4 = reshape(M4E4,siz); 
 M4GT = reshape(M4GT,siz); mask4 = reshape(mask4,siz); mask4 = logical(mask4);
 %%
-imagesc(M1E1(:,:,226)');
+imagesc(M1GT(:,:,226)');
 %colormap(gray);
 
 %%
