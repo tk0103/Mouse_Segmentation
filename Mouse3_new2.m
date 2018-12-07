@@ -17,7 +17,7 @@ for k = 1:K
 end
 clearvars tmp1 tmp2 tmp3
 %%
-atlas  = atlasfunc2(sig1,sig2,K,siz,mask,pM1GT,pM2GT);
+atlas  = atlasfunc_old(sig1,sig2,K,siz,mask,pM1GT,pM2GT);
 
 %%
 [Imap,~,PP,GMMMu,GMMSigma,GMMpro,Feat,lilelihood] ...
@@ -26,7 +26,7 @@ JI1= CalcuJI(Imap,pM3GT,K-1);
 disp("EM_MAP result")
 disp(JI1);
 %%
-imagesc(Imap(:,:,70)');
+imagesc(Imap(:,:,200)');
 axis tight equal off
 caxis([0 4])
 %%
@@ -34,56 +34,53 @@ blamask = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap == 1);
 [~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
 blamaxcomp(L1.PixelIdxList{idx}) = 1; 
-temp = bwdist(logical(blamaxcomp)) <  power(bwarea(blamaxcomp(:))/4/pi*3,1/3);
-blamask(temp) = 1;
-blamask = logical(and(blamask,mask)); 
+tmp = bwdist(logical(blamaxcomp)) <  power(bwarea(blamaxcomp(:))/4/pi*3,1/3);
+blamask(tmp) = 1;
+blamask = logical(and(blamask,pmask3)); 
 
 Lmaxcomp = zeros(siz); Lkidmask = zeros(siz);
 L1 = bwconncomp(Imap == 2);
 [~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
 Lmaxcomp(L1.PixelIdxList{idx}) = 1;
-temp = bwdist(logical(Lmaxcomp)) < power(bwarea(Lmaxcomp(:))/4/pi*3,1/3);
-Lkidmask(temp) = 1;
-Lkidmask = logical(and(Lkidmask,mask));
+tmp = bwdist(logical(Lmaxcomp)) < power(bwarea(Lmaxcomp(:))/4/pi*3,1/3);
+Lkidmask(tmp) = 1;
+Lkidmask = logical(and(Lkidmask,pmask3));
 
 Rmaxcomp = zeros(siz); Rkidmask = zeros(siz);
 L1 = bwconncomp(Imap == 3);
 [~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
 Rmaxcomp(L1.PixelIdxList{idx}) = 1;
-temp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
-Rkidmask(temp) = 1;
-Rkidmask = logical(and(Rkidmask,mask));
-
-temp = zeros(siz);
-temp(bwdist(logical(Rmaxcomp)) > bwdist(logical(Rmaxcomp))) = 1;
-temp2 = and(temp,and(Lkidmask,Rkidmask));
-Rkidmask = logical(Rkidmask - temp2); 
-
-temp(bwdist(logical(Rmaxcomp)) < bwdist(logical(Lmaxcomp))) = 1;
-temp2 = and(temp,and(Lkidmask,Rkidmask));
-Lkidmask = logical(Lkidmask - temp2);
+tmp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
+Rkidmask(tmp) = 1;
+Rkidmask = logical(and(Rkidmask,pmask3));
+LRAND = and(Rkidmask,Lkidmask);
 %%
-temp = cutM3GT == 1; temp2 = cutM3GT == 5;
-val1 = sum(temp(:)); val2 = sum(temp2(:));
-blaratio = val1/ (val1 + val2);
+[XX,YY,ZZ] = meshgrid(1:siz(1),1:siz(2),1:siz(3));
+tmp = bwdist(logical(not(Lmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RLkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
 
-temp = cutM3GT == 2; temp2 = cutM3GT == 6;
-val1 = sum(temp(:)); val2 = sum(temp2(:));
-Lkidration = val1/ (val1 + val2);
+tmp = bwdist(logical(not(Rmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RRkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
 
-temp = cutM3GT == 3; temp2 = cutM3GT == 7;
-val1 = sum(temp(:)); val2 = sum(temp2(:));
-Rkidration = val1/ (val1 + val2);
+tmp = zeros(siz);
+tmp(RLkid > RRkid) = 1;
+tmp2 = and(tmp,LRAND);
+Rkidmask = logical(Rkidmask - LRAND + tmp2); 
 
+tmp(RRkid > RLkid) = 1;
+tmp2 = and(tmp,LRAND);
+Lkidmask = logical(Lkidmask - LRAND + tmp2);
 %%
 Xtebla  = [pM3E2(blamask)  pM3E3(blamask) pM3E4(blamask)];
 XteLkid = [pM3E2(Lkidmask) pM3E3(Lkidmask) pM3E4(Lkidmask)];
 XteRkid = [pM3E2(Rkidmask) pM3E3(Rkidmask) pM3E4(Rkidmask)];
 %%
 clearvars atlasbla atlasLkid atlasRkid
-atlasbla   = atlasfunc3(sig1,siz,mask,blamask,GMMpro,0.8,1);
-atlasLkid  = atlasfunc3(sig1,siz,mask,Lkidmask,GMMpro,0.8,2);
-atlasRkid  = atlasfunc3(sig1,siz,mask,Rkidmask,GMMpro,0.8,3);
+atlasbla   = atlasfunc2(sig1,siz,mask,blamask,GMMpro,0.8,1);
+atlasLkid  = atlasfunc2(sig1,siz,mask,Lkidmask,GMMpro,0.8,2);
+atlasRkid  = atlasfunc2(sig1,siz,mask,Rkidmask,GMMpro,0.8,3);
 
 %%
 atlastemp1 = zeros(siz); 
@@ -222,7 +219,7 @@ JI2= CalcuJI(Imap2,pM3GT,K-1);
 disp(JI2);
 
 %%
-imagesc(Imap2(:,:,220)');
+imagesc(RkidGT(:,:,230)');
 axis tight equal off
 caxis([0 4])
 %%

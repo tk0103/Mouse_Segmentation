@@ -1,6 +1,6 @@
-In = M1E2; InGT = M1GT; diff1 = 0.25; diff2 = 0.1;
+%In = M1E2; InGT = M1GT; diff1 = 0.25; diff2 = 0.1;
 %In = M2E2; InGT = M2GT; diff1 = 0.06; diff2 = 0.1;
-%In = M3E2; InGT = M3GT; diff1 = 0.06; diff2 = 0.07;
+In = M3E2; InGT = M3GT; diff1 = 0.06; diff2 = 0.07;
 
 [N,edges] = histcounts(In(InGT ==1),'BinWidth',0.001);
 [~,I] = max(N); modeval(1) = (edges(I) + edges(I+1)) /2;
@@ -23,14 +23,14 @@ mask_LkidE2(Intemp > (modeval(2) - diff2) & Intemp < (modeval(2) + diff2) ) = 1;
 Intemp = zeros(siz); mask_RkidE2 = zeros(siz); Intemp(InGT == 3) = In(InGT == 3);
 mask_RkidE2(Intemp > (modeval(3) - diff2) & Intemp < (modeval(3) + diff2) ) = 1; 
 
-cutM1GT = zeros(siz);  cutM1GT(InGT == 4) = 4;
-mask_blaE2 = logical(mask_blaE2); cutM1GT(mask_blaE2) = 1; 
-mask_LkidE2 = logical(mask_LkidE2); cutM1GT(mask_LkidE2) = 2;
-mask_RkidE2 = logical(mask_RkidE2);cutM1GT(mask_RkidE2) = 3; 
-cutM1GT(and(InGT == 1,not(mask_blaE2))) = 5;
-cutM1GT(and(InGT == 2,not(mask_LkidE2))) = 6;
-cutM1GT(and(InGT == 3,not(mask_RkidE2))) = 7;
-cutM1GT = uint8(cutM1GT);
+cutM3GT = zeros(siz);  cutM3GT(InGT == 4) = 4;
+mask_blaE2 = logical(mask_blaE2); cutM3GT(mask_blaE2) = 1; 
+mask_LkidE2 = logical(mask_LkidE2); cutM3GT(mask_LkidE2) = 2;
+mask_RkidE2 = logical(mask_RkidE2);cutM3GT(mask_RkidE2) = 3; 
+cutM3GT(and(InGT == 1,not(mask_blaE2))) = 5;
+cutM3GT(and(InGT == 2,not(mask_LkidE2))) = 6;
+cutM3GT(and(InGT == 3,not(mask_RkidE2))) = 7;
+cutM3GT = uint8(cutM3GT);
 
 %%
 %GraphCut Enrgy of each term

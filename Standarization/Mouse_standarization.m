@@ -15,11 +15,16 @@ landmouse2 = [266,286,643; 298,260,644; 294,347,528; 349,304,526;];
 landmouse3 = [295,272,696; 252,282,695; 300,191,580; 232,211,579;];
 landmouse4 = [285,257,700; 260,290,699; 233,200,584; 183,256,584;];
 %%
+landmouse1 = [307,281,670; 266,295,670; 296,209,555; 219,232,555;];
+landmouse2 = [266,286,643; 298,260,644; 294,347,528; 349,304,526;];
+landmouse3 = [295,272,696; 252,282,695; 300,191,580; 232,211,579;];
+landmouse4 = [ 287,258,700;  260,291,699; 243,201,585;  195,266,584; ];
+%%
 threold = 10;
-[~,Z1,transform1] = procrustes(landmouse4,landmouse1,'Reflection',false);
-[~,Z2,transform2] = procrustes(landmouse4,landmouse2,'Reflection',false);
-[~,Z3,transform3] = procrustes(landmouse4,landmouse3,'Reflection',false);
-meanZ = (Z1 + Z2 + Z3 + landmouse4 ) /4;
+[~,Z1,transform1] = procrustes(landmouse3,landmouse1,'Reflection',false);
+[~,Z2,transform2] = procrustes(landmouse3,landmouse2,'Reflection',false);
+[~,Z3,transform3] = procrustes(landmouse3,landmouse4,'Reflection',false);
+meanZ = (Z1 + Z2 + Z3 + landmouse3 ) /4;
 
 for round = 2:10
     disp(round);
@@ -75,29 +80,49 @@ affine4(4,4) = 1;
 invaffine4 = invert(affine3d(affine4));
 %%
 IwM1E1 = apply_transformation_fast_3d( M1E1, invaffine1, siz );
-IwM1E2 = apply_transformation_fast_3d( M1E2, invaffine1, siz );
+ IwM1E2 = apply_transformation_fast_3d( M1E2, invaffine1, siz );
 IwM1E3 = apply_transformation_fast_3d( M1E3, invaffine1, siz );
 IwM1E4 = apply_transformation_fast_3d( M1E4, invaffine1, siz );
 
 IwM2E1 = apply_transformation_fast_3d( M2E1, invaffine2, siz );
-IwM2E2 = apply_transformation_fast_3d( M2E2, invaffine2, siz );
+ IwM2E2 = apply_transformation_fast_3d( M2E2, invaffine2, siz );
 IwM2E3 = apply_transformation_fast_3d( M2E3, invaffine2, siz );
 IwM2E4 = apply_transformation_fast_3d( M2E4, invaffine2, siz );
 
 IwM3E1 = apply_transformation_fast_3d( M3E1, invaffine3, siz );
-IwM3E2 = apply_transformation_fast_3d( M3E2, invaffine3, siz );
+ IwM3E2 = apply_transformation_fast_3d( M3E2, invaffine3, siz );
 IwM3E3 = apply_transformation_fast_3d( M3E3, invaffine3, siz );
 IwM3E4 = apply_transformation_fast_3d( M3E4, invaffine3, siz );
 
 IwM4E1 = apply_transformation_fast_3d( M4E1, invaffine4, siz );
-IwM4E2 = apply_transformation_fast_3d( M4E2, invaffine4, siz );
+ IwM4E2 = apply_transformation_fast_3d( M4E2, invaffine4, siz );
 IwM4E3 = apply_transformation_fast_3d( M4E3, invaffine4, siz );
 IwM4E4 = apply_transformation_fast_3d( M4E4, invaffine4, siz );
 %%
-imagesc(IwM4E1(:,:,420)');
+slice = 385;
+subplot(2,2,1)
+imagesc(IwM1E2(:,:,slice)');
 axis tight equal off
 colormap(gray)
-%caxis([0 0.7])
+caxis([0 0.7])
+
+subplot(2,2,2)
+imagesc(IwM2E2(:,:,slice)');
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
+
+subplot(2,2,3)
+imagesc(IwM3E2(:,:,slice)');
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
+
+subplot(2,2,4)
+imagesc(IwM4E2(:,:,slice)');
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
 %%
 %GT_transform
 IwM1GT = zeros(siz);
@@ -259,11 +284,16 @@ pIwM2E1 = pIwM2E1(:,:,st:en); pIwM2E2 = pIwM2E2(:,:,st:en); pIwM2E3 = pIwM2E3(:,
 pIwM3E1 = pIwM3E1(:,:,st:en); pIwM3E2 = pIwM3E2(:,:,st:en); pIwM3E3 = pIwM3E3(:,:,st:en); pIwM3E4 = pIwM3E4(:,:,st:en);  mask3 = mask3(:,:,st:en);
 pIwM4E1 = pIwM4E1(:,:,st:en); pIwM4E2 = pIwM4E2(:,:,st:en); pIwM4E3 = pIwM4E3(:,:,st:en); pIwM4E4 = pIwM4E4(:,:,st:en);  mask4 = mask4(:,:,st:en);
 siz2 = size(pIwM1E1);
-
+%%
 pIwM1GT = pIwM1GT(:,:,st:en);
 pIwM2GT = pIwM2GT(:,:,st:en);
 pIwM3GT = pIwM3GT(:,:,st:en);
 pIwM4GT = pIwM4GT(:,:,st:en);
+%%
+M1GT = IwM1GT(:,:,st:en);
+M2GT = IwM2GT(:,:,st:en);
+M3GT = IwM3GT(:,:,st:en);
+M4GT = IwM4GT(:,:,st:en);
 %%
 nhood = zeros(3,3,3);
 nhood(2,2,2) = 1.0;
@@ -299,9 +329,11 @@ boneM1 = boneM1 - tmp;
 negative = find(boneM1<0);
 boneM1(negative) = zeros(size(negative));
 %%
+a = bwdist(logical(not(new)));
+%%
 a = IwM1E2(boneM1);
 %%
-imagesc(pIwM4GT(:,:,204)');
+imagesc(a(:,:,314)');
 %%
 maxval = 2;
 for n = 1:maxval

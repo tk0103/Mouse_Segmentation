@@ -17,13 +17,16 @@ for k = 1:K1
     SS.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
 end 
 %%
-atlas  = atlasfunc(sig1,sig2,K1,siz,mask4,M1GT,M2GT,M3GT);
+atlas  = atlasfunc1(sig1,sig2,K1,siz,mask4,M1GT,M2GT,M3GT);
 %%
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,likelihood]...
     = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask4,siz,30);
-JI1= CalcuJI(Imap,M1GT,K1-1);
+JI1= CalcuJI(Imap,M4GT,K1-1);
 disp("EM_MAP result")
 disp(JI1);
+%%
+imagesc(M4E2(:,:,205)');
+axis tight equal
 %%
 blamask = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap == 1);
@@ -174,7 +177,9 @@ Imap2 = zeros(siz);
 Imap2(Imapbla == 1) = 1;  Imap2(Imapbla == 2) = 1;
 Imap2(ImapLkid == 1) = 2; Imap2(ImapLkid == 2) = 2;
 Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
-JI2= CalcuJI(Imap2,M4GT,K1-1);
+JI1= CalcuJI(Imap,M4GT,K2);
+disp(JI1);
+JI2= CalcuJI(Imap2,M4GT,K2);
 disp(JI2);
 
 %%

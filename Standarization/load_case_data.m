@@ -42,7 +42,8 @@ M3E1 = reshape(M3E1,siz); M3E2 = reshape(M3E2,siz); M3E3 = reshape(M3E3,siz); M3
 M3GT = reshape(M3GT,siz); 
 M4E1 = reshape(M4E1,siz); M4E2 = reshape(M4E2,siz); M4E3 = reshape(M4E3,siz); M4E4 = reshape(M4E4,siz); 
 M4GT = reshape(M4GT,siz); 
-
+%%
+M4E2new = permute(M4E2,[2 1 3]);
 %%
 imagesc(M4GT(:,:,400)');
 %%

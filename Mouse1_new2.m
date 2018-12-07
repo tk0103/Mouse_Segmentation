@@ -18,7 +18,7 @@ end
  
 %%
 %Atlas_guided EM
-atlas  = atlasfunc(sig1,sig2,K,siz,mask,pM2GT,pM3GT);
+atlas  = atlasfunc_old(sig1,sig2,K,siz,mask,pM2GT,pM3GT);
 %%
 [Imap,~,PP,GMMMu,GMMSigma,GMMpro,Feat,likelihood]...
     = AtlasGuidedEM_kubo(Xte,atlas,SS,K,mask,siz,30);
@@ -34,34 +34,44 @@ blamask = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap == 1);
 [~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
 blamaxcomp(L1.PixelIdxList{idx}) = 1; 
-temp = bwdist(logical(blamaxcomp)) <  power(bwarea(blamaxcomp(:))/4/pi*3,1/3);
-blamask(temp) = 1;
-blamask = logical(and(blamask,mask)); 
+tmp = bwdist(logical(blamaxcomp)) <  power(bwarea(blamaxcomp(:))/4/pi*3,1/3);
+blamask(tmp) = 1;
+blamask = logical(and(blamask,pmask1)); 
 
 Lmaxcomp = zeros(siz); Lkidmask = zeros(siz);
 L1 = bwconncomp(Imap == 2);
 [~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
 Lmaxcomp(L1.PixelIdxList{idx}) = 1;
-temp = bwdist(logical(Lmaxcomp)) < power(bwarea(Lmaxcomp(:))/4/pi*3,1/3);
-Lkidmask(temp) = 1;
-Lkidmask = logical(and(Lkidmask,mask));
+tmp = bwdist(logical(Lmaxcomp)) < power(bwarea(Lmaxcomp(:))/4/pi*3,1/3);
+Lkidmask(tmp) = 1;
+Lkidmask = logical(and(Lkidmask,pmask1));
 
 Rmaxcomp = zeros(siz); Rkidmask = zeros(siz);
 L1 = bwconncomp(Imap == 3);
 [~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
 Rmaxcomp(L1.PixelIdxList{idx}) = 1;
-temp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
-Rkidmask(temp) = 1;
-Rkidmask = logical(and(Rkidmask,mask));
+tmp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
+Rkidmask(tmp) = 1;
+Rkidmask = logical(and(Rkidmask,pmask1));
+LRAND = and(Rkidmask,Lkidmask);
+%%
+[XX,YY,ZZ] = meshgrid(1:siz(1),1:siz(2),1:siz(3));
+tmp = bwdist(logical(not(Lmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RLkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
 
-temp = zeros(siz);
-temp(bwdist(logical(Rmaxcomp)) > bwdist(logical(Rmaxcomp))) = 1;
-temp2 = and(temp,and(Lkidmask,Rkidmask));
-Rkidmask = logical(Rkidmask - temp2); 
+tmp = bwdist(logical(not(Rmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RRkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
 
-temp(bwdist(logical(Rmaxcomp)) < bwdist(logical(Lmaxcomp))) = 1;
-temp2 = and(temp,and(Lkidmask,Rkidmask));
-Lkidmask = logical(Lkidmask - temp2);
+tmp = zeros(siz);
+tmp(RLkid > RRkid) = 1;
+tmp2 = and(tmp,LRAND);
+Rkidmask = logical(Rkidmask - LRAND + tmp2); 
+
+tmp(RRkid > RLkid) = 1;
+tmp2 = and(tmp,LRAND);
+Lkidmask = logical(Lkidmask - LRAND + tmp2);
 %%
 temp = cutM1GT == 1; temp2 = cutM1GT == 5;
 val1 = sum(temp(:)); val2 = sum(temp2(:));
@@ -108,6 +118,9 @@ LkidGT(GT == 2) = 1; LkidGT(GT == 6) = 2;
 GT = zeros(siz);  GT(Rkidmask) = cutM1GT(Rkidmask);
 RkidGT = zeros(siz); RkidGT(Rkidmask) = 3;
 RkidGT(GT == 3) = 1; RkidGT(GT == 7) = 2; 
+%%
+imagesc(RkidGT(:,:,195)');
+axis tight equal off
 %%
 Sbla.mu(1,:) = GMMMu(1,:) +0.5*sqrt(diag(GMMSigma(:,:,1)))';
 Sbla.mu(2,:) = GMMMu(1,:) -0.5*sqrt(diag(GMMSigma(:,:,1)))';
@@ -210,17 +223,17 @@ Imap2(ImapRkid == 2) = 3;
 JI2= CalcuJI(Imap2,pM1GT,K-1);
 disp(JI2);
 %%
-%In = pM1E2; InGT = blaGT;
-%mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
+In = pM1E2; InGT = blaGT;
+mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
 %mu = GMMMubla; sigma = sqrt(GMMSigmabla);
 
 %In = pM1E2; InGT = LkidGT;
 %mu = SLkid.mu; sigma = sqrt(SLkid.Sigma);
 %mu = GMMMuLkid; sigma = sqrt(GMMSigmaLkid);
 
-In = pM1E2; InGT = RkidGT;
-mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
-mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
+%In = pM1E2; InGT = RkidGT;
+%mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
+%mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
 
 edge =[0 0:0.01:1.7 1.7];
 xlim([0 1.7])

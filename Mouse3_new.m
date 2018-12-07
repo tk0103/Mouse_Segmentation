@@ -1,8 +1,8 @@
 %train_mouse1 mouse2 mouse4 test_mouse3
-Xtr = [[M1E2(mask1); M2E2(mask2) M4E2(mask4)] [M1E3(mask1); M2E3(mask2) M4E3(mask4)]...
-      [M1E4(mask1); M2E4(mask2)] M4E4(mask4)];
+Xtr = [[M1E2(mask1); M2E2(mask2); M4E2(mask4)] [M1E3(mask1); M2E3(mask2); M4E3(mask4)]...
+      [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
 Xte = [M3E2(mask3) M3E3(mask3) M3E4(mask3)];
-XGTtr = [M1GT(mask1); M2GT(mask2) M4GT(mask4)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 XGTte = M3GT(mask3);
 %%
 %initial_value
@@ -18,7 +18,7 @@ for k = 1:K1
     SS.Sigma(:,:,k) = cov(([tmp1(XGTtr == k),tmp2(XGTtr == k),tmp3(XGTtr == k)]));
 end
 %%
-atlas  = atlasfunc(sig1,sig2,K1,siz,mask3,M1GT,M2GT,M4GT);
+atlas  = atlasfunc1(sig1,sig2,K1,siz,mask3,M1GT,M2GT,M4GT);
 %%
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,lilelihood] ...
     = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask3,siz,30);
@@ -26,7 +26,7 @@ JI1= CalcuJI(Imap,M3GT,K1-1);
 disp("EM_MAP result")
 disp(JI1);
 %%
-imagesc(Imap(:,:,155)');
+imagesc(Imap(:,:,200)');
 axis tight equal off
 caxis([0 4])
 %%
@@ -83,15 +83,15 @@ atlasbla   = atlasfunc2(sig2,siz,mask3,blamask,GMMpro,0.8,1);
 atlasLkid  = atlasfunc2(sig2,siz,mask3,Lkidmask,GMMpro,0.8,2);
 atlasRkid  = atlasfunc2(sig2,siz,mask3,Rkidmask,GMMpro,0.8,3);
 %%
-GT = zeros(siz);  GT(blamask) = cutM2GT(blamask);
+GT = zeros(siz);  GT(blamask) = cutM3GT(blamask);
 blaGT = zeros(siz); blaGT(blamask) = 3;
 blaGT(GT == 1) = 1; blaGT(GT == 5) = 2; 
 
-GT = zeros(siz);  GT(Lkidmask) = cutM2GT(Lkidmask);
+GT = zeros(siz);  GT(Lkidmask) = cutM3GT(Lkidmask);
 LkidGT = zeros(siz); LkidGT(Lkidmask) = 3;
 LkidGT(GT == 2) = 1; LkidGT(GT == 6) = 2;
 
-GT = zeros(siz);  GT(Rkidmask) = cutM2GT(Rkidmask);
+GT = zeros(siz);  GT(Rkidmask) = cutM3GT(Rkidmask);
 RkidGT = zeros(siz); RkidGT(Rkidmask) = 3;
 RkidGT(GT == 3) = 1; RkidGT(GT == 7) = 2; 
 
@@ -170,21 +170,23 @@ Imap2 = zeros(siz);
 Imap2(Imapbla == 1) = 1; Imap2(Imapbla == 2) = 1;
 Imap2(ImapLkid == 1) = 2; Imap2(ImapLkid == 2) = 2;
 Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
-JI2= CalcuJI(Imap2,M3GT,K2);
+JI1 = CalcuJI(Imap,M3GT,K2);
+disp(JI1);
+JI2 = CalcuJI(Imap2,M3GT,K2);
 disp(JI2);
 
 %%
-imagesc(3(:,:,210)');
+imagesc(Imap2(:,:,210)');
 axis tight equal off
 caxis([0 0.7])
 colormap(gray)
 %%
-imagesc(ImapLkid(:,:,210)');
+imagesc(Imap2(:,:,200)');
 axis tight equal off
 caxis([0 4])
 %%
-In = M3E2; InGT = blaGT;
-mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
+%In = M3E2; InGT = blaGT;
+%mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
 %mu = GMMMubla; sigma = sqrt(GMMSigmabla);
 
 %In = M3E2; InGT = LkidGT;

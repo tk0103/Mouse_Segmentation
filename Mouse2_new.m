@@ -16,7 +16,7 @@ for k = 1:K1
 end
 %%
 %Atlas_guided EM2
-atlas  = atlasfunc(sig1,sig2,K1,siz,mask2,M1GT,M3GT,M4GT);
+atlas  = atlasfunc1(sig1,sig2,K1,siz,mask2,M1GT,M3GT,M4GT);
 %%
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,likelihood] = ...
     AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask2,siz,30);
@@ -24,7 +24,7 @@ JI1= CalcuJI(Imap,M2GT,K1-1);
 disp("EM_MAP result")
 disp(JI1);
 %%
-imagesc(Rkidmask(:,:,240)');
+imagesc(M2GT(:,:,95)');
 axis tight equal 
 %%
 blamask = zeros(siz); blamaxcomp = zeros(siz);
@@ -154,10 +154,10 @@ SRkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
 %%
 [Imapbla,~,~,GMMMubla,GMMSigmabla,GMMprobla,Featbla,likelihoodbla]...
     = AtlasGuidedEM_kubo(Xtebla,atlasbla,Sbla,3,blamask,siz,30);
-%%
+
 [ImapLkid,~,PPLkid,GMMMuLkid,GMMSigmaLkid,~,~,~]...
     = AtlasGuidedEM_kubo(XteLkid,atlasLkid,SLkid,3,Lkidmask,siz,30);
-%%
+
 [ImapRkid,~,~,GMMMuRkid,GMMSigmaRkid,~,~,~]...
     = AtlasGuidedEM_kubo(XteRkid,atlasRkid,SRkid,3,Rkidmask,siz,30);
 %%
@@ -177,6 +177,8 @@ Imap2 = zeros(siz);
 Imap2(Imapbla == 1) = 1; Imap2(Imapbla == 2) = 1;
 Imap2(ImapLkid == 1) = 2; Imap2(ImapLkid == 2) = 2;
 Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
+JI1= CalcuJI(Imap,M2GT,K1-1);
+disp(JI1);
 JI2= CalcuJI(Imap2,M2GT,K1-1);
 disp(JI2);
 
@@ -186,13 +188,13 @@ axis tight equal off
 caxis([0 0.7])
 colormap(gray)
 %%
-imagesc(ImapLkid(:,:,210)');
+imagesc(Imap2(:,:,210)');
 axis tight equal off
 caxis([0 4])
 %%
 a = or(Imap2,Rkidmask);
 %%
-imagesc(ImapLkid(:,:,230)');
+imagesc(Imap2(:,:,240)');
 %%
 In = M2E2; InGT = blaGT;
 mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);

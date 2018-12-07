@@ -39,7 +39,7 @@ mask2 = load_raw([InputPath CasePath{22,:} '.raw'],'*uint8');
 mask3 = load_raw([InputPath CasePath{23,:} '.raw'],'*uint8');
 mask4 = load_raw([InputPath CasePath{24,:} '.raw'],'*uint8');
 %%
-siz = [544 544  284];
+siz = [544 544  287];
 M1E1 = reshape(M1E1,siz); M1E2 = reshape(M1E2,siz); M1E3 = reshape(M1E3,siz);  M1E4 = reshape(M1E4,siz);
 M1GT = reshape(M1GT,siz); mask1 = reshape(mask1,siz); mask1 = logical(mask1);
 M2E1 = reshape(M2E1,siz); M2E2 = reshape(M2E2,siz); M2E3 = reshape(M2E3,siz); M2E4 = reshape(M2E4,siz);
