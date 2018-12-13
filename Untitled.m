@@ -31,13 +31,7 @@ out = ismember(L, find( atval<=0.34  &...
     dist<=50 & [stats.Area]>=median([stats.Area])));
 out = imdilate(out,SE);
 %%
-SE = strel('sphere',2); 
-boneM1 = imdilate(boneM1,SE);
-boneM2 = imdilate(boneM2,SE);
-boneM3 = imdilate(boneM3,SE);
-boneM4 = imdilate(boneM4,SE);
-%%
-imagesc(boneM1(:,:,70)');
+imagesc(M4E2(:,:,260)');
 %caxis([0 10])
 axis tight equal
 %%
@@ -152,14 +146,20 @@ mask3 = pmask3;
 mask4 = pmask4;
 %%
 temp = zeros(siz);
-temp(pM1GT == 1) = 1;
-SE = strel('sphere',2); 
-temp2 = imdilate(temp,SE);
-temp2 = temp2 - temp; 
+temp(pM1GT == 1) = 8;
+SE = strel('sphere',1); 
+%%
+temp2 = imerode(temp,SE);
+%%
+pM1GT(pM1GT == 1) = 4;
+pM1GT(temp2 == 8) = 1;
+%%
+temp2 = temp- temp2; 
 %%
 imagesc(M1GT(:,:,70)');
 axis tight equal
 %%
-M1GT = M1GT + temp2;
+pM1GT = pM1GT - uint8(temp2);
+%%
 M1GT(M1GT == 5) = 1;
 M1GT = uint8(M1GT);

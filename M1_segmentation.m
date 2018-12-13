@@ -106,6 +106,11 @@ imagesc(voronoiFig(:,:,110)');
 axis tight equal off
 caxis([0 4])
 %%
+
+lambda = 2;
+h = 0.4;
+c = 1.2;
+%%
 % for n = 1:27
 n = 1;
 N = size(RP,1);
@@ -114,6 +119,9 @@ PreLabel = zeros(N,1);
 Output = zeros(siz2);
 flag = 0;
 PreE = 0;
+
+%%
+
 Sigmat =  abs(bsxfun(@minus,GMMMu(:,1),GMMMu(:,1)'))*h(n) + eye(K);
 PropLabel = double(voronoiOut);
 PropLabel(PropLabel == 0) = 1;
@@ -160,6 +168,8 @@ Imapout = Imap;
 Imapout(Imap==4) = 0;
 pM1GTout = pM1GT;
 pM1GTout(pM1GT==4) = 0;
+%%
+imagesc(Imap2(:,:,200)');
 %%
 slice1 = 206;
 slice2 = 66;

@@ -10,21 +10,29 @@ landmouse3 = [252,282,695; 295,272,696; 232,211,579; 300,191,580; ];
 landmouse4 = [260,290,699; 285,257,700; 183,256,584; 233,200,584; ];
 
 %%
+x = 20; y = -20;
 landmouse1 = [307,281,670; 266,295,670; 296,209,555; 219,232,555;];
-landmouse2 = [266,286,643; 298,260,644; 294,347,528; 349,304,526;];
+landmouse2 = [266,286,643; 298,260,644; 294,347,538; 349,304,536;];
 landmouse3 = [295,272,696; 252,282,695; 300,191,580; 232,211,579;];
-landmouse4 = [285,257,700; 260,290,699; 233,200,584; 183,256,584;];
+landmouse4 = [285,257,700; 260,290,699; 233+x,200+y,584; 183+x,256+y,584;];
 %%
-landmouse1 = [307,281,670; 266,295,670; 296,209,555; 219,232,555;];
-landmouse2 = [266,286,643; 298,260,644; 294,347,528; 349,304,526;];
-landmouse3 = [295,272,696; 252,282,695; 300,191,580; 232,211,579;];
-landmouse4 = [ 287,258,700;  260,291,699; 243,201,585;  195,266,584; ];
+%91 93 90
+landmouse1 = [266,295,670; 307,281,670; 219,232,555; 296,209,555; 245,172,433; 250,211,308];
+landmouse2 = [298,260,644; 266,286,643; 349,304,526; 294,347,528; 363,345,405; 347,316,300];
+landmouse3 = [252,282,695; 295,272,696; 232,211,579; 300,191,580; 240,167,443; 239,204,326];
+landmouse4 = [ 260,290,699;285,257,700;183,256,584; 233,200,584;  185,190,439; 220,219,315;];
+%%
+%91 93 90
+landmouse1 = [266,295,670; 307,281,670; 245,172,433;];
+landmouse2 = [298,260,644; 266,286,643;  363,345,405;];
+landmouse3 = [252,282,695; 295,272,696;  240,167,443;];
+landmouse4 = [ 260,290,699;285,257,700;  185,190,439;];
 %%
 threold = 10;
-[~,Z1,transform1] = procrustes(landmouse3,landmouse1,'Reflection',false);
-[~,Z2,transform2] = procrustes(landmouse3,landmouse2,'Reflection',false);
-[~,Z3,transform3] = procrustes(landmouse3,landmouse4,'Reflection',false);
-meanZ = (Z1 + Z2 + Z3 + landmouse3 ) /4;
+[~,Z1,transform1] = procrustes(landmouse4,landmouse1,'Reflection',false);
+[~,Z2,transform2] = procrustes(landmouse4,landmouse2,'Reflection',false);
+[~,Z3,transform3] = procrustes(landmouse4,landmouse3,'Reflection',false);
+meanZ = (Z1 + Z2 + Z3 + landmouse4 ) /4;
 
 for round = 2:10
     disp(round);
@@ -54,7 +62,7 @@ for round = 2:10
     threold = thre;
     meanZ = newmeanZ;
 end
-%%
+
 affine1 = zeros(4,4);
 affine1(1:3,1:3) = transform1.b .*transform1.T;
 affine1(4,1:3) = transform1.c(1,:);
@@ -85,21 +93,21 @@ IwM1E3 = apply_transformation_fast_3d( M1E3, invaffine1, siz );
 IwM1E4 = apply_transformation_fast_3d( M1E4, invaffine1, siz );
 
 IwM2E1 = apply_transformation_fast_3d( M2E1, invaffine2, siz );
- IwM2E2 = apply_transformation_fast_3d( M2E2, invaffine2, siz );
+  IwM2E2 = apply_transformation_fast_3d( M2E2, invaffine2, siz );
 IwM2E3 = apply_transformation_fast_3d( M2E3, invaffine2, siz );
 IwM2E4 = apply_transformation_fast_3d( M2E4, invaffine2, siz );
 
 IwM3E1 = apply_transformation_fast_3d( M3E1, invaffine3, siz );
- IwM3E2 = apply_transformation_fast_3d( M3E2, invaffine3, siz );
+  IwM3E2 = apply_transformation_fast_3d( M3E2, invaffine3, siz );
 IwM3E3 = apply_transformation_fast_3d( M3E3, invaffine3, siz );
 IwM3E4 = apply_transformation_fast_3d( M3E4, invaffine3, siz );
 
-IwM4E1 = apply_transformation_fast_3d( M4E1, invaffine4, siz );
- IwM4E2 = apply_transformation_fast_3d( M4E2, invaffine4, siz );
-IwM4E3 = apply_transformation_fast_3d( M4E3, invaffine4, siz );
-IwM4E4 = apply_transformation_fast_3d( M4E4, invaffine4, siz );
+IwM4E1 = apply_transformation_fast_3d( M4E1new, invaffine4, siz );
+  IwM4E2 = apply_transformation_fast_3d( M4E2new, invaffine4, siz );
+IwM4E3 = apply_transformation_fast_3d( M4E3new, invaffine4, siz );
+IwM4E4 = apply_transformation_fast_3d( M4E4new, invaffine4, siz );
 %%
-slice = 385;
+slice = 240;
 subplot(2,2,1)
 imagesc(IwM1E2(:,:,slice)');
 axis tight equal off
@@ -181,7 +189,7 @@ IwM3GT(IwM3GT==0) = 4;
 
 IwM4GT = zeros(siz);
 for k =1:3
-    mask = M4GT==k;
+    mask = M4GTnew==k;
     nmask = not(mask);
     label = zeros(siz); nlabel = zeros(siz); 
     label(mask) = 1; nlabel(nmask) = 1;
@@ -196,6 +204,12 @@ for k =1:3
     IwM4GT(tmp) = k;
 end
 IwM4GT(IwM4GT==0) = 4;
+%%
+a = (IwM1GT+IwM2GT+IwM3GT+IwM4GT)/4;
+%%
+imagesc(a(:,:,400)');
+axis tight equal
+caxis([0 7])
 %%
 %background
 M1bg = false(siz);
@@ -236,7 +250,7 @@ tube4(L==1) = true;
 mask4 = imdilate(tube4,SE);
 mask4 = not(or(mask4,M4bg));
 %%
-imagesc(mask4(:,:,400)');
+imagesc(pIwM1E1(:,:,400)');
 %%
 %mask processing
 pIwM1E1 = zeros(siz); pIwM1E2 = zeros(siz);  pIwM1E3 = zeros(siz);  pIwM1E4 = zeros(siz); pIwM1GT = zeros(siz);
@@ -285,10 +299,10 @@ pIwM3E1 = pIwM3E1(:,:,st:en); pIwM3E2 = pIwM3E2(:,:,st:en); pIwM3E3 = pIwM3E3(:,
 pIwM4E1 = pIwM4E1(:,:,st:en); pIwM4E2 = pIwM4E2(:,:,st:en); pIwM4E3 = pIwM4E3(:,:,st:en); pIwM4E4 = pIwM4E4(:,:,st:en);  mask4 = mask4(:,:,st:en);
 siz2 = size(pIwM1E1);
 %%
-pIwM1GT = pIwM1GT(:,:,st:en);
-pIwM2GT = pIwM2GT(:,:,st:en);
-pIwM3GT = pIwM3GT(:,:,st:en);
-pIwM4GT = pIwM4GT(:,:,st:en);
+pIwM1GT = IwM1GT(:,:,st:en);
+pIwM2GT = IwM2GT(:,:,st:en);
+pIwM3GT = IwM3GT(:,:,st:en);
+pIwM4GT = IwM4GT(:,:,st:en);
 %%
 M1GT = IwM1GT(:,:,st:en);
 M2GT = IwM2GT(:,:,st:en);
