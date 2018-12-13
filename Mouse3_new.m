@@ -53,7 +53,7 @@ L1 = bwconncomp(Imap == 3);
 Rmaxcomp(L1.PixelIdxList{idx}) = 1;
 tmp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
 Rkidmask(tmp) = 1;
-Rkidmask = logical(and(Rkidmask,mask2));
+Rkidmask = logical(and(Rkidmask,mask3));
 LRAND = and(Rkidmask,Lkidmask);
 
 %%
@@ -299,7 +299,7 @@ tmp2 = and(tmp,LRAND);
 Lkidmask2 = logical(Lkidmask2 - LRAND + tmp2);
 
 %%
-imagesc(Rkidmask2(:,:,200)');
+imagesc(LRAND(:,:,200)');
 axis tight equal
 %%
 %GC bladder
@@ -308,7 +308,7 @@ masktm = blamask;
 masktm2 = blamask2;
 GT = zeros(siz); GT(M3GT == 1) = 1;
 PPorgan = zeros(siz); PPorgan(masktm) = PPbla(:,1) + PPbla(:,2);
-PPorgan = imgaussfilt3(PPorgan,10);
+PPorgan = imgaussfilt3(PPorgan,5);
 PPback = 1.0 - PPorgan; 
 PPout(:,1) = PPorgan(masktm2); PPout(:,2) = PPback(masktm2);
 PPout = -log(PPout+eps);
@@ -361,18 +361,18 @@ sumIm = (M3E1 + M3E2 + M3E3 + M3E4)/4;
 sumIm = sumIm(masktm2);
 
 %%
-[sig,lambda] =ndgrid(0.0001:0.005:0.05 ,0.5:0.05:0.95);
+[sig,lambda] =ndgrid(0.00005:0.005:0.2,0.2:0.1:0.4);
 lambda = lambda(:);
 sig = sig(:);
 OutputJI = zeros(size(sig,1),1);
 %%
 clearvars GraphModel
 GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
-   
+%t‘
 %for n = 1:size(sig,1)
-n =1;
+n = 1;
 lambda = 1;
-sig = 0.0101;
+sig = 0.0051;
     N = size(PPout,1);
     CurLabel = zeros(N,1)+2;
     PreLabel = zeros(N,1);
@@ -393,14 +393,9 @@ sig = 0.0101;
         [lowerBound, label] = qpboMex([GraphModel.Vs,GraphModel.Vt],...
             [GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]); 
       
-              label = logical(label);
+        label = logical(label);
         CurLabel(label) = PropLabel(label);
-        
-        GraphModel.Vs(~isfinite(GraphModel.Vs)) = 0;
-        Eunary = sum(GraphModel.Vs); Epairwise = sum(GraphModel.H00);
-        E = Eunary + Epairwise;
-        disp(E);
-       
+               
         if CurLabel == PreLabel
             flag = 1;
             Output(masktm2) = CurLabel;
@@ -415,7 +410,7 @@ sig = 0.0101;
     disp(JI3);
     OutputJI(n) = JI3';
     disp(n);
-%end
+end
 
 %%
 save_raw(Output,'C:\\Users\\yourb\\Desktop\\M3GC.raw','*uint8')
@@ -429,15 +424,17 @@ map = [0, 0, 0
 %%
 aaa = zeros(siz); aaa(Lkidmask2) = M3GT(Lkidmask2);
 %%
-imagesc(GT(:,:,200)');
+imagesc(Output(:,:,200)');
 axis tight equal off
 
 %%
 clearvars GraphModel
 GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
-   
-for n = 1:size(sig,1)
-
+%δNγχ
+%for n = 1:size(sig,1)
+n =1;
+lambda = 9;
+sig = 0.02;
     N = size(PPout,1);
     CurLabel = zeros(N,1)+2;
     PreLabel = zeros(N,1);
@@ -476,7 +473,7 @@ for n = 1:size(sig,1)
     disp(JI3);
     OutputJI(n) = JI3';
     disp(n);
-end
+%end
 
 %%
 Result = zeros(siz) +4;

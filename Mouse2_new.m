@@ -300,7 +300,7 @@ tmp2 = and(tmp,LRAND);
 Lkidmask2 = logical(Lkidmask2 - LRAND + tmp2);
 
 %%
-imagesc(Rkidmask2(:,:,200)');
+imagesc(GT(:,:,200)');
 axis tight equal
 %%
 %GC bladder
@@ -309,7 +309,7 @@ masktm = blamask;
 masktm2 = blamask2;
 GT = zeros(siz); GT(M2GT == 1) = 1;
 PPorgan = zeros(siz); PPorgan(masktm) = PPbla(:,1) + PPbla(:,2);
-PPorgan = imgaussfilt3(PPorgan,10);
+PPorgan = imgaussfilt3(PPorgan,5);
 PPback = 1.0 - PPorgan;
 PPout(:,1) = PPorgan(masktm2); PPout(:,2) = PPback(masktm2);
 PPout = -log(PPout+eps);
@@ -363,10 +363,9 @@ OutputJI = zeros(size(sig,1),1);
 clearvars GraphModel
 GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
 %t‘
-%for n = 1:size(sig,1)
-n =1;
-lambda = 1;
-sig = 0.0101;
+for n = 1:size(sig,1)
+%n =1;
+
     N = size(PPout,1);
     CurLabel = zeros(N,1)+2;
     PreLabel = zeros(N,1);
@@ -410,8 +409,10 @@ sig = 0.0101;
     disp(JI3);
     OutputJI(n) = JI3';
     disp(n);
-%end
-
+end
+%%
+imagesc(Output(:,:,200)');
+axis tight equal
 %%
 save_raw(Output,'C:\\Users\\yourb\\Desktop\\M3GC.raw','*uint8')
 %%
@@ -424,9 +425,11 @@ map = [0, 0, 0
 %%
 clearvars GraphModel
 GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
-   
-for n = 1:size(sig,1)
-%n =1;
+ %δNγχ
+%for n = 1:size(sig,1)
+n =1;
+lambda = 1000;
+sig = 0.4;
     N = size(PPout,1);
     CurLabel = zeros(N,1)+2;
     PreLabel = zeros(N,1);
@@ -465,14 +468,14 @@ for n = 1:size(sig,1)
     disp(JI3);
     OutputJI(n) = JI3';
     disp(n);
-end
+%end
 %%
 Result = zeros(siz) +4;
 Result(M2GT == 0 ) = 0;
 %%
 Result(Output == 1) = 3;
 %%
-imagesc(Result(:,:,200)');
+imagesc(M2GT(:,:,70)');
 axis tight equal off
 caxis([0 4])
 colormap(map);

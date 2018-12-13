@@ -203,14 +203,15 @@ Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
 JI1= CalcuJI(Imap,M4GT,K2);
 disp(JI1);
 JI2= CalcuJI(Imap2,M4GT,K2);
+
 disp(JI2);
 
 
 %%
-imagesc(M4E1(:,:,70)');
+imagesc(Imap2(:,:,200)');
 axis tight equal off
-caxis([0 0.7])
-colormap(gray)
+%caxis([0 0.7])
+%colormap(gray)
 
 %%
 map = [0, 0, 0
@@ -343,7 +344,7 @@ tmp2 = and(tmp,LRAND);
 Lkidmask2 = logical(Lkidmask2 - LRAND + tmp2);
 
 %%
-imagesc(Rkidmask2(:,:,200)');
+imagesc(sumIm(:,:,70)');
 axis tight equal
 %%
 %GC bladder
@@ -352,14 +353,16 @@ masktm = blamask;
 masktm2 = blamask2;
 GT = zeros(siz); GT(M4GT == 1) = 1;
 PPorgan = zeros(siz); PPorgan(masktm) = PPbla(:,1) + PPbla(:,2);
-PPorgan = imgaussfilt3(PPorgan,10);
+PPorgan = imgaussfilt3(PPorgan,3);
 PPback = 1.0 - PPorgan;
+PPback(PPback <0 ) = 0;
 PPout(:,1) = PPorgan(masktm2); PPout(:,2) = PPback(masktm2);
+
 PPout = -log(PPout+eps);
 GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
 
 Kmat = [1,1; 1,1]; K3 = 2;
-sumIm = (M4E1 + M4E2 + M4E3 + M4E4)/4;
+sumIm = M4E2;
 sumIm = sumIm(masktm2);
 
 %%
@@ -375,7 +378,7 @@ PPout(:,1) = PPorgan(masktm2); PPout(:,2) = PPback(masktm2);
 PPout = -log(PPout+eps);
 
 Kmat = [1,1; 1,1]; K3 = 2;
-sumIm = (M4E1 + M4E2 + M4E3 + M4E4)/4;
+sumIm = M4E2;
 sumIm = sumIm(masktm2);
 
 
@@ -397,18 +400,19 @@ sumIm = sumIm(masktm2);
 
 
 %%
-[sig,lambda] =ndgrid(0.00005:0.005:0.2,0.5:0.1:0.9);
+[sig,lambda] =ndgrid(0.00005:0.005:0.2,0.2:0.1:0.4);
 lambda = lambda(:);
 sig = sig(:);
 OutputJI = zeros(size(sig,1),1);
 %%
 clearvars GraphModel
 GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
-   
+%t‘Ÿ
 %for n = 1:size(sig,1)
-n =1;
+%%
+n = 1;
 lambda = 1;
-sig = 0.0101;
+sig = 0.0051;
     N = size(PPout,1);
     CurLabel = zeros(N,1)+2;
     PreLabel = zeros(N,1);
@@ -465,14 +469,16 @@ map = [0, 0, 0
 %%
 aaa = zeros(siz); aaaa(Rkidmask2) = label;
 %%
-imagesc(GT(:,:,200)');
+imagesc(Imap2(:,:,200)');
 axis tight equal off
 %%
 clearvars GraphModel
 GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
    
-for n = 1:size(sig,1)
-%n =1;
+%for n = 1:size(sig,1)
+n =1;
+lambda = 9;
+sig = 0.05;
     N = size(PPout,1);
     CurLabel = zeros(N,1)+2;
     PreLabel = zeros(N,1);
@@ -493,7 +499,7 @@ for n = 1:size(sig,1)
         CurLabel(label) = PropLabel(label);
         
         GraphModel.Vs(~isfinite(GraphModel.Vs)) = 0;
-        Eunary = sum(GraphModel.Vs); Epairwise = sum(GraphModel.H00);
+        Eunary = sum(GraphModel.Vs); Epairwise = sum(GraphModel.H01);
         E = Eunary + Epairwise;
         disp(E);
        
@@ -511,16 +517,25 @@ for n = 1:size(sig,1)
     disp(JI3);
     OutputJI(n) = JI3';
     disp(n);
-end
+%end
 %%
 Result = zeros(siz) +4;
 Result(M4GT == 0 ) = 0;
 %%
 Result(Output == 1) = 3;
 %%
-imagesc(Result(:,:,200)');
+imagesc(Output(:,:,200)');
 axis tight equal off
 caxis([0 4])
+%%
 colormap(map);
 %%
 JI4= CalcuJI(Result,M4GT,1);
+%%
+temp = zeros(siz);
+temp(M1GT == 2) = 1;
+temp = imerode(temp,SE);
+temp2 = zeros(siz);
+temp2(M1GT == 2) = 1;
+temp2 = temp2 -temp;
+%%
