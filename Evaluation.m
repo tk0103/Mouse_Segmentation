@@ -1,5 +1,5 @@
-In = M1E2; InGT = M1GT; diff1 = 0.25; diff2 = 0.1;
-%In = M2E2; InGT = M2GT; diff1 = 0.06; diff2 = 0.1;
+%In = M1E2; InGT = M1GT; diff1 = 0.25; diff2 = 0.1;
+In = M2E2; InGT = M2GT; diff1 = 0.06; diff2 = 0.1;
 %In = M3E2; InGT = M3GT; diff1 = 0.06; diff2 = 0.07;
 %In = M4E2; InGT = M4GT; diff1 = 0.06; diff2 = 0.16;
 
@@ -24,14 +24,14 @@ mask_LkidE2(Intemp > (modeval(2) - diff2) & Intemp < (modeval(2) + diff2) ) = 1;
 Intemp = zeros(siz); mask_RkidE2 = zeros(siz); Intemp(InGT == 3) = In(InGT == 3);
 mask_RkidE2(Intemp > (modeval(3) - diff2) & Intemp < (modeval(3) + diff2) ) = 1; 
 
-cutM1GT = zeros(siz);  cutM1GT(InGT == 4) = 4;
-mask_blaE2 = logical(mask_blaE2); cutM1GT(mask_blaE2) = 1; 
-mask_LkidE2 = logical(mask_LkidE2); cutM1GT(mask_LkidE2) = 2;
-mask_RkidE2 = logical(mask_RkidE2);cutM1GT(mask_RkidE2) = 3; 
-cutM1GT(and(InGT == 1,not(mask_blaE2))) = 5;
-cutM1GT(and(InGT == 2,not(mask_LkidE2))) = 6;
-cutM1GT(and(InGT == 3,not(mask_RkidE2))) = 7;
-cutM1GT = uint8(cutM1GT);
+cutM2GT = zeros(siz);  cutM2GT(InGT == 4) = 4;
+mask_blaE2 = logical(mask_blaE2); cutM2GT(mask_blaE2) = 1; 
+mask_LkidE2 = logical(mask_LkidE2); cutM2GT(mask_LkidE2) = 2;
+mask_RkidE2 = logical(mask_RkidE2);cutM2GT(mask_RkidE2) = 3; 
+cutM2GT(and(InGT == 1,not(mask_blaE2))) = 5;
+cutM2GT(and(InGT == 2,not(mask_LkidE2))) = 6;
+cutM2GT(and(InGT == 3,not(mask_RkidE2))) = 7;
+cutM2GT = uint8(cutM2GT);
 %%
 imagesc(M4GT(:,:,64));
 axis tight equal
@@ -134,31 +134,31 @@ ylabel('36-52 keV, 52-79 keV, 79-118 keV')
 %legend('E1&E4(¶t‘)','E1&E3(¶t‘)','E1&E2(¶t‘)','E1&E4(δNγχ)','E1&E3(δNγχ)','E1&E2(δNγχ)','Location','northwest')
 
 %%
-slice = 66;
-y =290;
-rangex = [265,355];
-rangey = [y-45,y+45];
-test1 = pM3E2(:,y-15,slice);
-test2 = pM3E2(:,y-15,slice);
+slice = 196;
+y =255;
+rangex = [135,215];
+rangey = [y-40,y+40];
+test1 = M4E2(:,y,slice);
+test2 = M4E2(:,y,slice);
 %265:355,245:335
 
 subplot(3,4,[1,6])
-imagesc(pM3E2(:,:,slice)');
+imagesc(M4E2(:,:,slice)');
 caxis([0,0.7])
 colormap gray
 axis equal tight off
-rectangle('Position',[1,y-0.-15,436,1],'FaceColor','none','EdgeColor','r',...
+rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
     'LineWidth',1)
 xlim(rangex);
 ylim(rangey);
 
 
 subplot(3,4,[3,8])
-imagesc(pM3E2(:,:,slice)');
+imagesc(temp(:,:,slice)');
 %colormap(map)
-caxis([0,4])
+%caxis([0,4])
 axis equal tight off
- rectangle('Position',[1,y-0.5-15,436,1],'FaceColor','none','EdgeColor','r',...
+ rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
     'LineWidth',1)
 xlim(rangex);
 ylim(rangey);
@@ -169,7 +169,7 @@ subplot(3,4,[9,10])
 h= plot([test1]);
 h(1).Color = 'r';
 xlim(rangex);
-ylim([0,0.7]);
+ylim([0,1.0]);
 %legend({'Gray value'});
 
 
@@ -190,3 +190,20 @@ ylim([0.1 0.35]); ylabel('36-52 keV')
 zlim([0.1 0.35]); zlabel('52-79 keV')
 axis tight equal
 %legend('left-kidney','background')
+
+%%
+%edge =[0 0:0.025:2.8 2.8];
+%xlim([0 2.8])
+edge =[0 0:0.01:1.0 1.0];
+xlim([0 1.0])
+
+hold on
+histogram(M1E2(M1GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+histogram(M2E2(M2GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+histogram(M3E2(M3GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+histogram(M4E2(M4GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+%%
+imagesc(M4E2(230:330,250:350,70)');
+axis tight equal off
+caxis([0 0.7])
+colormap(gray)

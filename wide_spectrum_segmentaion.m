@@ -1,62 +1,197 @@
-%%
-st = 164; en = 439;
-pwM1E1 = wM1E1(:,:,st:en); pwM2E1 = wM2E1(:,:,st:en); pwM3E1 = wM3E1(:,:,st:en);
-pwM1GT = wM1GT(:,:,st:en);  pwM2GT = wM2GT(:,:,st:en);  pwM3GT = wM3GT(:,:,st:en);
-pwmask1 = wmask1(:,:,st:en);  pwmask2 = wmask2(:,:,st:en); pwmask3 = wmask3(:,:,st:en);
-siz = size(pwM2E1);
-clearvars wM1E1 wM2E1 wM3E1 wM1GT wM2GT wM3GT wmask1 wmask2 wmask3
-%%
-%train_mouse2_mouse3 test_mouse1
-Xtr = [pwM2E1(pwmask2); pwM3E1(pwmask3) ];
-Xte = pwM1E1(pwmask1);
-XGTtr = [pwM2GT(pwmask2); pwM3GT(pwmask3)];
+%train_mouse2_mouse3 mouse4 test_mouse1
+Xtr = [wM2E1(mask2); wM3E1(mask3); wM4E1(mask4) ];
+Xte = wM1E1(mask1);
+XGTtr = [M2GT(mask2); M3GT(mask3); M4GT(mask4)];
 
 %%
-%train_mouse1 mouse3 test_mouse2
-Xtr = [pwM1E1(pwmask1); pwM3E1(pwmask3) ];
-Xte = pwM2E1(pwmask2);
-XGTtr = [pwM1GT(pwmask1); pwM3GT(pwmask3)];
+%train_mouse1 mouse3 mouse4 test_mouse2
+Xtr = [wM1E1(mask1); wM3E1(mask3); wM4E1(mask4) ];
+Xte = wM2E1(mask2);
+XGTtr = [M1GT(mask1); M3GT(mask3); M4GT(mask4)];
 
 %%
-%train_mouse1 mouse2 test_mouse3
-Xtr = [pwM1E1(pwmask1); pwM2E1(pwmask2) ];
-Xte = pwM3E1(pwmask3);
-XGTtr = [pwM1GT(pwmask1); pwM2GT(pwmask2)];
+%train_mouse1 mouse2 mouse4 test_mouse3
+Xtr = [wM1E1(mask1); wM2E1(mask2); wM4E1(mask4) ];
+Xte = wM3E1(mask3);
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
 
+%%
+%train_mouse1 mouse2 mouse3 test_mouse4
+Xtr = [wM1E1(mask1); wM2E1(mask2); wM3E1(mask3) ];
+Xte = wM4E1(mask4);
+XGTtr = [M1GT(mask1); M2GT(mask2); M3GT(mask4)];
 %%
 %initial_value
-for k = 1:K
+clearvars SS
+for k = 1:K1
     tmp1 = Xtr(:,1);
-    S.mu(k,1) = mean(tmp1(XGTtr == k));
-    S.Sigma(:,:,k) = cov(tmp1(XGTtr == k));
+    SS.mu(k,1) = mean(tmp1(XGTtr == k));
+    SS.Sigma(:,:,k) = cov(tmp1(XGTtr == k));
 end
 
 %%
 %Atlas_guided EM,Mouse1
-sig1 = 5; sig2 = 3; K = 4;
-atlas  = atlasfunc2(sig1,sig2,K,siz,pwmask1,pwM2GT,pwM3GT);
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pwmask1,siz);
-JI= CalcuJI(Imap,pwM1GT,K-1);
+clearvars atlas
+atlas  = atlasfunc1(sig1,sig2,K1,siz,mask1,M2GT,M3GT,M4GT);
+
+[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,likelihood]...
+    = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask1,siz,30);
+JI1= CalcuJI(Imap,M1GT,K1-1);
 disp("EM_MAP result")
-disp(JI);
+disp(JI1);
 
 %%
 %Atlas_guided EM,Mouse2
-sig1 = 5; sig2 = 3; K = 4;
-atlas  = atlasfunc2(sig1,sig2,K,siz,pwmask2,pwM1GT,pwM3GT);
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pwmask2,siz);
-JI= CalcuJI(Imap,pwM2GT,K-1);
+clearvars atlas
+atlas  = atlasfunc1(sig1,sig2,K1,siz,mask2,M1GT,M3GT,M4GT);
+
+[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,likelihood] = ...
+    AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask2,siz,30);
+JI1= CalcuJI(Imap,M2GT,K1-1);
 disp("EM_MAP result")
-disp(JI);
+disp(JI1);
 %%
 %Atlas_guided EM,Mouse3
-sig1 = 5; sig2 = 3; K = 4;
-atlas  = atlasfunc2(sig1,sig2,K,siz,pwmask3,pwM1GT,pwM2GT);
-[Imap,L,PP,GMMMu,GMMSigma,GMMpro] = AtlasGuidedEM_kubo(Xte,atlas,S,K,pwmask3,siz);
-JI= CalcuJI(Imap,pwM3GT,K-1);
-disp("EM_MAP result")
-disp(JI);
+clearvars atlas
+atlas  = atlasfunc1(sig1,sig2,K1,siz,mask3,M1GT,M2GT,M4GT);
 
+[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,lilelihood] ...
+    = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask3,siz,30);
+JI1= CalcuJI(Imap,M3GT,K1-1);
+disp("EM_MAP result")
+disp(JI1);
+
+%%
+%EM Mosue4
+clearvars atlas
+atlas  = atlasfunc1(sig1,sig2,K1,siz,mask4,M1GT,M2GT,M3GT);
+
+[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,likelihood]...
+    = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask4,siz,30);
+JI1= CalcuJI(Imap,M4GT,K1-1);
+disp("EM_MAP result")
+disp(JI1);
+
+
+%%
+blamask = zeros(siz); blamaxcomp = zeros(siz);
+L1 = bwconncomp(Imap == 1);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
+blamaxcomp(L1.PixelIdxList{idx}) = 1; 
+tmp = bwdist(logical(blamaxcomp)) <  power(bwarea(blamaxcomp(:))/4/pi*3,1/3);
+blamask(tmp) = 1;
+blamask = logical(and(blamask,mask1)); 
+
+Lmaxcomp = zeros(siz); Lkidmask = zeros(siz);
+L1 = bwconncomp(Imap == 2);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
+Lmaxcomp(L1.PixelIdxList{idx}) = 1;
+tmp = bwdist(logical(Lmaxcomp)) < power(bwarea(Lmaxcomp(:))/4/pi*3,1/3);
+Lkidmask(tmp) = 1;
+Lkidmask = logical(and(Lkidmask,mask1));
+
+Rmaxcomp = zeros(siz); Rkidmask = zeros(siz);
+L1 = bwconncomp(Imap == 3);
+[~,idx] = max(cellfun(@numel,L1.PixelIdxList)); 
+Rmaxcomp(L1.PixelIdxList{idx}) = 1;
+tmp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
+Rkidmask(tmp) = 1;
+Rkidmask = logical(and(Rkidmask,mask1));
+LRAND = and(Rkidmask,Lkidmask);
+
+[XX,YY,ZZ] = meshgrid(1:siz(1),1:siz(2),1:siz(3));
+tmp = bwdist(logical(not(Lmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RLkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
+
+tmp = bwdist(logical(not(Rmaxcomp)));
+[~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
+RRkid = sqrt((XX - x).^2 + (YY -y).^2 + (ZZ - z).^2);
+
+tmp = zeros(siz);
+tmp(RLkid > RRkid) = 1;
+tmp2 = and(tmp,LRAND);
+Rkidmask = logical(Rkidmask - LRAND + tmp2); 
+
+tmp = zeros(siz);
+tmp(RRkid > RLkid) = 1;
+tmp2 = and(tmp,LRAND);
+Lkidmask = logical(Lkidmask - LRAND + tmp2);
+
+%%
+%Mouse1 Test
+Xtebla  = wM1E1(blamask);
+XteLkid = wM1E1(Lkidmask);
+XteRkid = wM1E1(Rkidmask);
+
+%%
+%Mouse2 Test
+Xtebla  = wM2E1(blamask);
+XteLkid = wM2E1(Lkidmask);
+XteRkid = wM2E1(Rkidmask);
+
+%%
+%Mouse3 Test
+Xtebla  = wM3E1(blamask);
+XteLkid = wM3E1(Lkidmask);
+XteRkid = wM3E1(Rkidmask);
+
+%%
+%Mouse4 Test
+Xtebla  = wM4E1(blamask);
+XteLkid = wM4E1(Lkidmask);
+XteRkid = wM4E1(Rkidmask);
+%%
+sig3 = 10;
+clearvars atlasbla atlasLkid atlasRkid
+atlasbla   = atlasfunc2(sig3,siz,mask4,blamask,GMMpro,0.8,1);
+atlasLkid  = atlasfunc2(sig3,siz,mask4,Lkidmask,GMMpro,0.2,2);
+atlasRkid  = atlasfunc2(sig3,siz,mask4,Rkidmask,GMMpro,0.2,3);
+%%
+clearvars Sbla SLkid SRkid
+Sbla.mu(1,:) = GMMMu(1,:) +0.5*sqrt(diag(GMMSigma(:,:,1)))';
+Sbla.mu(2,:) = GMMMu(1,:) -0.5*sqrt(diag(GMMSigma(:,:,1)))';
+Sbla.mu(3,:) = GMMMu(4,:); 
+
+Sbla.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,1))./4).^2;
+Sbla.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,1))./4).^2;
+Sbla.Sigma(:,:,3) =  GMMSigma(:,:,4);
+
+SLkid.mu(1,:) = GMMMu(2,:) -0.25*sqrt(diag(GMMSigma(:,:,2)))';
+SLkid.mu(2,:) = GMMMu(2,:) +0.25*sqrt(diag(GMMSigma(:,:,2)))';
+SLkid.mu(3,:) = GMMMu(4,:); 
+
+SLkid.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,2))./4).^2;
+SLkid.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,2))./4).^2;
+SLkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
+
+SRkid.mu(1,:) = GMMMu(3,:) -0.25*sqrt(diag(GMMSigma(:,:,3)))';
+SRkid.mu(2,:) = GMMMu(3,:) +0.25*sqrt(diag(GMMSigma(:,:,3)))';
+SRkid.mu(3,:) = GMMMu(4,:); 
+
+SRkid.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,3))./4).^2;
+SRkid.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,3))./4).^2;
+SRkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
+
+[Imapbla,~,PPbla,GMMMubla,GMMSigmabla,GMMprobla,Featbla,~]...
+    = AtlasGuidedEM_kubo(Xtebla,atlasbla,Sbla,K2,blamask,siz,30);
+
+[ImapLkid,~,PPLkid,GMMMuLkid,GMMSigmaLkid,~,FeatL,~]...
+    = AtlasGuidedEM_kubo(XteLkid,atlasLkid,SLkid,K2,Lkidmask,siz,30);
+
+[ImapRkid,~,PPRkid,GMMMuRkid,GMMSigmaRkid,~,~,~]...
+    = AtlasGuidedEM_kubo(XteRkid,atlasRkid,SRkid,K2,Rkidmask,siz,30);
+
+Imap2 = zeros(siz)+4;
+Imap2(M1GT==0 ) = 0;
+Imap2(Imapbla == 1) = 1; Imap2(Imapbla == 2) = 1;
+Imap2(ImapLkid == 1) = 2; Imap2(ImapLkid == 2) = 2;
+Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
+%%
+JI1 = CalcuJI(Imap,M4GT,K1-1);
+disp(JI1);
+JI2 = CalcuJI(Imap2,M4GT,K1-1);
+disp(JI2);
 %%
 map = [0, 0, 0
     0.1, 0.5, 0.8
@@ -64,11 +199,28 @@ map = [0, 0, 0
     0.8, 0.7, 0.3
     0.9, 0.9, 0];
 %%
-Imapout = Imap;
-Imapout(Imap==4) = 0;
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+out = M2GT;
+out(M2GT == 4) = 0;
+%imagesc(out(110:290,140:320,200)');
+imagesc(out(290:370,220:300,73)');
+%imagesc(out(:,:,73)');
+
+axis tight equal off
+colormap(map)
+caxis([0 4])
 %%
-pM1GTout = pM3GT;
-pM1GTout(pM1GT==4) = 0;
+%imagesc(out(110:290,140:320,200)');
+imagesc(M2E2(290:370,220:300,73)');
+%imagesc(out(:,:,73)');
+
+axis tight equal off
+colormap(gray)
+caxis([0 0.7])
 %%
 slice1 = 206;
 slice2 = 66;
@@ -131,11 +283,19 @@ caxis([0 4])
 colormap(map)
  rectangle('Position',[270,210,110,110],'FaceColor','none','EdgeColor','r',...
     'LineWidth',1)
+
 %%
-imagesc(Imapout(270:380,210:320,slice2)');
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+out = Imap2;
+out(Imap2 == 4) = 0;
+imagesc(out(100:280,140:320,200)');
 axis tight equal off
-caxis([0 4])
 colormap(map)
+caxis([0 4])
 
 
 

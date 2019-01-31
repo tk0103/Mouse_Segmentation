@@ -1,7 +1,8 @@
-In = M4E2; th = 0.32; 
-tmp1 = M1GT; tmp1(tmp1 == 4) = 0; tmp1 = logical(tmp1);
-tmp2 = M2GT; tmp2(tmp2 == 4) = 0; tmp2 = logical(tmp2);
-tmp3 = M3GT; tmp3(tmp3 == 4) = 0; tmp3 = logical(tmp3);
+In = pIwM4E2; th = 0.32;
+siz = size(In);
+tmp1 = pIwM1GT; tmp1(tmp1 == 4) = 0; tmp1 = logical(tmp1);
+tmp2 = pIwM2GT; tmp2(tmp2 == 4) = 0; tmp2 = logical(tmp2);
+tmp3 = pIwM3GT; tmp3(tmp3 == 4) = 0; tmp3 = logical(tmp3);
 GTtemp = (tmp1 + tmp2 + tmp3)/3.0;
 SE = strel('sphere',2); 
 %%
@@ -25,37 +26,38 @@ for n = 1:CC.NumObjects
     tmp(L == n)  = 1;
     tmp = logical(tmp);
     dist(n) = mean(distIm(tmp));
-    atval(n) =  mean(GTtemp(tmp));
+    atval(n) = mean(GTtemp(tmp));
 end
+
 out = ismember(L, find( atval<=0.34  &...
-    dist<=50 & [stats.Area]>=median([stats.Area])));
+    dist<=50 & [stats.Area]>= median([stats.Area])));
 out = imdilate(out,SE);
 %%
-imagesc(M4E2(:,:,260)');
-%caxis([0 10])
+imagesc(out(:,:,70)');
+caxis([0 10])
 axis tight equal
+%caxis([0 0.7])
 %%
-save_raw(out,'C:\Users\yourb\Desktop\new2\boneM4.raw','*uint8');
+save_raw(out,'C:\Users\yourb\Desktop\new3\boneM4.raw','*uint8');
 
 %%
-boneM1 = load_raw('C:\Users\yourb\Desktop\new2\boneM1.raw','*uint8');
-boneM2 = load_raw('C:\Users\yourb\Desktop\new2\boneM2.raw','*uint8');
-boneM3 = load_raw('C:\Users\yourb\Desktop\new2\boneM3.raw','*uint8');
-boneM4 = load_raw('C:\Users\yourb\Desktop\new2\boneM4.raw','*uint8');
+boneM1 = load_raw('C:\Users\yourb\Desktop\new3\boneM1.raw','*uint8');
+boneM2 = load_raw('C:\Users\yourb\Desktop\new3\boneM2.raw','*uint8');
+boneM3 = load_raw('C:\Users\yourb\Desktop\new3\boneM3.raw','*uint8');
+boneM4 = load_raw('C:\Users\yourb\Desktop\new3\boneM4.raw','*uint8');
 boneM1 = reshape(boneM1,siz);
 boneM2 = reshape(boneM2,siz);
 boneM3 = reshape(boneM3,siz);
 boneM4 = reshape(boneM4,siz);
 
 %%
-imagesc(M4E2(:,:,70)');
+imagesc(pwM1(:,:,70)');
 axis tight equal off
 colormap(gray)
 caxis([0 0.7])
 %%
-imagesc(mask1(:,:,200)');
+imagesc(pM4E4(:,:,200)');
 axis tight equal off
-%%
 caxis([0 0.7])
 colormap(gray)
 %%
@@ -63,57 +65,65 @@ pmask1 = mask1 - logical(boneM1);
 pmask2 = mask2 - logical(boneM2);
 pmask3 = mask3 - logical(boneM3);
 pmask4 = mask4 - logical(boneM4);
-%%
+
 pmask1 = logical(pmask1);
 pmask2 = logical(pmask2);
 pmask3 = logical(pmask3);
 pmask4 = logical(pmask4);
 %%
 pM1E1 = zeros(siz);
-pM1E1(pmask1) = M1E1(pmask1);
+pM1E1(pmask1) = pIwM1E1(pmask1);
 pM1E2 = zeros(siz);
-pM1E2(pmask1) = M1E2(pmask1);
+pM1E2(pmask1) = pIwM1E2(pmask1);
 pM1E3 = zeros(siz);
-pM1E3(pmask1) = M1E3(pmask1);
+pM1E3(pmask1) = pIwM1E3(pmask1);
 pM1E4 = zeros(siz);
-pM1E4(pmask1) = M1E4(pmask1);
+pM1E4(pmask1) = pIwM1E4(pmask1);
+pwM1 = zeros(siz);
+pwM1(pmask1) = pIwM1(pmask1);
 
 pM2E1 = zeros(siz);
-pM2E1(pmask2) = M2E1(pmask2);
+pM2E1(pmask2) = pIwM2E1(pmask2);
 pM2E2 = zeros(siz);
-pM2E2(pmask2) = M2E2(pmask2);
+pM2E2(pmask2) = pIwM2E2(pmask2);
 pM2E3 = zeros(siz);
-pM2E3(pmask2) = M2E3(pmask2);
+pM2E3(pmask2) = pIwM2E3(pmask2);
 pM2E4 = zeros(siz);
-pM2E4(pmask2) = M2E4(pmask2);
+pM2E4(pmask2) = pIwM2E4(pmask2);
+pwM2 = zeros(siz);
+pwM2(pmask2) = pIwM2(pmask2);
 
 pM3E1 = zeros(siz);
-pM3E1(pmask3) = M3E1(pmask3);
+pM3E1(pmask3) = pIwM3E1(pmask3);
 pM3E2 = zeros(siz);
-pM3E2(pmask3) = M3E2(pmask3);
+pM3E2(pmask3) = pIwM3E2(pmask3);
 pM3E3 = zeros(siz);
-pM3E3(pmask3) = M3E3(pmask3);
+pM3E3(pmask3) = pIwM3E3(pmask3);
 pM3E4 = zeros(siz);
-pM3E4(pmask3) = M3E4(pmask3);
+pM3E4(pmask3) = pIwM3E4(pmask3);
+pwM3 = zeros(siz);
+pwM3(pmask3) = pIwM3(pmask3);
 
 pM4E1 = zeros(siz);
-pM4E1(pmask4) = M4E1(pmask4);
+pM4E1(pmask4) = pIwM4E1(pmask4);
 pM4E2 = zeros(siz);
-pM4E2(pmask4) = M4E2(pmask4);
+pM4E2(pmask4) = pIwM4E2(pmask4);
 pM4E3 = zeros(siz);
-pM4E3(pmask4) = M4E3(pmask4);
+pM4E3(pmask4) = pIwM4E3(pmask4);
 pM4E4 = zeros(siz);
-pM4E4(pmask4) = M4E4(pmask4);
+pM4E4(pmask4) = pIwM4E4(pmask4);
+pwM4 = zeros(siz);
+pwM4(pmask4) = pIwM4(pmask4);
 
 
 pM1GT = zeros(siz);
-pM1GT(pmask1) = M1GT(pmask1);
+pM1GT(pmask1) = pIwM1GT(pmask1);
 pM2GT = zeros(siz);
-pM2GT(pmask2) = M2GT(pmask2);
+pM2GT(pmask2) = pIwM2GT(pmask2);
 pM3GT = zeros(siz);
-pM3GT(pmask3) = M3GT(pmask3);
+pM3GT(pmask3) = pIwM3GT(pmask3);
 pM4GT = zeros(siz);
-pM4GT(pmask4) = M4GT(pmask4);
+pM4GT(pmask4) = pIwM4GT(pmask4);
 %%
 M1E1 = pM1E1;
 M1E2 = pM1E2;
@@ -144,6 +154,12 @@ mask1 = pmask1;
 mask2 = pmask2;
 mask3 = pmask3;
 mask4 = pmask4;
+
+
+wM1E1 = pwM1;
+wM2E1 = pwM2;
+wM3E1 = pwM3;
+wM4E1 = pwM4;
 %%
 temp = zeros(siz);
 temp(pM1GT == 1) = 8;
@@ -156,8 +172,10 @@ pM1GT(temp2 == 8) = 1;
 %%
 temp2 = temp- temp2; 
 %%
-imagesc(M1GT(:,:,70)');
-axis tight equal
+imagesc(M4GT(:,:,70)');
+axis tight equal off
+%colormap(gray)
+%caxis([0 0.7])
 %%
 pM1GT = pM1GT - uint8(temp2);
 %%

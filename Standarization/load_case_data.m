@@ -42,14 +42,17 @@ M3E1 = reshape(M3E1,siz); M3E2 = reshape(M3E2,siz); M3E3 = reshape(M3E3,siz); M3
 M3GT = reshape(M3GT,siz); 
 M4E1 = reshape(M4E1,siz); M4E2 = reshape(M4E2,siz); M4E3 = reshape(M4E3,siz); M4E4 = reshape(M4E4,siz); 
 M4GT = reshape(M4GT,siz); 
+
+M4E1 = permute(M4E1,[2 1 3]); M4E2 = permute(M4E2,[2 1 3]); M4E3 = permute(M4E3,[2 1 3]);
+M4E4 = permute(M4E4,[2 1 3]); M4GT = permute(M4GT,[2 1 3]);
 %%
-M4E1new = permute(M4E1,[2 1 3]);
-M4E2new = permute(M4E2,[2 1 3]);
-M4E3new = permute(M4E3,[2 1 3]);
-M4E4new = permute(M4E4,[2 1 3]);
-M4GTnew = permute(M4GT,[2 1 3]);
+imagesc(M1E1(:,:,400)');
+axis tight equal
+%colormap gray
+%caxis([0 0.7])
+
 %%
-imagesc(M4GT(:,:,400)');
+save_raw(M4GT,'C:\Users\yourb\Desktop\label.raw','*uint8');
 %%
 %load_path
 fileID = fopen('InputPath_wide.txt');
@@ -62,38 +65,36 @@ fileID = fopen('CasePath_wide.txt');
 C = textscan(fileID,'%s');
 fclose(fileID);
 CasePath = C{1,1};
-
+%%
 %load_data
-M1E1 = load_raw([InputPath CasePath{1,:} '.raw'],'*single');
-%M1E2 = load_raw([InputPath CasePath{2,:} '.raw'],'*single');
-%M1E3 = load_raw([InputPath CasePath{3,:} '.raw'],'*single');
-%M1E4 = load_raw([InputPath CasePath{4,:} '.raw'],'*single');
-M2E1 = load_raw([InputPath CasePath{5,:} '.raw'],'*single');
-M2E2 = load_raw([InputPath CasePath{6,:} '.raw'],'*single');
-%M2E3 = load_raw([InputPath CasePath{7,:} '.raw'],'*single');
-%M2E4 = load_raw([InputPath CasePath{8,:} '.raw'],'*single');
-M3E1 = load_raw([InputPath CasePath{9,:} '.raw'],'*single');
-%M3E2 = load_raw([InputPath CasePath{10,:} '.raw'],'*single');
-%M3E3 = load_raw([InputPath CasePath{11,:} '.raw'],'*single');
-%M3E4 = load_raw([InputPath CasePath{12,:} '.raw'],'*single');
+wM1E1 = load_raw([InputPath CasePath{1,:} '.raw'],'*single');
+wM2E1 = load_raw([InputPath CasePath{2,:} '.raw'],'*single');
+wM3E1 = load_raw([InputPath CasePath{3,:} '.raw'],'*single');
+wM4E1 = load_raw([InputPath CasePath{4,:} '.raw'],'*single');
 
 siz = [672 672 792];
-M1E1 = reshape(M1E1,siz); 
-%M1E2 = reshape(M1E2,siz); M1E3 = reshape(M1E3,siz);  M1E4 = reshape(M1E4,siz);
-M2E1 = reshape(M2E1,siz); 
-%M2E2 = reshape(M2E2,siz); M2E3 = reshape(M2E3,siz); M2E4 = reshape(M2E4,siz);
-M3E1 = reshape(M3E1,siz); 
-%M3E2 = reshape(M3E2,siz); M3E3 = reshape(M3E3,siz); M3E4 = reshape(M3E4,siz); 
+wM1E1 = reshape(wM1E1,siz); 
+wM2E1 = reshape(wM2E1,siz); 
+wM3E1 = reshape(wM3E1,siz); 
+siz = [544 544 912];
+wM4E1 = reshape(wM4E1,siz);
+%%
+wM1E1 = wM1E1(65:608,65:608,3:792);
+wM2E1 = wM2E1(65:608,65:608,3:792);
+wM3E1 = wM3E1(65:608,65:608,3:792);
+wM4E1 = wM4E1(:,:,1:790);
 
-wM1E1 = M1E1(65:608,65:608,3:792);
-% M1E2 = M1E2(65:608,65:608,3:792);
-% M1E3 = M1E3(65:608,65:608,3:792);
-% M1E4 = M1E4(65:608,65:608,3:792);
-wM2E1 = M2E1(65:608,65:608,3:792);
-% M2E2 = M2E2(65:608,65:608,3:792);
-% M2E3 = M2E3(65:608,65:608,3:792);
-% M2E4 = M2E4(65:608,65:608,3:792);
-wM3E1 = M3E1(65:608,65:608,3:792);
-% M3E2 = M3E2(65:608,65:608,3:792);
-% M3E3 = M3E3(65:608,65:608,3:792);
-% M3E4 = M3E4(65:608,65:608,3:792);
+siz = [544 544 860];
+wM1 = zeros(siz);
+wM2 = zeros(siz);
+wM3 = zeros(siz);
+wM4 = zeros(siz);
+
+wM1(:,:,1:790) = wM1E1;
+wM2(:,:,1:790) = wM2E1;
+wM3(:,:,1:790) = wM3E1;
+wM4(:,:,1:790) = wM4E1;
+wM4 = permute(wM4,[2 1 3]);
+%%
+imagesc(M4E1(:,:,754)');
+axis tight equal
