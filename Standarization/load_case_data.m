@@ -46,10 +46,37 @@ M4GT = reshape(M4GT,siz);
 M4E1 = permute(M4E1,[2 1 3]); M4E2 = permute(M4E2,[2 1 3]); M4E3 = permute(M4E3,[2 1 3]);
 M4E4 = permute(M4E4,[2 1 3]); M4GT = permute(M4GT,[2 1 3]);
 %%
-imagesc(M1E1(:,:,400)');
-axis tight equal
-%colormap gray
-%caxis([0 0.7])
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+
+slice = 400;
+subplot(1,4,1)
+imagesc(M1GT(:,:,242)');
+axis tight equal off
+colormap(map)
+caxis([0 4])
+
+subplot(1,4,2)
+imagesc(M2GT(:,:,254)');
+axis tight equal off
+colormap(map)
+caxis([0 4])
+
+subplot(1,4,3)
+imagesc(M3GT(:,:,254)');
+axis tight equal off
+colormap(map)
+caxis([0 4])
+
+subplot(1,4,4)
+imagesc(M4GT(:,:,248)');
+axis tight equal off
+colormap(map)
+caxis([0 4])
+
 
 %%
 save_raw(M4GT,'C:\Users\yourb\Desktop\label.raw','*uint8');

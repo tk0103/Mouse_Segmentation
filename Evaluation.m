@@ -72,8 +72,8 @@ term = sum(term1da(:))+sum(term2da(:))+sum(term3da(:));
 disp(term);
 
 %%
-Label = CurLabel;
-E1test = pM1E1(pmask1);
+Label = M;
+E1test = M1E1(mask1);
 P = GraphModel.Hi(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
 Q = GraphModel.Hj(Label(GraphModel.Hi)== 2 & Label(GraphModel.Hj)==4);
 
@@ -132,18 +132,48 @@ ylim([0.1 0.7]);
 xlabel('27-36 keV')
 ylabel('36-52 keV, 52-79 keV, 79-118 keV')
 %legend('E1&E4(¶t‘)','E1&E3(¶t‘)','E1&E2(¶t‘)','E1&E4(δNγχ)','E1&E3(δNγχ)','E1&E2(δNγχ)','Location','northwest')
-
 %%
-slice = 196;
-y =255;
-rangex = [135,215];
-rangey = [y-40,y+40];
-test1 = M4E2(:,y,slice);
-test2 = M4E2(:,y,slice);
+%%
+slice = 73;
+imagesc(M1E2(320:370,275:325,slice)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+hold on
+temp = M1GT(320:370,275:325,slice);
+temp(temp == 4) = 0;
+v = [1,1];
+contour(temp',v,'-r','LineWidth',2.0);
+set(gca,'YDir','reverse')
+%%
+temp1 = M1E2(319:369,274:324,slice);
+temp2 = M1E2(320:370,275:325,slice);
+temp3 = abs(temp2 - temp1);
+temp3 = exp(-temp3);
+%%
+imagesc(temp3');
+colormap(gray)
+axis tight equal off
+caxis([0.8 1])
+
+hold on
+temp = M1GT(320:370,275:325,slice);
+temp(temp == 4) = 0;
+v = [1,1];
+contour(temp',v,'-r','LineWidth',2.0);
+set(gca,'YDir','reverse')
+%%
+slice = 73;
+y =300;
+rangex = [320,370];
+rangey = [y-25,y+25];
+test1 = M1E2(:,y,slice);
+test2 = M1E2(:,y,slice);
 %265:355,245:335
 
 subplot(3,4,[1,6])
-imagesc(M4E2(:,:,slice)');
+imagesc(M1E2(:,:,slice)');
 caxis([0,0.7])
 colormap gray
 axis equal tight off
@@ -152,9 +182,8 @@ rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
 xlim(rangex);
 ylim(rangey);
 
-
 subplot(3,4,[3,8])
-imagesc(temp(:,:,slice)');
+imagesc(M1E2(:,:,slice)');
 %colormap(map)
 %caxis([0,4])
 axis equal tight off
@@ -162,14 +191,13 @@ axis equal tight off
     'LineWidth',1)
 xlim(rangex);
 ylim(rangey);
-
  
 M1 = movmean(test1,3);
 subplot(3,4,[9,10])
 h= plot([test1]);
 h(1).Color = 'r';
 xlim(rangex);
-ylim([0,1.0]);
+ylim([0,3.0]);
 %legend({'Gray value'});
 
 
@@ -182,6 +210,21 @@ ylim([0,0.7]);
 %legend({'Gray value'});
 
 %%
+GT = M3GT;
+ptemp_k1 = M3E2(GT ==2);
+ptemp_k2 = M3E3(GT ==2);
+ptemp_k3 = M3E4(GT ==2);
+ptemp_b1 = M3E2(GT ==4);
+ptemp_b2 = M3E3(GT ==4);
+ptemp_b3 = M3E4(GT ==4);
+
+ptemp_k1 = ptemp_k1(1:3000);
+ptemp_k2 = ptemp_k2(1:3000);
+ptemp_k3 = ptemp_k3(1:3000);
+ptemp_b1 = ptemp_b1(1:3000);
+ptemp_b2 = ptemp_b2(1:3000);
+ptemp_b3 = ptemp_b3(1:3000);
+%%
 scatter3(ptemp_k1,ptemp_k2,ptemp_k3,'.');
 hold on
 scatter3(ptemp_b1,ptemp_b2,ptemp_b3,'.');
@@ -189,19 +232,28 @@ xlim([0.1 0.35]); xlabel('26-36 keV')
 ylim([0.1 0.35]); ylabel('36-52 keV')
 zlim([0.1 0.35]); zlabel('52-79 keV')
 axis tight equal
-%legend('left-kidney','background')
+%legend('L.kidney','Background')
+ax = gca;
+ax.FontName = 'Times New Roman';
+ax.FontSize = 12;
+%%
 
 %%
 %edge =[0 0:0.025:2.8 2.8];
 %xlim([0 2.8])
-edge =[0 0:0.01:1.0 1.0];
-xlim([0 1.0])
+GT = M3GT;
+edge =[0 0:0.005:0.7 0.7];
+xlim([0 0.7])
 
 hold on
-histogram(M1E2(M1GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
-histogram(M2E2(M2GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
-histogram(M3E2(M3GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
-histogram(M4E2(M4GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+histogram(wM3E1(GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+histogram(wM3E1(GT == 4),edge,'Normalization','probability','EdgeAlpha',0.4);
+%histogram(M3E2(GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+%histogram(M4E2(M4GT == 2),edge,'Normalization','probability','EdgeAlpha',0.4);
+ax = gca;
+ax.FontName = 'Times New Roman';
+ax.FontSize = 12;
+legend('L.kidney','Background')
 %%
 imagesc(M4E2(230:330,250:350,70)');
 axis tight equal off

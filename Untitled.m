@@ -1,8 +1,8 @@
-In = pIwM4E2; th = 0.32;
+In = pIwM2E2; th = 0.32;
 siz = size(In);
 tmp1 = pIwM1GT; tmp1(tmp1 == 4) = 0; tmp1 = logical(tmp1);
-tmp2 = pIwM2GT; tmp2(tmp2 == 4) = 0; tmp2 = logical(tmp2);
-tmp3 = pIwM3GT; tmp3(tmp3 == 4) = 0; tmp3 = logical(tmp3);
+tmp2 = pIwM3GT; tmp2(tmp2 == 4) = 0; tmp2 = logical(tmp2);
+tmp3 = pIwM4GT; tmp3(tmp3 == 4) = 0; tmp3 = logical(tmp3);
 GTtemp = (tmp1 + tmp2 + tmp3)/3.0;
 SE = strel('sphere',2); 
 %%
@@ -28,13 +28,31 @@ for n = 1:CC.NumObjects
     dist(n) = mean(distIm(tmp));
     atval(n) = mean(GTtemp(tmp));
 end
-
+%%
 out = ismember(L, find( atval<=0.34  &...
     dist<=50 & [stats.Area]>= median([stats.Area])));
 out = imdilate(out,SE);
+
 %%
-imagesc(out(:,:,70)');
-caxis([0 10])
+a = [stats.Area];
+scatter3(a,dist,atval,'MarkerEdgeColor','none','MarkerFaceColor','r');
+xlabel('体積（ボクセル数）')
+ylabel('体表からの距離')
+zlabel('確率値');
+%%
+map2 = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.4
+    0.8, 0.7, 0.4
+    0.6 , 0.5, 0.5
+    0.9, 0.9, 0];
+imagesc(L(:,:,70)');
+caxis([0 6])
+colormap(map2)
+axis tight equal off
+%caxis([0 0.7])
+%%
+imagesc(tmp1(:,:,280)');
 axis tight equal
 %caxis([0 0.7])
 %%
@@ -51,12 +69,12 @@ boneM3 = reshape(boneM3,siz);
 boneM4 = reshape(boneM4,siz);
 
 %%
-imagesc(pwM1(:,:,70)');
+imagesc(boneM3(:,:,200)');
 axis tight equal off
-colormap(gray)
-caxis([0 0.7])
+%colormap(gray)
+%caxis([0 0.7])
 %%
-imagesc(pM4E4(:,:,200)');
+imagesc(M1E1(:,:,70)');
 axis tight equal off
 caxis([0 0.7])
 colormap(gray)
@@ -79,8 +97,8 @@ pM1E3 = zeros(siz);
 pM1E3(pmask1) = pIwM1E3(pmask1);
 pM1E4 = zeros(siz);
 pM1E4(pmask1) = pIwM1E4(pmask1);
-pwM1 = zeros(siz);
-pwM1(pmask1) = pIwM1(pmask1);
+% pwM1 = zeros(siz);
+% pwM1(pmask1) = pIwM1(pmask1);
 
 pM2E1 = zeros(siz);
 pM2E1(pmask2) = pIwM2E1(pmask2);
@@ -90,8 +108,8 @@ pM2E3 = zeros(siz);
 pM2E3(pmask2) = pIwM2E3(pmask2);
 pM2E4 = zeros(siz);
 pM2E4(pmask2) = pIwM2E4(pmask2);
-pwM2 = zeros(siz);
-pwM2(pmask2) = pIwM2(pmask2);
+% pwM2 = zeros(siz);
+% pwM2(pmask2) = pIwM2(pmask2);
 
 pM3E1 = zeros(siz);
 pM3E1(pmask3) = pIwM3E1(pmask3);
@@ -101,8 +119,8 @@ pM3E3 = zeros(siz);
 pM3E3(pmask3) = pIwM3E3(pmask3);
 pM3E4 = zeros(siz);
 pM3E4(pmask3) = pIwM3E4(pmask3);
-pwM3 = zeros(siz);
-pwM3(pmask3) = pIwM3(pmask3);
+% pwM3 = zeros(siz);
+% pwM3(pmask3) = pIwM3(pmask3);
 
 pM4E1 = zeros(siz);
 pM4E1(pmask4) = pIwM4E1(pmask4);
@@ -112,8 +130,8 @@ pM4E3 = zeros(siz);
 pM4E3(pmask4) = pIwM4E3(pmask4);
 pM4E4 = zeros(siz);
 pM4E4(pmask4) = pIwM4E4(pmask4);
-pwM4 = zeros(siz);
-pwM4(pmask4) = pIwM4(pmask4);
+% pwM4 = zeros(siz);
+% pwM4(pmask4) = pIwM4(pmask4);
 
 
 pM1GT = zeros(siz);
@@ -172,10 +190,15 @@ pM1GT(temp2 == 8) = 1;
 %%
 temp2 = temp- temp2; 
 %%
-imagesc(M4GT(:,:,70)');
+imagesc(pIwM3E2(:,:,70)');
 axis tight equal off
-%colormap(gray)
-%caxis([0 0.7])
+colormap(gray)
+caxis([0 0.7])
+%%
+imagesc(pmask3(:,:,70)');
+axis tight equal off
+%colormap(map)
+%caxis([0 4])
 %%
 pM1GT = pM1GT - uint8(temp2);
 %%

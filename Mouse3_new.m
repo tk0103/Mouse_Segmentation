@@ -1,8 +1,8 @@
 %train_mouse1 mouse2 mouse4 test_mouse3
-Xtr = [[M1E2(mask1); M2E2(mask2); M4E2(mask4)] [M1E3(mask1); M2E3(mask2); M4E3(mask4)]...
-      [M1E4(mask1); M2E4(mask2); M4E4(mask4)]];
+Xtr = [[M1E2(mask1); M2E2(mask2); M4E2(mask3)] [M1E3(mask1); M2E3(mask2); M4E3(mask3)]...
+      [M1E4(mask1); M2E4(mask2); M4E4(mask3)]];
 Xte = [M3E2(mask3) M3E3(mask3) M3E4(mask3)];
-XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask4)];
+XGTtr = [M1GT(mask1); M2GT(mask2); M4GT(mask3)];
 XGTte = M3GT(mask3);
 %%
 clearvars SS
@@ -44,13 +44,11 @@ atlas  = atlasfunc1(sig1,sig2,K1,siz,mask3,M1GT,M2GT,M4GT);
 
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,lilelihood] ...
     = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask3,siz,30);
-JI1= CalcuJI(Imap,M3GT,K1-1);
+JI= CalcuJI(Imap,M3GT,K1-1);
 disp("EM_MAP result")
-disp(JI1);
-%%
-imagesc(Imap(:,:,200)');
-axis tight equal off
-caxis([0 4])
+disp(JI);
+
+clearvars Xtr XTe XGTtr XGTte
 %%
 blamask = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap == 1);
@@ -96,6 +94,8 @@ tmp = zeros(siz);
 tmp(RRkid > RLkid) = 1;
 tmp2 = and(tmp,LRAND);
 Lkidmask = logical(Lkidmask - LRAND + tmp2);
+
+clearvars blamaxcomp Rmaxcomp Lmaxcomp L1 XX YY ZZ  x y z tmp tmp1 tmp2 tmp3
 %%
 Xtebla  = M3E4(blamask);
 XteLkid = M3E4(Lkidmask);
@@ -112,19 +112,15 @@ XteRkid = [M3E2(Rkidmask) M3E3(Rkidmask) M3E4(Rkidmask) ];
 Xtebla  = [M3E1(blamask)  M3E2(blamask)  M3E3(blamask)  M3E4(blamask)];
 XteLkid = [M3E1(Lkidmask) M3E2(Lkidmask) M3E3(Lkidmask) M3E4(Lkidmask)];
 XteRkid = [M3E1(Rkidmask) M3E2(Rkidmask) M3E3(Rkidmask) M3E4(Rkidmask)];
-%%
-clearvars atlasbla atlasLkid atlasRkid
-sig3 = 10;
-atlasbla   = atlasfunc2(sig3,siz,mask3,blamask,GMMpro,0.8,1);
-atlasLkid  = atlasfunc2(sig3,siz,mask3,Lkidmask,GMMpro,0.2,2);
-atlasRkid  = atlasfunc2(sig3,siz,mask3,Rkidmask,GMMpro,0.2,3);
+
 %%
 tmp  =zeros(siz);
 tmp(Lkidmask) = atlasLkid(:,1);
 %%
-imagesc(tmp(:,:,200)');
-axis tight equal
-caxis([0 1]);
+imagesc(Imap(:,:,130)');
+axis tight equal off
+caxis([0 4]);
+colormap(map)
 %%
 GT = zeros(siz);  GT(blamask) = cutM3GT(blamask);
 blaGT = zeros(siz); blaGT(blamask) = 3;
@@ -163,6 +159,12 @@ for k = 1:K2
     SRkid.Sigma(:,:,k) = cov(([tmp1(mask == k),tmp2(mask == k),tmp3(mask == k)]));
 end
 %%
+clearvars atlasbla atlasLkid atlasRkid
+sig3 = 10;
+atlasbla   = atlasfunc2(sig3,siz,mask3,blamask,GMMpro,0.8,1);
+atlasLkid  = atlasfunc2(sig3,siz,mask3,Lkidmask,GMMpro,0.2,2);
+atlasRkid  = atlasfunc2(sig3,siz,mask3,Rkidmask,GMMpro,0.2,3);
+
 clearvars Sbla SLkid SRkid
 Sbla.mu(1,:) = GMMMu(1,:) +0.5*sqrt(diag(GMMSigma(:,:,1)))';
 Sbla.mu(2,:) = GMMMu(1,:) -0.5*sqrt(diag(GMMSigma(:,:,1)))';
@@ -203,65 +205,12 @@ Imap2(Imapbla == 1) = 1;  Imap2(Imapbla == 2) = 1;
 Imap2(ImapLkid == 1) = 2; Imap2(ImapLkid == 2) = 2;
 Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
 
-JI1 = CalcuJI(Imap,M3GT,K2);
-disp(JI1);
-JI2 = CalcuJI(Imap2,M3GT,K2);
-disp(JI2);
-%%
-imagesc(Imap2(:,:,200)');
-axis tight equal off
+JI = CalcuJI(Imap,M3GT,K2);
+disp(JI);
+JI = CalcuJI(Imap2,M3GT,K2);
+disp(JI);
 
-%%
-map = [0, 0, 0
-    0.1, 0.5, 0.8
-    0.2, 0.7, 0.6
-    0.8, 0.7, 0.3
-    0.9, 0.9, 0];
-imagesc(Imap2(:,:,200)');
-axis tight equal off
-caxis([0 4])
-colormap(map);
-%%
-%In = M3E2; InGT = blaGT;
-%mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
-%mu = GMMMubla; sigma = sqrt(GMMSigmabla);
-
-%In = M3E2; InGT = LkidGT;
-%mu = SLkid.mu; sigma = sqrt(SLkid.Sigma);
-%mu = GMMMuLkid; sigma = sqrt(GMMSigmaLkid);
-
-%In = M3E2; InGT = RkidGT;
-%mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
-%mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
-
-edge =[0 0:0.01:0.7 0.7];
-xlim([0 0.7])
-
-hold on
-histogram(In(InGT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(In(InGT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4);
-histogram(In(InGT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
-
-mutest = mu(1,1); sigtest = sigma(1,1,1);
-y1 = pdf('Normal',edge,mutest,sigtest);
-plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
-
-mutest = mu(2,1); sigtest =  sigma(1,1,2);
-y2 = pdf('Normal',edge,mutest,sigtest);
-plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
-
-mutest = mu(3,1); sigtest = sigma(1,1,3);
-y3 = pdf('Normal',edge,mutest,sigtest);
-plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
-hold off
-%%
-edge =[0 0:0.01:0.7 0.7];
-In = M3E2; InGT = RkidGT;
-hold on
-histogram(In(InGT ==1),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==2),edge,'EdgeAlpha',0.4);
-histogram(In(InGT ==3),edge,'EdgeAlpha',0.4);
-
+clearvars atlasbla atlasLkid atlasRkid Sbla SLkid SRkid
 %%
 blamask2 = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap2 == 1);
@@ -287,7 +236,8 @@ tmp = bwdist(logical(Rmaxcomp)) <  power(bwarea(Rmaxcomp(:))/4/pi*3,1/3);
 Rkidmask2(tmp) = 1;
 Rkidmask2 = logical(and(Rkidmask2,mask3));
 LRAND = and(Rkidmask2,Lkidmask2);
-%%
+LRkidmask = or(Rkidmask2,Lkidmask2);
+
 [XX,YY,ZZ] = meshgrid(1:siz(1),1:siz(2),1:siz(3));
 tmp = bwdist(logical(not(Lmaxcomp)));
 [~,I] = max(tmp(:)); [y,x,z] = ind2sub(siz,I);
@@ -307,236 +257,193 @@ tmp(RRkid > RLkid) = 1;
 tmp2 = and(tmp,LRAND);
 Lkidmask2 = logical(Lkidmask2 - LRAND + tmp2);
 
+clearvars blamaxcomp Rmaxcomp Lmaxcomp L1 XX YY ZZ atlas x y z tmp tmp1 tmp2 tmp3
 %%
-imagesc(M3E1(:,:,200)');
-axis tight equal
-caxis([0.2 0.4])
+save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\Imap2_Mouse3.raw','*uint8');
 %%
-%GC bladder
+%Reaginal term bladder
 clearvars PPout GraphModel
-masktm = blamask;
-masktm2 = blamask2;
-GT = zeros(siz); GT(M3GT == 1) = 1;
-PPorgan = zeros(siz); PPorgan(masktm) = PPbla(:,1) + PPbla(:,2);
-PPorgan = imgaussfilt3(PPorgan,5);
-PPback = 1.0 - PPorgan; 
-PPout(:,1) = PPorgan(masktm2); PPout(:,2) = PPback(masktm2);
-PPout = -log(PPout+eps);
-PPout = real(PPout);
-GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
 
-Kmat = [1,1; 1,1]; K3 = 2;
-sumIm = (M3E1 + M3E2)/2;
-sumIm = sumIm(masktm2);
-%[lambda,h] =ndgrid(100:100:1000 ,0.01:0.1:10);
-
-%lambda = lambda(:);
-%h = h(:);
-%OutputJI = zeros(size(h,1),1);
-%%
-%Reaginal term
-clearvars PPout
-masktm = Lkidmask;
-masktm2 = Lkidmask2;
-GT = zeros(siz); GT(M3GT == 2) = 1;
-PPorgan = zeros(siz); PPorgan(masktm) = ((PPLkid(:,1)+PPLkid(:,2)));
+PPtemp1 = zeros(siz); PPtemp1(blamask) = PPbla(:,1) + PPbla(:,2);
 PPorgannew = zeros(siz);
-PPorgannew(masktm2) = PPorgan(masktm2);
-PPorgan = imgaussfilt3(PPorgannew,5);
-PPback = 1.0 - PPorgan;
-PPout(:,1) = PPorgan(masktm2); PPout(:,2) = PPback(masktm2);
+PPorgannew(blamask2) = PPtemp1(blamask2);
+PPtemp1 = imgaussfilt3(PPorgannew,5);
+PPtemp2 = 1.0 - PPtemp1;
+
+PPout(:,1) = PPtemp1(blamask2);
+PPout(:,2) = PPtemp2(blamask2);
 PPout = -log(PPout+eps);
 
-Kmat = [1,1; 1,1];
-K3 = 2;
-%sumIm = (M3E1 + M3E2 + M3E3 + M3E4)/4;
-sumIm = (M3E2+M3E1)/2;
-sumIm = sumIm(masktm2);
-%%
-imagesc(PPorgan(:,:,200)');
+sumIm = M3E2(blamask2);
 
-%%
-%Reaginal term
-clearvars PPout 
-masktm = Rkidmask;
-masktm2 = Rkidmask2;
-GT = zeros(siz); GT(M3GT == 3) = 1;
-PPorgan = zeros(siz); PPorgan(masktm) = PPRkid(:,1)+PPRkid(:,2);
-PPorgannew = zeros(siz);
-PPorgannew(masktm2) = PPorgan(masktm2);
-PPorgan = imgaussfilt3(PPorgannew,5);
-PPback = 1.0 - PPorgan;
-PPout(:,1) = PPorgan(masktm2); PPout(:,2) = PPback(masktm2);
-PPout = -log(PPout+eps);
+GraphModel = CreateFullyConnectedGraphWithMask(blamask2);
 
-Kmat = [1,1; 1,1];
-K3 = 2;
-sumIm = (M3E1 + M3E2 )/2;
-sumIm = sumIm(masktm2);
+clearvars PPtemp1 PPtemp2 PPorgannew
 %%
-se = strel('sphere',5);
-I1 = zeros(siz);
-I1(Imap2 == 2) = 1;
-I1 = imopen(I1,se); I1 = imclose(I1,se);
-%%
-LK = signed_EUDT(I1); 
-LK = LK(mask); 
-E1 = sqrt((1 - (LK(GraphModel.Hj)-LK(GraphModel.Hi))./GraphModel.dist)/2);
-E2 = sqrt((1 - (RK(GraphModel.Hj)-RK(GraphModel.Hi))./GraphModel.dist)/2);
-E1 = real(E1); E2 = real(E2);
-
-%%
-imagesc(M3E2(120:220,190:290,200)');
-axis tight equal
-%caxis([0.04 0.5])
-colormap(gray)
-%%
-[sig,lambda] =ndgrid(0.00005:0.005:0.2,0.2:0.1:0.4);
+[sigma,lambda] =ndgrid(0.001:0.005:0.1,0.01:0.25:2);
 lambda = lambda(:);
-sig = sig(:);
-OutputJI = zeros(size(sig,1),1);
+sigma = sigma(:);
+OutputJI = zeros(size(sigma,1),1);
 
 
 %%
-shpepri = Iw(masktm2); 
-te = (1-(shpepri(GraphModel.Hj)-shpepri(GraphModel.Hi))./GraphModel.dist)./2;
+[sigma,lambda,c] =ndgrid(0.002:0.0002:0.003,0.001:0.002:0.04,0.95:0.02:0.99);
+lambda = lambda(:); sigma = sigma(:); c = c(:);
+OutputJI = zeros(size(sigma,1),1);
 %%
+shpepri = Iw(Rkidmask2); 
+te = (1-(shpepri(GraphModel.Hi)-shpepri(GraphModel.Hj))./GraphModel.dist)./2;
 te =real(sqrt(te));
-%%
-clearvars GraphModel
-GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
-%%
-%t‘
-%for n = 1:size(sig,1)
-n = 1;
-lambda = 0.5;
-sig = 0.00505;
-    N = size(PPout,1);
-    CurLabel = zeros(N,1)+2;
-    PreLabel = zeros(N,1);
-    Output = zeros(siz);
-    PropLabel = ones(N,1);
-    
-    flag = 0; PreE = 0;
-    c = 0.2;
- 
-    while(flag~=1)
-        GraphModel.Vs = PPout((1:N)'+(CurLabel(:)-1)*N)*lambda(n);
-        GraphModel.Vt = PPout((1:N)'+(PropLabel(:)-1)*N)*lambda(n);
-        
-        Z = (sumIm(GraphModel.Hj)-sumIm(GraphModel.Hi)).^2;
-        
-        %GraphModel.H01(:) = exp(-Z./ (2*sig(n)^2)) ./ GraphModel.dist;
-        %GraphModel.H01(:) = c*(exp(-Z./ (2*sig(n)^2)) ./ GraphModel.dist) +(1-c)*te; 
-        tem1 = c.*(exp(-Z./ (2*sig(n)^2)) ./ GraphModel.dist); tem2 = (1-c).*te;
-        GraphModel.H01(:) = tem1 + tem2;
-        GraphModel.H10(:) = GraphModel.H01;
-        GraphModel.H00(:) = 0;
-        GraphModel.H11(:) = 0;
-        [lowerBound, label] = qpboMex([GraphModel.Vs,GraphModel.Vt],...
-            [GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]); 
-        
-        label = logical(label);
-        CurLabel(label) = PropLabel(label);
-               
-          Eunary = sum(GraphModel.Vs); Epairwise1 = sum(tem1); Epairwise2 = sum(tem2);
-        E = Eunary + Epairwise1 + Epairwise2;
-        disp(E);
-        
-        if CurLabel == PreLabel
-            flag = 1;
-            Output(masktm2) = CurLabel;
-        end
-        
-        PreLabel = CurLabel;
-        
-  
-    end
-    
-    JI3= CalcuJI(Output,GT,1);
-    disp(JI3);
-    OutputJI(n) = JI3';
-    disp(n);
-end
+
+
 
 %%
-save_raw(Output,'C:\\Users\\yourb\\Desktop\\M3GC.raw','*uint8')
-%%
-map = [0, 0, 0
-    0.1, 0.5, 0.8
-    0.2, 0.7, 0.6
-    0.8, 0.7, 0.3
-    0.9, 0.9, 0];
+clearvars edgeWeight terminalWeights
+%bladder
+edgeWeight(:,1) = GraphModel.Hi;
+edgeWeight(:,2) = GraphModel.Hj;
+Z = (sumIm(GraphModel.Hi)-sumIm(GraphModel.Hj)).^2;
+sigma = 0.011; lambda = 0.26; n =1;
 
-%%
-aaa = zeros(siz); aaa(Lkidmask2) = M3GT(Lkidmask2);
-%%
-imagesc(Output(:,:,200)');
-axis tight equal off
-
-%%
-clearvars GraphModel
-GraphModel = CreateFullyConnectedGraphWithMask(masktm2);
-%δNγχ
-%for n = 1:size(sig,1)
-n =1;
-lambda = 5;
-sig = 0.05;
-    N = size(PPout,1);
-    CurLabel = zeros(N,1)+2;
-    PreLabel = zeros(N,1);
-    Output = zeros(siz);
-    PropLabel = ones(N,1);
+%for n = 1:160
+    terminalWeights = lambda(n) .* PPout;
+    Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
+    edgeWeight(:,3) = Bound;
+    edgeWeight(:,4) = Bound;
     
-    flag = 0; PreE = 0; 
- 
-    while(flag~=1)
-        GraphModel.Vs = PPout((1:N)'+(CurLabel(:)-1)*N)*lambda(n);
-        GraphModel.Vt = PPout((1:N)'+(PropLabel(:)-1)*N)*lambda(n);
-        GraphModel = SetNWeight_binary(GraphModel, sumIm, CurLabel,PropLabel,sig(n), Kmat);
-  
-        [lowerBound, label] = qpboMex([GraphModel.Vs,GraphModel.Vt],...
-            [GraphModel.Hi,GraphModel.Hj,GraphModel.H00,GraphModel.H01,GraphModel.H10,GraphModel.H11]); 
-      
-              label = logical(label);
-        CurLabel(label) = PropLabel(label);
-        
-        GraphModel.Vs(~isfinite(GraphModel.Vs)) = 0;
-        Eunary = sum(GraphModel.Vs); Epairwise = sum(GraphModel.H00);
-        E = Eunary + Epairwise;
-        disp(E);
-       
-        if CurLabel == PreLabel
-            flag = 1;
-            Output(masktm2) = CurLabel;
-        end
-        
-        PreLabel = CurLabel;
-        
-        PreE = E;
-    end
+    [cut, labels] = graphCutMex(terminalWeights,edgeWeight);
     
-    JI3= CalcuJI(Output,GT,1);
-    disp(JI3);
-    OutputJI(n) = JI3';
+    Outputtem = zeros(siz);
+    Outputtem(blamask2) = labels;
+    JI= CalcuJI(Outputtem,M3GT,1);
+    disp(JI);
+    OutputJI(n) = JI;
     disp(n);
 %end
+OutGC(Outputtem == 1) = 1;
+%%
+slice = 70;
+subplot(1,3,1);
+imagesc(Imap2(:,:,slice)');
+axis tight equal off
+
+subplot(1,3,2);
+imagesc(Outputtem(:,:,slice)');
+axis tight equal off
+
+subplot(1,3,3);
+imagesc(M3GT(:,:,slice)');
+axis tight equal off
+%%
+JI = CalcuJI(Imap2,M3GT,3);
+disp(JI)
 
 %%
-Result = zeros(siz) +4;
-Result(M3GT == 0 ) = 0;
+imagesc(
+
+
 %%
-Result(Output == 1) = 3;
+%Reaginal term L.kidney
+clearvars PPout GraphModel
+
+PPtemp1 = zeros(siz); PPtemp1(Lkidmask) = PPLkid(:,1) + PPLkid(:,2);
+PPorgannew = zeros(siz);
+PPorgannew(Lkidmask2) = PPtemp1(Lkidmask2);
+PPtemp1 = imgaussfilt3(PPorgannew,5);
+PPtemp2 = 1.0 - PPtemp1;
+
+PPout(:,1) = PPtemp1(Lkidmask2);
+PPout(:,2) = PPtemp2(Lkidmask2);
+PPout = -log(PPout+eps);
+
+sumIm =M3E2(Lkidmask2);
+GraphModel = CreateFullyConnectedGraphWithMask(Lkidmask2);
+
+clearvars PPtemp1 PPtemp2 PPorgannew
 %%
-imagesc(Imap2(:,:,70)');
+[sigma,lambda] =ndgrid(0.0001:0.0002:0.002,0.041:0.002:0.05);
+lambda = lambda(:);
+sigma = sigma(:);
+OutputJI = zeros(size(sigma,1),1);
+%%
+clearvars edgeWeight terminalWeights
+
+edgeWeight(:,1) = GraphModel.Hi;
+edgeWeight(:,2) = GraphModel.Hj;
+Z =   (sumIm(GraphModel.Hi)-sumIm(GraphModel.Hj)).^2;
+%sigma = 0.0019; lambda = 0.009; n =1;
+
+for n = 1:600
+    terminalWeights = lambda(n) .* PPout;
+    Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
+%     edgeWeight(:,3) = Bound;
+%     edgeWeight(:,4) = Bound;
+    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
+    edgeWeight(:,4) =   edgeWeight(:,3);
+    
+    [~, labels] = graphCutMex(terminalWeights,edgeWeight);
+    
+    Outputtem = zeros(siz);
+    Outputtem(Lkidmask2) = labels;
+    JI= CalcuJI(Outputtem,M3GT-1,1);
+    disp(JI);
+    OutputJI(n) = JI;
+    disp(n);
+end
+OutGC(Outputtem == 1) = 2;
+%%
+%Reaginal term R.kidney
+clearvars PPout GraphModel
+
+PPtemp1 = zeros(siz); PPtemp1(Rkidmask) = PPRkid(:,1)+PPRkid(:,2);
+PPorgannew = zeros(siz);
+PPorgannew(Rkidmask2) = PPtemp1(Rkidmask2);
+PPtemp1 = imgaussfilt3(PPorgannew,5);
+PPtemp2 = 1.0 - PPtemp1;
+
+PPout(:,1) = PPtemp1(Rkidmask2);
+PPout(:,2) = PPtemp2(Rkidmask2);
+PPout = -log(PPout+eps);
+
+sumIm = M3E2(Rkidmask2);
+GraphModel = CreateFullyConnectedGraphWithMask(Rkidmask2);
+
+clearvars PPtemp1 PPtemp2 PPorgannew
+%%
+[sigma,lambda] =ndgrid(0.0001:0.0002:0.002,0.039:0.002:0.05);
+lambda = lambda(:);
+sigma = sigma(:);
+OutputJI = zeros(size(sigma,1),1);
+%%
+clearvars edgeWeight terminalWeights
+
+edgeWeight(:,1) = GraphModel.Hi;
+edgeWeight(:,2) = GraphModel.Hj;
+Z =   (sumIm(GraphModel.Hi)-sumIm(GraphModel.Hj)).^2;
+%sigma = 0.0005; lambda = 0.019; n =1;
+
+for n = 1:600
+    terminalWeights = lambda(n) .* PPout;
+    Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
+%     edgeWeight(:,3) = Bound;
+%     edgeWeight(:,4) = Bound;
+    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
+    edgeWeight(:,4) =   edgeWeight(:,3);
+    
+    [~, labels] = graphCutMex(terminalWeights,edgeWeight);
+    
+    Outputtem = zeros(siz);
+    Outputtem(Rkidmask2) = labels;
+    JI= CalcuJI(Outputtem,M3GT-2,1);
+    disp(JI);
+    OutputJI(n) = JI;
+    disp(n);
+end
+OutGC(Outputtem == 1) = 3;
+%%
+imagesc(OutGC(:,:,70)');
 axis tight equal off
+colormap(map)
 caxis([0 4])
-colormap(map);
 %%
-JI4= CalcuJI(Result,M3GT,1);
-%%
-map = [0, 0, 0
-    0.1, 0.5, 0.8
-    0.2, 0.7, 0.6
-    0.8, 0.7, 0.3
-    0.9, 0.9, 0];
+save_raw(OutGC,'C:\\Users\\yourb\\Desktop\\new3\\GC_Mouse3.raw','*uint8');

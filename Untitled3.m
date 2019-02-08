@@ -46,14 +46,14 @@ Az = reshape(Az,1,1,siz(3));
 Gx = (Ax * invmat(1,1) + Ay * invmat(1,2) + Az * invmat(1,3)) + invmat(1,4);
 Gy = (Ax * invmat(2,1) + Ay * invmat(2,2) + Az * invmat(2,3)) + invmat(2,4);
 Gz = (Ax * invmat(3,1) + Ay * invmat(3,2) + Az * invmat(3,3)) + invmat(3,4);
-%%
+
 Re = zeros(siz);
 F = griddedInterpolant(original,'linear','nearest');
 
 Iw = F(Gx,Gy,Gz);
 Re(Iw <=0 ) =1;
 %%
-imagesc(Imap2(:,:,70)');
+imagesc(Imap2(:,:,200)');
 axis tight equal
 %%
 imagesc(Iw(:,:,200)');

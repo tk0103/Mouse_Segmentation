@@ -223,10 +223,10 @@ imagesc(RkidGT(:,:,230)');
 axis tight equal off
 caxis([0 4])
 %%
-imagesc(pM3E2(:,:,80)');
+imagesc(Imap2(:,:,200)');
 axis tight equal off
-caxis([0 0.7])
-colormap(gray)
+%caxis([0 0.7])
+%colormap(gray)
 %%
 %In = pM3E2; InGT = blaGT;
 %mu = Sbla.mu; sigma = sqrt(Sbla.Sigma);
