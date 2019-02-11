@@ -238,7 +238,7 @@ caxis([0 4])
 imagesc(Rkidmask(:,:,200)');
 axis tight equal off
 %%
-save_raw(Imap2,'C:\Users\yourb\Desktop\new3\Imap2_Mouse2.raw','*uint8');
+save_raw(Imap2,'C:\Users\yourb\Desktop\new3\ImapM2.raw','*uint8');
 %%
 blamask2 = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap2 == 1);
@@ -324,7 +324,7 @@ OutputJI = zeros(size(sigma,1),1);
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z = (Im(GraphModel.Hi)-Im(GraphModel.Hj)).^2;
-sigma = 0.011; lambda = 0.26; n =1;
+sigma = 0.021; lambda = 0.26; n =1;
 
 %for n = 1:160
     terminalWeights = lambda(n) .* PPout;
@@ -341,17 +341,17 @@ sigma = 0.011; lambda = 0.26; n =1;
     OutputJI(n) = JI;
     disp(n);
 %end
-
-%Output = zeros(siz);
+%%
+OutGC = zeros(siz);
 OutGC(Outputtem ==1) = 1;
 %%
-slice = 70;
+slice = 80;
 subplot(1,3,1);
 imagesc(Imap2(:,:,slice)');
 axis tight equal off
 
 subplot(1,3,2);
-imagesc(Outputtem(:,:,slice)');
+imagesc(OutGC(:,:,slice)');
 axis tight equal off
 
 subplot(1,3,3);
@@ -368,7 +368,7 @@ disp(JI)
 lambda = lambda(:); sigma = sigma(:); c = c(:);
 OutputJI = zeros(size(sigma,1),1);
 %%
-shpepri = Iw(Rkidmask2); 
+shpepri = Iw(Lkidmask2); 
 te = (1-(shpepri(GraphModel.Hi)-shpepri(GraphModel.Hj))./GraphModel.dist)./2;
 te =real(sqrt(te));
 
@@ -388,12 +388,14 @@ PPtemp2 = 1.0 - PPtemp1;
 PPout(:,1) = PPtemp1(Lkidmask2);
 PPout(:,2) = PPtemp2(Lkidmask2);
 PPout = -log(PPout+eps);
-
 Im = M2E2(Lkidmask2);
-
 GraphModel = CreateFullyConnectedGraphWithMask(Lkidmask2);
 
 clearvars PPtemp1 PPtemp2 PPorgannew
+%%
+[sigma,lambda] =ndgrid(0.0001:0.0002:0.004,0.001:0.002:0.04);
+lambda = lambda(:); sigma = sigma(:); 
+OutputJI = zeros(size(sigma,1),1);
 %%
 [sigma,lambda] =ndgrid(0.0001:0.0002:0.002,0.001:0.002:0.04);
 lambda = lambda(:);
@@ -401,20 +403,18 @@ sigma = sigma(:);
 OutputJI = zeros(size(sigma,1),1);
 %%
 clearvars edgeWeight terminalWeights
-
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z = (Im(GraphModel.Hi)-Im(GraphModel.Hj)).^2;
-%sigma = 0.0019; lambda = 0.021; n =1;
+%sigma = 0.0017; lambda = 0.019; n =1; c = 1;
 
-for n = 1:600
+for n = 1:700
     terminalWeights = lambda(n) .* PPout;
     Bound = exp(- Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
-%     edgeWeight(:,3) = Bound;
-%     edgeWeight(:,4) = Bound;
-    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
-    edgeWeight(:,4) =   edgeWeight(:,3);
-    
+     edgeWeight(:,3) = Bound;
+     edgeWeight(:,4) = Bound;
+%    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
+%    edgeWeight(:,4) =   edgeWeight(:,3);
     
     [~, labels] = graphCutMex(terminalWeights,edgeWeight);
     
@@ -424,11 +424,10 @@ for n = 1:600
     disp(JI);
     OutputJI(n) = JI;
     disp(n);
-    
 end
-
+%%
 %Output = zeros(siz);
-OutGC(Outputtem ==1) = 2;
+OutGC2(Outputtem ==1) = 2;
 %%
 slice = 200;
 subplot(1,3,1);
@@ -453,20 +452,17 @@ axis tight equal off
 %%
 %Reaginal term R.kidney
 clearvars PPout GraphModel
-
 PPtemp1 = zeros(siz); PPtemp1(Rkidmask) = PPRkid(:,1)+PPRkid(:,2);
 PPorgannew = zeros(siz);
 PPorgannew(Rkidmask2) = PPtemp1(Rkidmask2);
 PPtemp1 = imgaussfilt3(PPorgannew,5);
 PPtemp2 = 1.0 - PPtemp1;
-
 PPout(:,1) = PPtemp1(Rkidmask2);
 PPout(:,2) = PPtemp2(Rkidmask2);
 PPout = -log(PPout+eps);
 
 Im = M2E2(Rkidmask2);
 GraphModel = CreateFullyConnectedGraphWithMask(Rkidmask2);
-
 clearvars PPtemp1 PPtemp2 PPorgannew
 %%
 [sigma,lambda] =ndgrid(0.0001:0.0002:0.002,0.041:0.002:0.05);
@@ -479,15 +475,15 @@ clearvars edgeWeight terminalWeights Z
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z =   (Im(GraphModel.Hi)-Im(GraphModel.Hj)).^2;
-%sigma = 0.0013; lambda = 0.039; n =1;
+%sigma = 0.0017; lambda = 0.033; n =1; c = 1;
 
-for n = 1:600
+for n = 1:400
     terminalWeights = lambda(n) .* PPout;
     Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
-  %     edgeWeight(:,3) = Bound;
-%     edgeWeight(:,4) = Bound;
-    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
-    edgeWeight(:,4) =   edgeWeight(:,3);
+      edgeWeight(:,3) = Bound;
+     edgeWeight(:,4) = Bound;
+%    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
+ %   edgeWeight(:,4) =   edgeWeight(:,3);
     
     [~, labels] = graphCutMex(terminalWeights,edgeWeight);
     
@@ -498,13 +494,13 @@ for n = 1:600
     OutputJI(n) = JI;
     disp(n);   
 end
-
-OutGC(Outputtem ==1) = 3;
 %%
-imagesc(OutGC(:,:,80)');
+OutGC2(Outputtem ==1) = 3;
+%%
+imagesc(OutGC2(:,:,200)');
 axis tight equal off
 colormap(map)
 caxis([0 4])
 
 %%
-save_raw(OutGC,'C:\Users\yourb\Desktop\GC_Mouse2.raw','*uint8');
+save_raw(OutGC2,'C:\Users\yourb\Desktop\GC2M2.raw','*uint8');

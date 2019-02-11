@@ -1,5 +1,5 @@
-mask = mask1;
-GT  =M1GT;
+mask = mask4;
+GT  =M4GT;
 %%
 %train_mouse2_mouse3 mouse4 test_mouse1
 Xtr = [wM2E1(mask2); wM3E1(mask3); wM4E1(mask4) ];
@@ -197,7 +197,7 @@ disp(JI);
 JI = CalcuJI(Imap2,GT,K1-1);
 disp(JI);
 %%
-save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\Imap2_Mouse4_wide.raw','*uint8');
+save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\ImapWM4.raw','*uint8');
 %%
 blamask2 = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap2 == 1);

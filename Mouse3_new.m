@@ -117,7 +117,7 @@ XteRkid = [M3E1(Rkidmask) M3E2(Rkidmask) M3E3(Rkidmask) M3E4(Rkidmask)];
 tmp  =zeros(siz);
 tmp(Lkidmask) = atlasLkid(:,1);
 %%
-imagesc(Imap(:,:,130)');
+imagesc(Imap2(:,:,200)');
 axis tight equal off
 caxis([0 4]);
 colormap(map)
@@ -259,7 +259,7 @@ Lkidmask2 = logical(Lkidmask2 - LRAND + tmp2);
 
 clearvars blamaxcomp Rmaxcomp Lmaxcomp L1 XX YY ZZ atlas x y z tmp tmp1 tmp2 tmp3
 %%
-save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\Imap2_Mouse3.raw','*uint8');
+save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\ImapM3.raw','*uint8');
 %%
 %Reaginal term bladder
 clearvars PPout GraphModel
@@ -287,7 +287,7 @@ OutputJI = zeros(size(sigma,1),1);
 
 
 %%
-[sigma,lambda,c] =ndgrid(0.002:0.0002:0.003,0.001:0.002:0.04,0.95:0.02:0.99);
+[sigma,lambda,c] =ndgrid(0.0001:0.0002:0.002,0.001:0.002:0.04,0.95:0.02:0.99);
 lambda = lambda(:); sigma = sigma(:); c = c(:);
 OutputJI = zeros(size(sigma,1),1);
 %%
@@ -303,7 +303,7 @@ clearvars edgeWeight terminalWeights
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z = (sumIm(GraphModel.Hi)-sumIm(GraphModel.Hj)).^2;
-sigma = 0.011; lambda = 0.26; n =1;
+sigma = 0.031; lambda = 0.76; n =1;
 
 %for n = 1:160
     terminalWeights = lambda(n) .* PPout;
@@ -320,6 +320,7 @@ sigma = 0.011; lambda = 0.26; n =1;
     OutputJI(n) = JI;
     disp(n);
 %end
+%%
 OutGC(Outputtem == 1) = 1;
 %%
 slice = 70;
@@ -337,9 +338,8 @@ axis tight equal off
 %%
 JI = CalcuJI(Imap2,M3GT,3);
 disp(JI)
-
 %%
-imagesc(
+
 
 
 %%
@@ -361,7 +361,13 @@ GraphModel = CreateFullyConnectedGraphWithMask(Lkidmask2);
 
 clearvars PPtemp1 PPtemp2 PPorgannew
 %%
-[sigma,lambda] =ndgrid(0.0001:0.0002:0.002,0.041:0.002:0.05);
+shpepri = Iw(Lkidmask2); 
+te = (1-(shpepri(GraphModel.Hi)-shpepri(GraphModel.Hj))./GraphModel.dist)./2;
+te =real(sqrt(te));
+
+
+%%
+[sigma,lambda] =ndgrid(0.0001:0.0002:0.002,0.051:0.002:0.07);
 lambda = lambda(:);
 sigma = sigma(:);
 OutputJI = zeros(size(sigma,1),1);
@@ -371,15 +377,15 @@ clearvars edgeWeight terminalWeights
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z =   (sumIm(GraphModel.Hi)-sumIm(GraphModel.Hj)).^2;
-%sigma = 0.0019; lambda = 0.009; n =1;
+%sigma = 0.0015; lambda = 0.005; n =1; c = 0.99;
 
-for n = 1:600
+for n = 1:700
     terminalWeights = lambda(n) .* PPout;
     Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
-%     edgeWeight(:,3) = Bound;
-%     edgeWeight(:,4) = Bound;
-    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
-    edgeWeight(:,4) =   edgeWeight(:,3);
+    edgeWeight(:,3) = Bound;
+    edgeWeight(:,4) = Bound;
+    %edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
+    %edgeWeight(:,4) =   edgeWeight(:,3);
     
     [~, labels] = graphCutMex(terminalWeights,edgeWeight);
     
@@ -390,7 +396,8 @@ for n = 1:600
     OutputJI(n) = JI;
     disp(n);
 end
-OutGC(Outputtem == 1) = 2;
+%%
+OutGC2(Outputtem == 1) = 2;
 %%
 %Reaginal term R.kidney
 clearvars PPout GraphModel
@@ -410,7 +417,7 @@ GraphModel = CreateFullyConnectedGraphWithMask(Rkidmask2);
 
 clearvars PPtemp1 PPtemp2 PPorgannew
 %%
-[sigma,lambda] =ndgrid(0.0001:0.0002:0.002,0.039:0.002:0.05);
+[sigma,lambda] =ndgrid(0.0021:0.0002:0.004,0.051:0.002:0.07);
 lambda = lambda(:);
 sigma = sigma(:);
 OutputJI = zeros(size(sigma,1),1);
@@ -420,15 +427,15 @@ clearvars edgeWeight terminalWeights
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z =   (sumIm(GraphModel.Hi)-sumIm(GraphModel.Hj)).^2;
-%sigma = 0.0005; lambda = 0.019; n =1;
+%sigma = 0.0019; lambda = 0.039; n =1; c= 1;
 
-for n = 1:600
+for n = 1:700
     terminalWeights = lambda(n) .* PPout;
     Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
-%     edgeWeight(:,3) = Bound;
-%     edgeWeight(:,4) = Bound;
-    edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
-    edgeWeight(:,4) =   edgeWeight(:,3);
+    edgeWeight(:,3) = Bound;
+    edgeWeight(:,4) = Bound;
+   % edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
+   % edgeWeight(:,4) =   edgeWeight(:,3);
     
     [~, labels] = graphCutMex(terminalWeights,edgeWeight);
     
@@ -439,11 +446,12 @@ for n = 1:600
     OutputJI(n) = JI;
     disp(n);
 end
-OutGC(Outputtem == 1) = 3;
 %%
-imagesc(OutGC(:,:,70)');
+OutGC2(Outputtem == 1) = 3;
+%%
+imagesc(Outputtem(:,:,200)');
 axis tight equal off
 colormap(map)
 caxis([0 4])
 %%
-save_raw(OutGC,'C:\\Users\\yourb\\Desktop\\new3\\GC_Mouse3.raw','*uint8');
+save_raw(OutGC2,'C:\\Users\\yourb\\Desktop\\new3\\GC2M3.raw','*uint8');

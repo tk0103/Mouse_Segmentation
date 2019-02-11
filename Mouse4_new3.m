@@ -52,7 +52,7 @@ disp(JI1);
 imagesc(M3E1(:,:,70)');
 axis tight equal
 %%
-imagesc(Imap(:,:,165)');
+imagesc(Imap(:,:,255)');
 axis tight equal
 caxis([0 4])
 %%
@@ -228,7 +228,7 @@ disp(JI2);
 
 clearvars atlasbla atlasLkid atlasRkid Sbla SLkid SRkid
 %%
-save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\Imap2_Mouse4.raw','*uint8');
+save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\ImapM4.raw','*uint8');
 %%
 blamask2 = zeros(siz); blamaxcomp = zeros(siz);
 L1 = bwconncomp(Imap2 == 1);
@@ -308,7 +308,7 @@ OutputJI = zeros(size(sigma,1),1);
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z =(Im(GraphModel.Hi)-Im(GraphModel.Hj)).^2;
-sigma = 0.016; lambda = 0.76; n =1;
+sigma = 0.071; lambda = 1.51; n =1;
 
 %for n = 1:160
     terminalWeights = lambda(n) .* PPout;
@@ -319,14 +319,15 @@ sigma = 0.016; lambda = 0.76; n =1;
     
     [cut, labels] = graphCutMex(terminalWeights,edgeWeight);
     
-    Outputtem = zeros(siz);
-    Outputtem(blamask2) = labels;
-    JI= CalcuJI(Outputtem,M4GT,1);
+    Outputtem2 = zeros(siz);
+    Outputtem2(blamask2) = labels;
+    JI= CalcuJI(Outputtem2,M4GT,1);
     disp(JI);
     OutputJI(n) = JI;
     disp(n);
 %end
-OutGC(Outputtem == 1) = 1;
+%%
+OutGC(Outputtem2 == 1) = 1;
 %%
 slice = 70;
 subplot(1,3,1);
@@ -334,7 +335,7 @@ imagesc(Imap2(:,:,slice)');
 axis tight equal off
 
 subplot(1,3,2);
-imagesc(Outputtem(:,:,slice)');
+imagesc(Outputtem2(:,:,slice)');
 axis tight equal off
 
 subplot(1,3,3);
@@ -345,7 +346,7 @@ JI = CalcuJI(Imap2,M4GT,3);
 disp(JI)
 
 %%
-shpepri = Iw(Rkidmask2); 
+shpepri = Iw(Lkidmask2); 
 te = (1-(shpepri(GraphModel.Hi)-shpepri(GraphModel.Hj))./GraphModel.dist)./2;
 te =real(sqrt(te));
 %%
@@ -382,9 +383,9 @@ clearvars edgeWeight terminalWeights
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z =   (Im(GraphModel.Hi)-Im(GraphModel.Hj)).^2;
-%sigma = 0.0019; lambda = 0.019; n =1;
+sigma = 0.0019; lambda = 0.035; n =1; c = 1.0;
 
-for n = 1:600
+%for n = 1:600
     terminalWeights = lambda(n) .* PPout;
     Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
     edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
@@ -392,14 +393,31 @@ for n = 1:600
     
     [~, labels] = graphCutMex(terminalWeights,edgeWeight);
     
-    Outputtem = zeros(siz);
-    Outputtem(Lkidmask2) = labels;
-    JI= CalcuJI(Outputtem,M4GT-1,1);
+    Outputtem2 = zeros(siz);
+    Outputtem2(Lkidmask2) = labels;
+    JI= CalcuJI(Outputtem2,M4GT-1,1);
     disp(JI);
     OutputJI(n) = JI;
     disp(n);
-end
-OutGC(Outputtem == 1) = 2;
+%end
+%%
+OutGC2(Outputtem2 == 1) = 2;
+%%
+slice = 217;
+subplot(1,3,1)
+imagesc(Outputtem1(130:330,100:300,slice)');
+axis tight equal off
+colormap(map)
+
+subplot(1,3,2)
+imagesc(Outputtem2(130:330,100:300,slice)');
+axis tight equal off
+colormap(map)
+
+subplot(1,3,3)
+imagesc(M4GT(130:330,100:300,slice)');
+axis tight equal off
+colormap(map)
 %%
 %Reaginal term R.kidney
 clearvars PPout GraphModel
@@ -428,28 +446,29 @@ clearvars edgeWeight terminalWeights
 edgeWeight(:,1) = GraphModel.Hi;
 edgeWeight(:,2) = GraphModel.Hj;
 Z =   (Im(GraphModel.Hi)-Im(GraphModel.Hj)).^2;
-%sigma = 0.0005; lambda = 0.019; n =1;
+sigma = 0.0019; lambda = 0.039; n =1; c = 1;
 
-for n = 1:600
+%for n = 1:600
     terminalWeights = lambda(n) .* PPout;
     Bound = exp(-Z ./ (2*sigma(n)^2)) ./ GraphModel.dist;
     edgeWeight(:,3) = c(n)*Bound + (1-c(n))*te;
     edgeWeight(:,4) =   edgeWeight(:,3); 
     [~, labels] = graphCutMex(terminalWeights,edgeWeight);
     
-    Outputtem = zeros(siz);
-    Outputtem(Rkidmask2) = labels;
-    JI= CalcuJI(Outputtem,M4GT-2,1);
+    Outputtem2 = zeros(siz);
+    Outputtem2(Rkidmask2) = labels;
+    JI= CalcuJI(Outputtem2,M4GT-2,1);
     disp(JI);
     OutputJI(n) = JI;
     disp(n);
     
-end
-OutGC(Outputtem == 1) = 3;
+%end
 %%
-imagesc(Outputtem(:,:,200)');
+OutGC2(Outputtem2 == 1) = 3;
+%%
+imagesc(OutGC2(:,:,200)');
 axis tight equal off
 colormap(map)
 caxis([0 4])
 %%
-save_raw(OutGC,'C:\\Users\\yourb\\Desktop\\new3\\GC_Mouse4.raw','*uint8');
+save_raw(OutGC2,'C:\\Users\\yourb\\Desktop\\new3\\GC2M4.raw','*uint8');
