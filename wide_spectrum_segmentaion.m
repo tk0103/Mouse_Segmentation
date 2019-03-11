@@ -35,7 +35,7 @@ end
 %%
 %Atlas_guided EM,Mouse1
 clearvars atlas
-atlas  = atlasfunc1(sig1,sig2,K1,siz,mask1,M2GT,M3GT,M4GT);
+atlas  = atlasfunc1(sig1,sig2,siz,mask1,M2GT,M3GT,M4GT);
 
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,~]...
     = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask1,siz,30);
@@ -45,9 +45,9 @@ disp(JI);
 %%
 %Atlas_guided EM,Mouse2
 clearvars atlas
-atlas  = atlasfunc1(sig1,sig2,K1,siz,mask2,M1GT,M3GT,M4GT);
+atlas  = atlasfunc1(sig1,sig2,siz,mask2,M1GT,M3GT,M4GT);
 
-[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,~] = ...
+[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,li] = ...
     AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask2,siz,30);
 JI= CalcuJI(Imap,M2GT,K1-1);
 disp("EM_MAP result")
@@ -55,9 +55,9 @@ disp(JI);
 %%
 %Atlas_guided EM,Mouse3
 clearvars atlas
-atlas  = atlasfunc1(sig1,sig2,K1,siz,mask3,M1GT,M2GT,M4GT);
+atlas  = atlasfunc1(sig1,sig2,siz,mask3,M1GT,M2GT,M4GT);
 
-[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,~] ...
+[Imap,~,~,GMMMu,GMMSigma,GMMpro,~,li] ...
     = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask3,siz,30);
 JI= CalcuJI(Imap,M3GT,K1-1);
 disp("EM_MAP result")
@@ -66,7 +66,7 @@ disp(JI);
 %%
 %EM Mosue4
 clearvars atlas
-atlas  = atlasfunc1(sig1,sig2,K1,siz,mask4,M1GT,M2GT,M3GT);
+atlas  = atlasfunc1(sig1,sig2,siz,mask4,M1GT,M2GT,M3GT);
 
 [Imap,~,~,GMMMu,GMMSigma,GMMpro,~,~]...
     = AtlasGuidedEM_kubo(Xte,atlas,SS,K1,mask4,siz,30);
@@ -175,13 +175,13 @@ SRkid.Sigma(:,:,1) =  (sqrt(GMMSigma(:,:,3))./4).^2;
 SRkid.Sigma(:,:,2) =  (sqrt(GMMSigma(:,:,3))./4).^2;
 SRkid.Sigma(:,:,3) =  (sqrt(GMMSigma(:,:,4))).^2;
 
-[Imapbla,~,PPbla,GMMMubla,GMMSigmabla,GMMprobla,Featbla,~]...
+[Imapbla,~,PPbla,GMMMubla,GMMSigmabla,GMMprobla,Featbla,li1]...
     = AtlasGuidedEM_kubo(Xtebla,atlasbla,Sbla,K2,blamask,siz,30);
 
-[ImapLkid,~,PPLkid,GMMMuLkid,GMMSigmaLkid,~,FeatL,~]...
+[ImapLkid,~,PPLkid,GMMMuLkid,GMMSigmaLkid,~,FeatL,li2]...
     = AtlasGuidedEM_kubo(XteLkid,atlasLkid,SLkid,K2,Lkidmask,siz,30);
 
-[ImapRkid,~,PPRkid,GMMMuRkid,GMMSigmaRkid,~,~,~]...
+[ImapRkid,~,PPRkid,GMMMuRkid,GMMSigmaRkid,~,~,li3]...
     = AtlasGuidedEM_kubo(XteRkid,atlasRkid,SRkid,K2,Rkidmask,siz,30);
 
 Imap2 = zeros(siz)+4;
@@ -190,12 +190,17 @@ Imap2(Imapbla == 1) = 1; Imap2(Imapbla == 2) = 1;
 Imap2(ImapLkid == 1) = 2; Imap2(ImapLkid == 2) = 2;
 Imap2(ImapRkid == 1) = 3; Imap2(ImapRkid == 2) = 3;
 
-clearvars atlasbla atlasLkid atlasRkid Sbla SLkid SRkid Xtebla XteLkid XteRkid
-
 JI = CalcuJI(Imap,GT,K1-1);
 disp(JI);
 JI = CalcuJI(Imap2,GT,K1-1);
 disp(JI);
+%%
+Imap2(Imap2
+imagesc(Imap2(120:310,125:315,190)');
+axis tight equal off
+colormap(map)
+%%
+clearvars atlasbla atlasLkid atlasRkid Sbla SLkid SRkid Xtebla XteLkid XteRkid
 %%
 save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\ImapWM4.raw','*uint8');
 %%
@@ -246,10 +251,10 @@ Lkidmask2 = logical(Lkidmask2 - LRAND + tmp2);
 
 clearvars blamaxcomp Rmaxcomp Lmaxcomp L1 XX YY ZZ atlas x y z tmp tmp1 tmp2 tmp3 Xtr XGTtr Xte
 %%
-imagesc(OutGC(:,:,200)');
+imagesc(M4E2(:,:,70)');
 axis tight equal off
-colormap(map)
-caxis([0 4])
+colormap(gray)
+caxis([0 0.7])
 %%
 save_raw(Imap2,'C:\\Users\\yourb\\Desktop\\new3\\Imap2_Mouse2_wide.raw','*uint8');
 %%

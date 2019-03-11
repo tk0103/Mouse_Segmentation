@@ -32,15 +32,7 @@ cutM2GT(and(InGT == 1,not(mask_blaE2))) = 5;
 cutM2GT(and(InGT == 2,not(mask_LkidE2))) = 6;
 cutM2GT(and(InGT == 3,not(mask_RkidE2))) = 7;
 cutM2GT = uint8(cutM2GT);
-%%
-imagesc(M4GT(:,:,64));
-axis tight equal
-caxis([0 8])
-%%
-imagesc(M4E2(:,:,64)');
-axis tight equal
-caxis([0 0.7])
-colormap(gray)
+
 %%
 %GraphCut Enrgy of each term
 seikai = pM1GT(pmask1);
@@ -163,18 +155,19 @@ v = [1,1];
 contour(temp',v,'-r','LineWidth',2.0);
 set(gca,'YDir','reverse')
 %%
-slice = 73;
+slice = 70;
 y =300;
-rangex = [320,370];
-rangey = [y-25,y+25];
+rangex = [325,365];
+rangey = [y-20,y+20];
 test1 = M1E2(:,y,slice);
 test2 = M1E2(:,y,slice);
 %265:355,245:335
 
 subplot(3,4,[1,6])
-imagesc(M1E2(:,:,slice)');
-caxis([0,0.7])
-colormap gray
+imagesc(M1GT(:,:,slice)');
+caxis([0,4])
+%colormap gray
+colormap(map)
 axis equal tight off
 rectangle('Position',[1,y-0.5,436,1],'FaceColor','none','EdgeColor','r',...
     'LineWidth',1)
@@ -235,8 +228,7 @@ axis tight equal
 ax = gca;
 ax.FontName = 'Times New Roman';
 ax.FontSize = 12;
-%%
-imagesc(M1GT(:,:,70));
+
 %%
 %edge =[0 0:0.025:2.8 2.8];
 %xlim([0 2.8])
@@ -253,8 +245,273 @@ legend('L.kidney','Background')
 ax = gca;
 ax.FontName = 'Times New Roman';
 ax.FontSize = 12;
+
 %%
-imagesc(M4E2(230:330,250:350,70)');
+bn= [0.4867	,0.7922	,0.9534	,0.892]';
+ln=	[0.6673	,0.7009	,0.7391	,0.7824]';
+rn= [0.7921	,0.6464	,0.6308	,0.5112]';
+
+bw=	[0.5467	,0.884	,0.8752	,0.367]';
+lw= [0.5862	,0.5688	,0.4759	,0.3266]';
+rw= [0.6832	,0.6918	,0.5163	,0.3114]';
+%%
+mb = [0.4867	,0.7922,	0.9534,	0.892]';
+ml = [0.6673	,0.7009,	0.7391,	0.782]';
+mr = [0.7921	,0.6464,	0.6308,	0.5112]';
+mm = [0.6487	,0.713166667,	0.774433333,	0.7284]';
+
+wb = [0.5467	,0.884	,0.8752	,0.367]';
+wl = [0.5862	,0.5688	,0.4759	,0.3266]';
+wr = [0.6832	,0.6918	,0.5163	,0.3114]';
+wm = [0.605366667,	0.714866667	,0.622466667	,0.335]';
+
+gb = [0.7471	,0.8777,	0.9258,	0.8304]';
+gl = [0.79773161	,0.798019026	,0.218807725	,0.888751213]';
+gr = [0.826829926	,0.75474252	,0.149646984	,0.783928965]';
+gm = [0.790553845	,0.810153849	,0.431418236	,0.834360059]';
+
+%%
+boxplot([mb,wb,ml,wl,mr,wr,mm,wm],'Labels',{'Narrow(δNγχ)','Wide(δNγχ)'...
+    ,'Narrow(¶t‘)','Wide(¶t‘)','Narrow(‰Et‘)','Wide(‰Et‘)','Narrow(•½‹Ο)','Wide(•½‹Ο)'});
+ax = gca;
+ax.FontSize = 10;
+ylim([0 1.0])
+ylabel('Jaccard Index')
+%%
+boxplot([mb,gb,ml,gl,mr,gr,mm,gm],'Labels',{'MAP(δNγχ)','GC(δNγχ)'...
+    ,'MAP(¶t‘)','GC(¶t‘)','MAP(‰Et‘)','GC(‰Et‘)','MAP(•½‹Ο)','GC(•½‹Ο)'});
+ax = gca;
+ax.FontSize = 10;
+ylim([0 1.0])
+ylabel('Jaccard Index')
+%%
+[p1,h1] = signrank(bn,bw)
+
+%%
+map = [0, 0, 0
+    0.1, 0.5, 0.8
+    0.2, 0.7, 0.6
+    0.8, 0.7, 0.3
+    0.9, 0.9, 0];
+out = Imap2;
+out(Imap2 == 4) = 0;
+imagesc(out(100:290,150:340,200)');
+%imagesc(out(:,:,200)');
 axis tight equal off
-caxis([0 0.7])
+caxis([0 4])
+colormap(map);
+
+%%
+Mouse_voxnum = [38516 227013 216702 12316284; ...
+                130557 220659 244271 14620045;...
+                276949, 204858, 185717, 13149164;...
+                248592 246458 235185 12864228];
+
+c = categorical({'Mouse1','Mouse2','Mouse3','Mouse4'});
+bar(c,Mouse_voxnum);
+ax = gca;
+ax.YScale = 'log';
+ax.FontName = 'Times New Roman';
+ax.FontSize = 15;
+legend('Bladder','L.kidney','R.kidney','Background')
+legend('boxoff')
+
+%%
+JI = [0.65615	0.7108	0.640525	0.68125	0.72795	0.780225	0.714675	0.792625	0.7515	0.651375	0.7551	0.754075	0.810675	0.8012	0.762075	0.679875;...
+ 0.535725	0.5876	0.4558	0.41425	0.69125	0.667725	0.53565	0.703525	0.60895	0.400225	0.717325	0.70005	0.663975	0.722325	0.725425	0.488975;...
+ 0.58005	0.613375	0.505425	0.413025	0.62505	0.67695	0.653375	0.666775	0.70385	0.496825	0.65215	0.623875	0.66675	0.645125	0.63295	0.547325;...
+ 0.590641667	0.637258333	0.533916667	0.502841667	0.681416667	0.7083	0.634566667	0.720975	0.6881	0.516141667	0.708191667	0.692666667	0.7138	0.722883333	0.706816667	0.572058333];
+
+bar(JI',0.8,'EdgeColor','none');
+
+ax = gca;
+ax.FontName = 'Times New Roman';
+ax.FontSize = 12;
+ax.XTickLabels = {'E1','E2','E3','E4','E1,2','E1,3','E1,4','E2,3','E2,4','E3,4','E1,2,3','E1,2,4','E1,3,4','E2,3,4','E1,2,3,4','Wide'};
+ax.XTick = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16]; 
+legend('Bladder','L.kidney','R.kidney','Background')
+legend('boxoff')
+ylim([0 1.0])
+
+%%
+imagesc(GT(:,:,slice)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+rectangle('Position',[110,150,180,180],'FaceColor','none','EdgeColor','r',...
+    'LineWidth',2)
+%270:380,210:320,
+%%
+slice = 215;
+imagesc(GC(110:290,150:340,slice)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+hold on
+temp = M3GT(110:290,150:340,slice);
+temp(temp == 4) = 0;
+v = [1,1];
+contour(temp',v,'-r','LineWidth',2.0);
+set(gca,'YDir','reverse')
+axis tight equal off
+%%
+slice = 200;
+imagesc(M1GT(110:300,155:345,slice)');
+axis tight equal off
+caxis([0 4])
+colormap(map)
+
+hold on
+temp = GT(110:300,155:345,slice);
+temp(temp == 4) = 0;
+v = [1,1];
+contour(temp',v,'-r','LineWidth',2.0);
+set(gca,'YDir','reverse')
+
+%%
+Imap = load_raw('C:\Users\yourb\Desktop\new3\ImapM1.raw','*uint8');
+%ImapW = load_raw('C:\Users\yourb\Desktop\new3\ImapWM4.raw','*uint8');
+GC = load_raw('C:\Users\yourb\Desktop\new3\GCM1.raw','*uint8');
+%GC2 = load_raw('C:\Users\yourb\Desktop\new3\GC2M4.raw','*uint8');
+GT = M1GT;
+Imap = reshape(Imap,siz); GC = reshape(GC,siz); 
+%ImapW = reshape(ImapW,siz); GC2 = reshape(GC2,siz);
+Imap(Imap == 4) = 0;  GT(GT == 4) = 0;  ImapW(ImapW == 4) = 0;
+%%
+JI = CalcuJI(GC2,M2GT,3);
+disp(JI)
+
+
+%%
+In = M3E1(Rkidmask); InGT = M3GT(Rkidmask);
+mu = SRkid.mu; sigma = sqrt(SRkid.Sigma);
+%mu = GMMMuRkid; sigma = sqrt(GMMSigmaRkid);
+
+edge =[0 0:0.01:0.7 0.7];
+xlim([0 0.7])
+
+hold on
+%histogram(In(InGT ==1),edge,'Normalization','pdf','EdgeAlpha',0.4,'FaceColor',[51 102 255]/255);
+%histogram(In(InGT ==2),edge,'Normalization','pdf','EdgeAlpha',0.4,'FaceColor',[255 135 0]/255);
+histogram(In(InGT ==3),edge,'Normalization','pdf','EdgeAlpha',0.4);
+histogram(In(InGT ==4),edge,'Normalization','pdf','EdgeAlpha',0.4);
+
+
+mutest = mu(1,1); sigtest = sigma(1,1,1);
+y1 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y1,'Color',[51 102 255]/255,'LineWidth',2)
+
+mutest = mu(2,1); sigtest =  sigma(1,1,2);
+y2 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y2,'Color',[255 135 0]/255,'LineWidth',2)
+
+mutest = mu(3,1); sigtest = sigma(1,1,3);
+y3 = pdf('Normal',edge,mutest,sigtest);
+plot(edge,y3,'Color',[255 255 0]/255,'LineWidth',2)
+
+
+
+%%
+%325:365,280:320,70
+Im = M4E2(150:230,230:310,198:202);
+%Im = M3E2(140:220,255:335,198:202);
+mask =  ones([81,81,5]); mask = logical(mask);
+GraphModel2 = CreateFullyConnectedGraphWithMask(mask);
+Z = (Im(GraphModel2.Hi)-Im(GraphModel2.Hj)).^2;
+
+%%
+val = GraphModel2.nodes;
+%val = 1001;
+n = 1;
+out = zeros(val,1);
+for n =1:val
+   
+    temp = Z(GraphModel2.Hi == n);
+    temp2 = Z(GraphModel2.Hj == n);
+    temp3 = GraphModel2.dist(GraphModel2.Hi == n);
+    temp4 = GraphModel2.dist(GraphModel2.Hj == n);
+    temp5 = vertcat(temp,temp2);
+    temp6 = vertcat(temp3,temp4);
+    val = exp(-temp5 ./(2*sigma(n)^2))./temp6;
+    val2 = max(temp5);
+    out(n,1) = min(val);
+    out2(n,1) = min(val);
+end
+
+out = reshape(out,[81 81 5]);
+%%
+outexp = exp(-out ./2 ./0.0019);
+%%
+imagesc(out(:,:,3)');
+axis tight equal off
 colormap(gray)
+caxis([0.58 0.60])
+
+hold on
+temp = M4GT(150:230,230:310,200);
+%temp = M3GT(140:220,255:335,200);
+temp(temp == 4) = 0;
+v = [1,1];
+contour(temp',v,'-r','LineWidth',2.0);
+set(gca,'YDir','reverse')
+
+%%
+%325:365,280:320,70
+Im = M1E2(325:365,280:320,68:72);
+mask =  ones([41,41,5]); mask = logical(mask);
+GraphModel2 = CreateFullyConnectedGraphWithMask(mask);
+Z = (Im(GraphModel2.Hi)-Im(GraphModel2.Hj)).^2;
+
+val = GraphModel2.nodes;
+out = zeros(val,1);
+out2 = zeros(val,1);
+for n =1:val
+    temp = Z(GraphModel2.Hi == n);
+    temp2 = Z(GraphModel2.Hj == n);
+    temp3 = GraphModel2.dist(GraphModel2.Hi == n);
+    temp4 = GraphModel2.dist(GraphModel2.Hj == n);
+    temp5 = vertcat(temp,temp2);
+    temp6 = vertcat(temp3,temp4);
+    
+    val2 = max(temp5);
+    val = exp(-val2 ./(2*0.05^2))./max(temp6);
+    out(n,1) = val;
+    out2(n,1) = val2;
+end
+out = reshape(out,[41 41 5]);
+out2 = reshape(out2,[41 41 5]);
+%%
+imagesc(out(:,:,3)');
+axis tight equal off
+colormap(gray)
+caxis([0.02 1.0])
+
+hold on
+temp = M1GT(325:365,280:320,70);
+temp(temp == 4) = 0;
+v = [1,1];
+contour(temp',v,'-r','LineWidth',2.0);
+set(gca,'YDir','reverse')
+
+%%
+[sigma,lambda] =ndgrid(0.0001:0.0004:0.008,0.001:0.002:0.07);
+lambda = lambda(:); sigma = sigma(:);
+OutputJI = zeros(size(sigma,1),1);
+
+%%
+
+[sigma,lambda] =ndgrid(0.0081:0.0004:0.01,0.001:0.002:0.07);
+lambda = lambda(:); sigma = sigma(:);
+OutputJI = zeros(size(sigma,1),1);
+
+%%
+[sigma,lambda,c] =ndgrid(0.0001:0.0004:0.008,0.001:0.002:0.07,0.94:0.02:0.98);
+lambda = lambda(:); sigma = sigma(:); c = c(:);
+OutputJI = zeros(size(sigma,1),1);
+
+%%
+[sigma,lambda,c] =ndgrid(0.0081:0.0004:0.01,0.001:0.002:0.07,0.94:0.02:0.98);
+lambda = lambda(:); sigma = sigma(:); c = c(:);
+OutputJI = zeros(size(sigma,1),1);
